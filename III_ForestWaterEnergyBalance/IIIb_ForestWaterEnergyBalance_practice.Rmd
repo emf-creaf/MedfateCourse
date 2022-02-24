@@ -1,0 +1,29 @@
+---
+title: "III.b - Forest water and energy balances (practice)"
+author: "Miquel De Cáceres"
+date: "24/2/2022"
+output: 
+  ioslides_presentation:
+    logo: ../isotip-fons.png
+    widescreen: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(medfate)
+```
+
+
+## Water balance input object
+
+## Simulation input object
+
+Simulation functions `spwb()` and `growth()` (and similar functions) require first combining forest, soil, species-parameter and simulation control inputs into a single input object (of class `spwbInput` or `growthInput`) that is then used as input to the corresponding simulation function along with weather data. 
+
+
+## Running the basic water balance model
+## Running the advanced water balance model
+## Plots and summaries
+## Evaluating model performance
+## Modifying model inputs
+

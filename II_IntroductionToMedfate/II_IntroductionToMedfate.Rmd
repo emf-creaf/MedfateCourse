@@ -1,0 +1,295 @@
+---
+title: "II - Introduction to medfate"
+author: "Miquel De Cáceres (EMF)"
+date: "23/2/2022"
+output:
+  ioslides_presentation:
+    logo: ../isotip-fons.png
+    widescreen: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(medfate)
+library(medfateutils)
+```
+
+# Purpose and development context
+
+## Model scope {.smaller .build}
+
+Being able to anticipate the impact of global change on forest ecosystems is one of the major environmental challenges in contemporary societies. 
+
+The R package `medfate` has been designed to study the characteristics and simulate the functioning and structural dynamics of forest ecosystems.
+
+Climatic conditions are the main environmental drivers, with a particular focus on drought impacts under Mediterranean conditions. 
+
+Representation of vegetation accounts for structural and compositional variation but is not spatially-explicit (i.e. trees or shrubs do not have explicit coordinates within forest stands). 
+
+## Development context
+
+
+
+## Companion packages
+
+During the development of **medfate** some functions have been originally placed there and then moved to more specialized packages which now evolve in parallel to **medfate**:
+
+  + Package [**meteoland**](https://github.com/emf-creaf/meteoland) allows generating daily weather input for simulation models in **medfate**.
+  + Package [**medfateland**](https://github.com/emf-creaf/medfateland) extends **medfate** by allowing simulations to be performed in a spatially explicit context.
+  + Package [**medfateutils**](https://github.com/emf-creaf/medfateutils) provides functions to help initializing vegetation, soil and species parameter inputs for **medfate** simulation functions.
+
+
+# Package installation
+
+## Installation from CRAN or GitHub
+
+From CRAN (stable versions):
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+install.packages("medfate")
+```
+
+From GitHub (frequent updates):
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+remotes::install_github("emf-creaf/medfate")
+```
+
+This session we will also use package **medfateutils**:
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+remotes::install_github("emf-creaf/medfateutils")
+```
+
+
+# Overview of package functions
+
+## Simulation functions
+
+Three main simulation models can be executed in medfate, each building on the preceeding ones.
+
+|  Function | Description                 |
+| --------- | --------------------------- |
+| `spwb()` | Water and energy balance    |
+| `growth()` | Carbon balance, growth and mortality |
+| `fordyn()` | Forest dynamics, including recruitment and forest management |
+
+
+## Post-processing functions
+
+
+## Submodel functions {.smaller}
+
+Sub-model functions are grouped by *subject*:
+
+-   `biophysics_*`: Physical and biophysical utility functions.
+-   `carbon_*`: Carbon balance.
+-   `hydraulics_*`: Plant hydraulics.
+-   `hydrology_*`: Canopy and soil hydrology (rainfall interception, soil evaporation, soil infiltration).
+-   `light_*`: Light extinction and absortion.
+-   `moisture_*`: Live tissue moisture.
+-   `pheno_*`: Leaf phenology.
+-   `photo_*`: Leaf photosynthesis.
+-   `root_*`: Root distribution and conductance calculations.
+-   `soil_*`: Soil hydraulics and thermodynamics.
+-   `spwb_*`: Soil water balance parameter optimization/calibration routines.
+-   `transp_*`: Stomatal regulation and resulting transpiration/photosynthesis.
+-   `wind_*`: Canopy turbulence.
+
+# Species parameters
+
+## Species parameters
+
+Simulation models in **medfate** require a `data.frame` with species parameter values.
+
+The package includes a default data set of parameter values for a set of Mediterranean species.
+
+```{r, echo = TRUE}
+data("SpParamsMED")
+```
+
+A large number of parameters (columns) can be found in `SpParamsMED`. Not all parameters are needed for all models. You can find parameter definitions in table `SpParamsDefinition`:
+
+```{r, echo = TRUE}
+data("SpParamsDefinition")
+```
+
+# Vegetation input
+
+## Forest object {.smaller .build}
+
+<div class="columns-2">
+Each forest plot is represented in an object of class `forest`, a list that contains several elements. 
+
+```{r, include = TRUE, echo = TRUE}
+data(exampleforestMED)
+forest <- exampleforestMED
+```
+
+```{r}
+forest
+```
+</div>
+
+The most important items are two data frames, `treeData` (for trees) and `shrubData` for shrubs.
+
+## Forest attributes {.smaller .build}
+
+The package includes a number of functions to examine properties of the plants conforming the `forest` object, summary functions at the stand level or vertical profiles of several physical properties:
+
+-   `plant_*`: Cohort-level information (species name, id, leaf area index, height...).
+-   `species_*`: Species-level attributes (e.g. basal area, leaf area index).
+-   `stand_*`: Stand-level attributes (e.g. basal area).
+-   `vprofile_*`: Vertical profiles (light, wind, fuel density, leaf area density).
+
+```{r, echo = TRUE}
+plant_basalArea(forest)
+```
+
+```{r, echo = TRUE}
+plant_LAI(forest, SpParamsMED)
+```
+
+
+## Aboveground data {.smaller .build}
+
+Simulation functions in `medfate` allow starting in a more general way using two data frames, one with **aboveground** information and the other with **belowground** information.
+
+```{r, echo = TRUE}
+above <- forest2aboveground(forest, SpParamsMED)
+above
+```
+
+The call to `forest2aboveground()` includes species parameters because species-specific values are needed to calculate leaf area from tree diameters or shrub cover.
+
+## Aboveground vertical profiles | Leaf distribution {.smaller .build}
+
+Aboveground leaf area distribution (at the cohort-, species- or stand-level) can be examined by calling function `vprofile_leafAreaDensity()`:
+
+<div class="columns-2">
+```{r, fig = TRUE, fig.width= 4, fig.height=3, fig.align= 'center', echo=TRUE}
+vprofile_leafAreaDensity(forest, SpParamsMED, 
+                         byCohorts = F)
+```
+
+```{r, fig = TRUE, fig.width= 5, fig.height=3, fig.align= 'center', echo=TRUE}
+vprofile_leafAreaDensity(forest, SpParamsMED, 
+                         byCohorts = T)
+```
+</div>
+
+## Aboveground vertical profiles | Radiation extinction {.smaller .build}
+
+Radiation extinction (PAR or SWR) across the vertical axis can also be examined:
+
+<div class="columns-2">
+```{r, fig = TRUE, fig.width= 4, fig.height=3, fig.align= 'center', echo=TRUE}
+vprofile_PARExtinction(forest, SpParamsMED)
+```
+
+```{r, fig = TRUE, fig.width= 5, fig.height=3, fig.align= 'center', echo=TRUE}
+vprofile_SWRExtinction(forest, SpParamsMED)
+```
+</div>
+
+## Belowground vertical profiles {.smaller .build}
+
+Users can visually inspect the distribution of fine roots of `forest` objects by calling function `vprofile_rootDistribution()`:
+
+```{r, fig = TRUE, fig.width= 5, fig.height=3, fig.align= 'center', echo=TRUE}
+vprofile_rootDistribution(forest, SpParamsMED)
+```
+
+## Interactive forest inspection
+
+Function `shinyplot()` is a more convenient way to display properties and profiles of `forest` objects:
+
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+shinyplot(forest, SpParamsMED)
+```
+
+## Creating a 'forest' object from forest inventory data
+
+
+
+# Soil input
+
+## Soil physical description {.smaller .build}
+
+Soil physical attributes can be initialized to default values, for a given number of layers, using function `defaultSoilParams()`:
+
+```{r, echo = TRUE}
+spar <- defaultSoilParams(2)
+print(spar)
+```
+
+## Creating a 'soil' object from SoilGrids
+
+
+## Soil input object
+
+Soil input for simulations is an object of class `soil` (a list) that is created from physical description using a function with the same name:
+
+```{r, echo = TRUE}
+examplesoil <- soil(spar)
+class(examplesoil)
+```
+
+## Water retention curves
+
+The **water retention curve** is used to represent the relationship between soil water content ($\theta$; %) and soil water potential ($\Psi$; MPa).
+
+The following code calls function `soil_retentionCurvePlot()` to illustrate the difference between the two water retention models in this soil:
+
+```{r, fig = TRUE, fig.width= 5, fig.height=3, fig.align= 'center', echo=TRUE}
+soil_retentionCurvePlot(examplesoil, model="both")
+```
+
+# Weather input
+
+## Weather data frame {.smaller .build}
+
+All simulations in the package require **daily weather** inputs in form of a `data.frame` with dates as `row.names`. 
+
+The weather variables that are required depend on the **complexity** of model we are using.
+
+An example of daily weather data frame: 
+```{r, echo = TRUE}
+data(examplemeteo)
+head(examplemeteo, 2)
+```
+
+Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/). 
+
+# Simulation control
+
+## Simulation control parameters {.build}
+The behaviour of simulation models can be controlled using a set of global parameters. 
+
+The default parameterization is obtained using function `defaultControl()`:
+
+```{r, echo = TRUE}
+control <- defaultControl()
+```
+
+A large number of control parameters exist:
+
+```{r, echo = TRUE, eval = FALSE, include=TRUE}
+names(control)
+```
+
+
+Control parameters should normally be left to their **default values** until their effect on simulations is fully understood.
+
+# Simulation input object
+## Simulation input object {.smaller .build}
+
+Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a **single input object** that is then passed to the corresponding simulation function along with weather data. 
+
+The combination of inputs is done via functions `spwbInput()` and `growthInput()`, respectively, or the more convenient `forest2spwbInput()` and `forest2growthInput()`:
+
+```{r, echo = TRUE}
+x <- forest2spwbInput(forest, examplesoil, SpParamsMED, control)
+```
+
+
+Having this additional step is handy because initialized cohort-level parameters and state variables can then be modified before calling the actual simulation functions.
+
+Function `fordyn()` is different from the other two models: the user enters forest, soil, weather, species parameters and simulation control inputs directly into the simulation function.

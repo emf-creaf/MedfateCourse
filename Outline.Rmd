@@ -1,0 +1,107 @@
+---
+title: "Outline"
+author: "Miquel De Cáceres"
+date: "24/2/2022"
+output: html_document
+---
+
+## Temporal organization
+
++ Day 1 (~ 4.5h including 30-min break and 1h exercises): 
+  - I - Introduction to process-based forest modelling
+  - II - Introduction to medfate
++ Day 2 (~ 5h including 30-min break and 1h exercises)
+  - III - Forest water and energy balance
++ Day 3 (~ 5h including 30-min break and 1h30min exercises): 
+  - IV - Forest growth and forest dynamics
++ Day 4 (~ 4h including 30-min break):
+  - V - Advanced topics
+  - VI - Closure and feedback 
+
+## Content
+
+### I - Introduction to process-based forest modelling
+
+#### 1.1 Theory (1h 30min)
+
++ General modelling concepts: conceptual models, computational models, spatial and temporal scales, state variables, boundary conditions, etc.
++ Model development process: design, implementation, verification, calibration, evaluation, sensitivity analysis, uncertainty analysis, etc.
++ Overview of existing process-based forest modelling approaches and model examples
+
+### II - Introduction to medfate
+
+#### 2.1 Guided practice (1h 30min)
+
++ Scope and history
++ Package installation
++ Overview of package functions
++ Vegetation input
++ Soil input
++ Weather input
++ Simulation control
++ Simulation input object
+
+#### 2.2 Exercises (1h)
+
++ Suggested exercises: Obtain vegetation, soil and weather inputs from coordinates and forest inventory data (meteoland's interpolator object supplied).
+
+### III - Forest water and energy balance
+
+#### 3.1 Theory (1h 30min)
+
++ Forest hydrology (fluxes, compartments at different scales)
++ Forest energy balance
++ Plant hydraulics and regulation of transpiration
++ Effect of water limitation on forests
+
+#### 3.2 Guided practice (2h)
+
++ Water balance input object
++ Running the basic water balance model
++ Running the advanced water balance model
++ Plots and summaries
++ Evaluating model performance
++ Modifying model inputs
+
+#### 3.3 Exercises (1h)
+
++ Suggested exercises: Run the water balance model on a particular stand (e.g. FontBlanche experimental site) and answer a set of questions by examining simulation results and fit to observed data.
+
+### IV - Plant growth and forest dynamics
+
+#### 4.1 Theory (1h 30min)
+
++ Carbon balance and carbon allocation in process-based models
++ Secondary growth and sink limitations in process-based models
++ Mortality and recruitment in process-based models
+
+#### 4.2 Guided practice (1h 30min)
+
++ Growth input object
++ Running growth simulations and examining output
++ Evaluation of growth predictions
++ Running forest dynamics simulations and examining output
++ Forest management and forest dynamics
+
+#### 4.3 Exercises (1h 30min)
+
++ Suggested exercises: Run the growth model on a particular stand (e.g. FUN2FUN plot) and answer a set of questions by examining simulation results and fit to observed growth data. Project forest dynamics to the future for the same plot and summarize the results focusing on a particular question.
+
+
+### V - Advanced topics
+
+#### 5.1 Guided practice (2h 30min)
+
++ Sensitivity analysis
++ Parameterization using functional trait databases
++ Tips on model calibration
++ Brief introduction to meteoland package
++ Parallelization and medfateland package
+
+### VI - Closure and feedback 
+
+#### 6.1 Open debate (1h)
+
++ Open debate on medfate's design and usability
++ Future prospects of developments in medfate and companion packages
++ Feedback about the course itself
