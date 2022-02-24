@@ -1,6 +1,6 @@
 ---
-title: "III.b - Forest water and energy balances (practice)"
-author: "Miquel De Cáceres"
+title: "III.b - Forest water and energy balances"
+author: "Miquel De Cáceres (EMF)"
 date: "24/2/2022"
 output: 
   ioslides_presentation:
@@ -14,16 +14,119 @@ library(medfate)
 ```
 
 
-## Water balance input object
+# Water balance input object
 
-## Simulation input object
+## Creating the water balance input object {.smaller .build}
 
-Simulation functions `spwb()` and `growth()` (and similar functions) require first combining forest, soil, species-parameter and simulation control inputs into a single input object (of class `spwbInput` or `growthInput`) that is then used as input to the corresponding simulation function along with weather data. 
+We assume we have an appropriate forest object and species parameter data frame:
+```{r, echo = TRUE}
+data(exampleforestMED)
+data(SpParamsMED)
+```
+a soil input object:
+```{r, echo = TRUE}
+examplesoil <- soil(defaultSoilParams(4))
+```
+and simulation control list:
+```{r, echo = TRUE}
+control <- defaultControl("Granier")
+```
+With these four elements we can build our input object for function `spwb()`:
+```{r, echo = TRUE}
+x <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
+```
 
+## Structure of the water balance input object
 
-## Running the basic water balance model
-## Running the advanced water balance model
-## Plots and summaries
-## Evaluating model performance
-## Modifying model inputs
+# Running the basic water balance model
+
+## Water balance run {.smaller .build}
+
+```{r, echo = TRUE}
+data(examplemeteo)
+```
+
+Now we are ready to call function `spwb()`:
+```{r, echo = TRUE, eval = FALSE}
+S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
+```
+```{r, include = FALSE, eval = TRUE}
+S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
+```
+Function `spwb()` returns an object of class with the same name, actually a list:
+```{r, echo = TRUE}
+class(S)
+```
+It is interesting to inspect the list element names:
+```{r, echo = TRUE}
+names(S)
+```
+
+## Summaries {.smaller .build}
+
+The package provides a `summary()` function for objects of class `spwb`. It can be used to extract/summarize the model's output at different temporal steps (i.e. weekly, annual, ...).
+
+For example, to obtain the average soil moisture and water potentials by months one can use:
+```{r, echo = TRUE, eval = FALSE}
+summary(S, freq="months",FUN=mean, output="Soil")
+```
+
+Parameter `output` indicates the element of the `spwb` object for which we desire a summary. Similarly, it is possible to calculate the average stress of plant cohorts by months:
+
+```{r, echo = TRUE, eval = FALSE}
+summary(S, freq="months",FUN=mean, output="PlantStress")
+```
+
+The `summary` function can be also used to aggregate the output by species. In this case, the values of plant cohorts belonging to the same species will be averaged using LAI values as weights:
+```{r, echo = TRUE, eval = FALSE}
+summary(S, freq="months", output="PlantStress", bySpecies = TRUE)
+```
+
+## Plots {.smaller .build}
+
+The package provides a `plot()` function for objects of class `spwb`. It can be used to show weather inputs and different components of the water balance:
+
+<div class="columns-2">
+```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3}
+plot(S, type = "PET_Precipitation")
+```
+
+```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3}
+plot(S, type = "Export")
+```
+</div>
+
+## Interactive plots {.build}
+
+The help page of `?plot.spwb` lists all the possible plots...
+
+... but instead of typing all plots, we can call the interactive plot function and explore them all:
+
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+shinyplot(S)
+```
+
+## Post-processing functions {.smaller .build}
+
+The package provides some functions to extract or transform specific outputs from soil plant water balance simulations. 
+
+Function `droughtStress()` allows calculating several plant stress indices, such as the maximum drought stress value per month:
+```{r, echo = TRUE}
+DS <- droughtStress(S, index = "MDS", freq = "months", draw=FALSE)
+head(DS)
+```
+Other similar post-processing functions are `waterUseEfficiency()` or `fireHazard()`.
+
+# Running the advanced water balance model
+
+## Transpiration mode control parameter
+## Input object in the advanced model
+## Static analysis of plant hydraulics
+## Water/energy balance run for a single day
+## Water/energy balance run for a multiple days
+## Summaries, plots and interactive plots
+
+# Evaluating model performance
+
+# Modifying model inputs
 
