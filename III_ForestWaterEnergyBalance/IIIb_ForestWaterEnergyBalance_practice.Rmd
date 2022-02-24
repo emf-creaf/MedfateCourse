@@ -36,7 +36,43 @@ With these four elements we can build our input object for function `spwb()`:
 x <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
 ```
 
-## Structure of the water balance input object
+## Structure of the water balance input object {.smaller .build}
+
+The water balance input object is a `list` with several elements:
+```{r, echo = TRUE}
+names(x)
+```
+
+Elements `soil` and `control` contain copies of the parameters used in the call to `forest2spwbInput()`.
+
+Element `cohorts` contains the species identity of each cohort:
+```{r, echo = TRUE}
+x$cohorts
+```
+
+## Structure of the water balance input object {.smaller .build}
+Element `above` contains above-ground description of vegetation:
+```{r, echo = TRUE}
+x$above
+```
+Here, the model already estimated foliar biomass and leaf area index from the forest structure using allometric relationships and species-specific coefficients in `SpParams`. 
+
+Element `below` contains below-ground description of vegetation:
+```{r, echo = TRUE}
+x$below
+```
+
+## Structure of the water balance input object {.smaller .build}
+
+Elements `params*` contain cohort-level parameters, for example:
+```{r, echo = TRUE}
+x$paramsTranspiration
+```
+
+Elements `internal*` contain cohort-level state variables, for example:
+```{r, echo = TRUE}
+x$internalPhenology
+```
 
 # Running the basic water balance model
 
@@ -119,14 +155,33 @@ Other similar post-processing functions are `waterUseEfficiency()` or `fireHazar
 
 # Running the advanced water balance model
 
-## Transpiration mode control parameter
-## Input object in the advanced model
+## Creating an input object for the advanced model {.smaller .build}
+The most important step to run the advanced model is to specify the appropriate transpiration mode in the `control` parameters:
+```{r, echo = TRUE}
+control <- defaultControl("Sperry")
+```
+We can build our input object for function `spwb()` using the same function as before:
+```{r, echo = TRUE}
+x_adv <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
+```
+The water balance input object contains some new elements:
+```{r, echo = TRUE}
+names(x_adv)
+```
+
+## Creating an input object for the advanced model {.smaller .build}
+... but the main difference with the basic model is in the number of parameters, e.g.:
+```{r, echo = TRUE}
+x_adv$paramsTranspiration
+```
+
 ## Static analysis of plant hydraulics
 ## Water/energy balance run for a single day
 ## Water/energy balance run for a multiple days
 ## Summaries, plots and interactive plots
 
 # Evaluating model performance
+
 
 # Modifying model inputs
 
