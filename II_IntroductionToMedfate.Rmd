@@ -1,7 +1,7 @@
 ---
 title: "II - Introduction to medfate"
 author: "Miquel De Cáceres (EMF)"
-date: "23/2/2022"
+date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
     css: xaringan-themer.css
@@ -12,16 +12,25 @@ output:
       ratio: 16:9
 ---
 
-```{r xaringan-themer, include=FALSE, warning=FALSE}
-library(xaringanthemer)
-style_mono_accent()
+```{r setup, include=FALSE, warning=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-library(medfate)
-library(medfateutils)
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#1381B0",
+  secondary_color = "#FF961C",
+  inverse_header_color = "#FFFFFF"
+)
 ```
+
+```{r, include = FALSE}
+library(medfate)
+library(cowplot)
+```
+
 
 background-image: url(isotip-fons.png)
 
@@ -239,21 +248,36 @@ layout: true
 
 #### Leaf distribution
 
-Aboveground leaf area distribution (at the cohort-, species- or stand-level) can be examined by calling function `vprofile_leafAreaDensity()`:
+Vertical leaf area distribution (at the cohort-, species- or stand-level) can be examined using:
 
---
+.pull-left[
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
-vprofile_leafAreaDensity(forest, SpParamsMED, byCohorts = TRUE)
+vprofile_leafAreaDensity(forest, SpParamsMED, 
+                         byCohorts = FALSE)
 ```
+]
 
+.pull-right[
+```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
+vprofile_leafAreaDensity(forest, SpParamsMED, 
+                         byCohorts = TRUE)
+```
+]
 ---
 #### Radiation extinction
 
 Radiation extinction (PAR or SWR) profile across the vertical axis can also be examined:
 
+.pull-left[
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_PARExtinction(forest, SpParamsMED)
 ```
+]
+.pull-right[
+```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
+vprofile_SWRExtinction(forest, SpParamsMED)
+```
+]
 
 ---
 #### Belowground root distribution
@@ -372,3 +396,17 @@ Having this additional step is handy because initialized cohort-level parameters
 --
 
 Function `fordyn()` is different from the other two models: the user enters forest, soil, weather, species parameters and simulation control inputs directly into the simulation function.
+
+
+
+---
+class: center, middle
+
+# Thanks!
+
+Slides created via the R packages:
+
+[**xaringan**](https://github.com/yihui/xaringan)<br>
+[gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).

@@ -1,7 +1,7 @@
 ---
 title: "III.b - Forest water and energy balances"
 author: "Miquel De Cáceres (EMF)"
-date: "24/2/2022"
+date: "`r Sys.Date()`"
 output: 
   xaringan::moon_reader:
     css: xaringan-themer.css
@@ -12,13 +12,21 @@ output:
       ratio: 16:9
 ---
 
-```{r xaringan-themer, include=FALSE, warning=FALSE}
-library(xaringanthemer)
-style_mono_accent()
+```{r setup, include=FALSE, warning=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#1381B0",
+  secondary_color = "#FF961C",
+  inverse_header_color = "#FFFFFF"
+)
+```
+
+```{r, include = FALSE}
 library(medfate)
 library(cowplot)
 ```
@@ -305,11 +313,16 @@ names(sd1)
 ---
 #### Plotting single-day results
 
-```{r, fig=TRUE, fig.align="center", fig.width=12, fig.height = 4}
-g1<-plot(sd1, type = "LeafTranspiration", bySpecies = TRUE)
-g2<-plot(sd1, type = "LeafGrossPhotosynthesis", bySpecies = TRUE)
-plot_grid(g1,g2, nrow=1)
+.pull-left[
+```{r, fig=TRUE, fig.align="center", fig.width=7, fig.height = 4}
+plot(sd1, type = "LeafTranspiration", bySpecies = TRUE)
 ```
+]
+.pull-right[
+```{r, fig=TRUE, fig.align="center", fig.width=7, fig.height = 4}
+plot(sd1, type = "LeafGrossPhotosynthesis", bySpecies = TRUE)
+```
+]
 
 More conveniently, you can examine multiple plots interactively:
 ```{r, eval=FALSE, echo=TRUE}
@@ -339,7 +352,7 @@ We can now run the advanced water balance model (which takes 1 min aprox.)
 S_adv <- spwb(x_adv, examplemeteo, latitude = 41.82592, elevation = 100)
 ```
 
-```{r}
+```{r, echo = FALSE}
 S_adv <- readRDS("Rdata/IIIb_spwb_adv.rds")
 ```
 
@@ -352,21 +365,21 @@ names(S_adv)
 
 ---
 #### Summaries, plots and interactive plots
-Summaries and plots can be obtained from simulation results, using functions `summary`:
+Summaries and plots can be obtained from simulation results, using functions `summary()`:
 
 ```{r, echo = TRUE, eval = FALSE}
 summary(S_adv, freq="months", output="PlantStress", bySpecies = TRUE)
 ```
 
 --
-and `plot`:
+and `plot()`:
 ```{r, echo = TRUE, eval = FALSE}
 plot(S_adv, type="LeafPsiMin", bySpecies = TRUE)
 ```
 
 --
 
-Alternatively, one can interactively create plots using function `shinyplot`, e.g.:
+Alternatively, one can interactively create plots using function `shinyplot()`, e.g.:
 ```{r, eval = FALSE, echo = TRUE}
 shinyplot(S_adv)
 ```
@@ -435,3 +448,14 @@ x_mod <- modifyInputParams(x_adv, c("T2_168/LAI_live" = 1.1))
 which will display messages describing the parameters that are modified.
 
 
+---
+class: center, middle
+
+# Thanks!
+
+Slides created via the R packages:
+
+[**xaringan**](https://github.com/yihui/xaringan)<br>
+[gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
