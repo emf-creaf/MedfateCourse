@@ -20,10 +20,23 @@ style_mono_accent()
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(medfate)
+library(cowplot)
 ```
 
+background-image: url(isotip-fons.png)
+
+### Outline
+
+  1. Water balance inputs
+  2. Basic water balance
+  3. Advanced water/energy balance
+  4. Evaluating model performance
+  5. Modifying model inputs
+
+
+---
 layout: true
-### Water balance inputs
+### 1. Water balance inputs
 
 ---
 
@@ -114,9 +127,10 @@ data(examplemeteo)
 ```
 
 Now we are ready to use function `spwb()` !
+
 ---
 layout: true
-### Using the basic water balance model
+### 2. Basic water balance
 
 ---
 #### Water balance run
@@ -209,7 +223,7 @@ Other similar post-processing functions are `waterUseEfficiency()` or `fireHazar
 
 ---
 layout: true
-### Advanced water balance model
+### 3. Advanced water/energy balance
 
 ---
 #### Creating an input object for the advanced model
@@ -234,17 +248,190 @@ x_adv$paramsTranspiration
 ```
 
 ---
-#### Static analysis of plant hydraulics
+#### Vulnerability curves
+
+We can inspect *hydraulic vulnerability curves* (i.e. how hydraulic conductance of a given segment changes with the water potential) for each plant cohort and each of the different segments of the soil-plant hydraulic network:
+
+```{r, fig=TRUE, fig.align="center", fig.width=6, fig.height = 3.5, echo = TRUE}
+hydraulics_vulnerabilityCurvePlot(x_adv, type="stem", speciesNames = TRUE)
+```
+
+The maximum values and shape of vulnerability curves for leaves and stems are regulated by parameters in `paramsTranspiration`.
+
+---
+#### Supply functions
+
+The vulnerability curves conforming the hydraulic network are used in the model to build the **supply function**, which relates water flow (i.e. transpiration) with the drop of water potential along the whole hydraulic pathway. 
+
+```{r, fig=TRUE, fig.align="center", fig.width=6, fig.height = 3.5, echo = TRUE}
+hydraulics_supplyFunctionPlot(x_adv, examplesoil, type="E", speciesNames = TRUE)
+```
+
+---
+#### Stomatal regulation
+
+Stomatal conductance is determined after building a photosynthesis function corresponding to the supply function and finding the value of stomatal conductance that maximizes carbon revenue while avoiding hydraulic damage: the *profit-maximization* approach. 
+
+```{r, fig=TRUE, fig.align="center", fig.width=8, fig.height = 4, echo = TRUE}
+transp_stomatalRegulationPlot(x_adv, examplemeteo, day = 100, timestep=12,
+                              latitude = 41.82592, elevation = 100, type="E")
+```
+
+---
+#### Pressure-volume curves
+
+```{r, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3.5}
+moisture_pressureVolumeCurvePlot(x_adv, segment="leaf", fraction="symplastic")
+```
+
+---
 #### Water/energy balance run for a single day
-#### Water/energy balance run for a multiple days
+
+Since the model operates at a daily and sub-daily temporal scales, it is possible to perform soil water balance for one day only, by using function `spwb_day()`:
+```{r, echo = TRUE}
+d = 100
+sd1<-spwb_day(x_adv, rownames(examplemeteo)[d],  
+             examplemeteo$MinTemperature[d], examplemeteo$MaxTemperature[d], 
+             examplemeteo$MinRelativeHumidity[d], examplemeteo$MaxRelativeHumidity[d], 
+             examplemeteo$Radiation[d], examplemeteo$WindSpeed[d], 
+             latitude = 41.82592, elevation = 100, 
+             slope= 0, aspect = 0, prec = examplemeteo$Precipitation[d])
+```
+The output of `spwb_day()` is a list with several elements:
+```{r, echo = TRUE}
+names(sd1)
+```
+
+---
+#### Plotting single-day results
+
+```{r, fig=TRUE, fig.align="center", fig.width=12, fig.height = 4}
+g1<-plot(sd1, type = "LeafTranspiration", bySpecies = TRUE)
+g2<-plot(sd1, type = "LeafGrossPhotosynthesis", bySpecies = TRUE)
+plot_grid(g1,g2, nrow=1)
+```
+
+More conveniently, you can examine multiple plots interactively:
+```{r, eval=FALSE, echo=TRUE}
+shinyplot(sd1)
+```
+
+---
+#### Resetting the input object
+
+However, running `spwb_day()` modified the input object. In particular, the soil moisture at the end of the simulation was:
+```{r, echo = TRUE}
+x_adv$soil$W
+```
+
+We simply use function `resetInputs()` to reset state variables to their default values, so that the new simulation is not affected by the end state of the previous simulation:
+```{r, echo = TRUE}
+resetInputs(x_adv)
+x_adv$soil$W
+```
+
+---
+#### Water/energy balance run for multiple days
+
+We can now run the advanced water balance model (which takes 1 min aprox.)
+
+```{r, eval = FALSE, echo = TRUE}
+S_adv <- spwb(x_adv, examplemeteo, latitude = 41.82592, elevation = 100)
+```
+
+```{r}
+S_adv <- readRDS("Rdata/IIIb_spwb_adv.rds")
+```
+
+--
+
+Function `spwb()` returns a list of class `spwb`, like the basic water balance model, but which contains more information:
+```{r}
+names(S_adv)
+```
+
+---
 #### Summaries, plots and interactive plots
+Summaries and plots can be obtained from simulation results, using functions `summary`:
+
+```{r, echo = TRUE, eval = FALSE}
+summary(S_adv, freq="months", output="PlantStress", bySpecies = TRUE)
+```
+
+--
+and `plot`:
+```{r, echo = TRUE, eval = FALSE}
+plot(S_adv, type="LeafPsiMin", bySpecies = TRUE)
+```
+
+--
+
+Alternatively, one can interactively create plots using function `shinyplot`, e.g.:
+```{r, eval = FALSE, echo = TRUE}
+shinyplot(S_adv)
+```
+
 
 ---
+
 layout: true
-### Evaluating model performance
+### 4. Evaluating model performance
+
+---
+
+#### Evaluation metrics
+The package provides functions to compare predictions with observations (use `?evaluation` for details on how observations should be arranged).
+
+--
+
+For example, a single evaluation metric can be calculated:
+```{r, echo = TRUE}
+evaluation_metric(S_adv, exampleobs, type = "SWC", metric = "MAE")
+```
+
+--
+
+or many of them:
+```{r, echo = TRUE}
+evaluation_stats(S_adv, exampleobs, type = "SWC")
+```
+
+---
+
+#### Evaluation plots and interactive evaluation
+
+Evaluation functions also allow visualizing the comparison as time series or scatter plots:
+```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=8, fig.height = 4}
+evaluation_plot(S_adv, exampleobs, type = "SWC", plotType = "dynamics")
+```
+
+Alternatively, the observed data can be supplied as an additional parameter to `shinyplot()` for interactive graphics including model evaluation:
+```{r, echo = TRUE, eval = FALSE}
+shinyplot(S_adv, exampleobs)
+```
 
 
 ---
-layout: true
-### Modifying model inputs
+layout: false
+### 5. Modifying model inputs
+
+Let's imagine one is not happy with a particular cohort parameter. For example, LAI estimates produced by `forest2spwbInput()` do not match known values:
+```{r, echo = TRUE}
+x_adv$above
+```
+
+--
+
+We should not manually modify `x_adv` because some parameters are related and we may break their relationship.
+
+--
+
+Instead, we should use function `modifyInputParams()`:
+
+```{r, echo = TRUE}
+x_mod <- modifyInputParams(x_adv, c("T2_168/LAI_live" = 1.1))
+```
+
+which will display messages describing the parameters that are modified.
+
 

@@ -23,9 +23,25 @@ library(medfate)
 library(medfateutils)
 ```
 
+background-image: url(isotip-fons.png)
+
+### Outline
+
+  1. Purpose and development context
+  2. Package installation
+  3. Overview of package functions
+  4. Species parameters
+  5. Forest input
+  6. Vertical profiles
+  7. Soil input
+  8. Weather input
+  9. Simulation control
+  10. Simulation input object
+  
+
 ---
 layout: true
-### Purpose and development context
+### 1. Purpose and development context
 
 ---
 #### Model scope
@@ -65,17 +81,16 @@ During the development of **medfate** some functions have been originally placed
 
 ---
 layout: false
-<!-- # Package installation -->
 
-### Installation from CRAN or GitHub
+### 2. Package installation
 
-From CRAN (stable versions):
+From **CRAN** (stable versions):
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 install.packages("medfate")
 ```
 --
 
-From GitHub (frequent updates):
+From **GitHub** (frequent updates):
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 remotes::install_github("emf-creaf/medfate")
 ```
@@ -90,7 +105,7 @@ remotes::install_github("emf-creaf/medfateutils")
 
 ---
 layout: true
-### Overview of package functions
+### 3. Overview of package functions
 
 ---
 #### Simulation functions
@@ -131,7 +146,7 @@ Notes here
 
 ---
 layout: false
-### Species parameter input
+### 4. Species parameters
 
 Simulation models in **medfate** require a `data.frame` with species parameter values.
 
@@ -155,7 +170,7 @@ data("SpParamsDefinition")
 ---
 
 layout:true
-### Forest input
+### 5. Forest input
 
 ---
 
@@ -218,7 +233,7 @@ The call to `forest2aboveground()` includes species parameters because species-s
 
 ---
 layout: true
-### Vertical profiles
+### 6. Vertical profiles
 
 ---
 
@@ -250,8 +265,7 @@ vprofile_rootDistribution(forest, SpParamsMED)
 ```
 
 ---
-layout: false
-### Interactive forest inspection
+#### Interactive forest inspection
 
 Function `shinyplot()` is a more convenient way to display properties and profiles of `forest` objects:
 
@@ -263,7 +277,7 @@ shinyplot(forest, SpParamsMED)
 
 ---
 layout: true
-### Soil input
+### 7. Soil input
 
 ---
 #### Soil physical description
@@ -303,7 +317,7 @@ soil_retentionCurvePlot(examplesoil, model="both")
 
 ---
 layout: false
-### Weather input
+### 8. Weather input
 
 All simulations in the package require **daily weather** inputs in form of a `data.frame` with dates as `row.names`. 
 
@@ -321,7 +335,7 @@ The weather variables that are required depend on the complexity of model we are
 
 
 ---
-### Simulation control
+### 9. Simulation control
 The behaviour of simulation models can be controlled using a set of global parameters. 
 
 The default parameterization is obtained using function `defaultControl()`:
@@ -340,7 +354,7 @@ names(control)
 Control parameters should normally be left to their **default values** until their effect on simulations is fully understood.
 
 ---
-### Simulation input object
+### 10. Simulation input object
 
 Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a **single input object** that is then passed to the corresponding simulation function along with weather data. 
 
