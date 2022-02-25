@@ -3,102 +3,148 @@ title: "III.b - Forest water and energy balances"
 author: "Miquel De Cáceres (EMF)"
 date: "24/2/2022"
 output: 
-  ioslides_presentation:
-    logo: ../isotip-fons.png
-    widescreen: yes
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
 ---
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent()
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(medfate)
 ```
 
+layout: true
+### Water balance inputs
 
-# Water balance input object
+---
 
-## Creating the water balance input object {.smaller .build}
+#### Creating the water balance input object
 
 We assume we have an appropriate forest object and species parameter data frame:
 ```{r, echo = TRUE}
 data(exampleforestMED)
 data(SpParamsMED)
 ```
+
+--
+
 a soil input object:
 ```{r, echo = TRUE}
 examplesoil <- soil(defaultSoilParams(4))
 ```
+
+--
 and simulation control list:
 ```{r, echo = TRUE}
 control <- defaultControl("Granier")
 ```
+
+--
+
 With these four elements we can build our input object for function `spwb()`:
 ```{r, echo = TRUE}
 x <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
 ```
 
-## Structure of the water balance input object {.smaller .build}
+---
+#### Structure of the water balance input object
 
 The water balance input object is a `list` with several elements:
 ```{r, echo = TRUE}
 names(x)
 ```
 
+--
+
 Elements `soil` and `control` contain copies of the parameters used in the call to `forest2spwbInput()`.
+
+--
 
 Element `cohorts` contains the species identity of each cohort:
 ```{r, echo = TRUE}
 x$cohorts
 ```
 
-## Structure of the water balance input object {.smaller .build}
+---
+
+#### Structure of the water balance input object
+
 Element `above` contains above-ground description of vegetation:
 ```{r, echo = TRUE}
 x$above
 ```
-Here, the model already estimated foliar biomass and leaf area index from the forest structure using allometric relationships and species-specific coefficients in `SpParams`. 
+
+--
 
 Element `below` contains below-ground description of vegetation:
 ```{r, echo = TRUE}
 x$below
 ```
 
-## Structure of the water balance input object {.smaller .build}
+---
+#### Structure of the water balance input object
 
 Elements `params*` contain cohort-level parameters, for example:
 ```{r, echo = TRUE}
 x$paramsTranspiration
 ```
 
+--
+
 Elements `internal*` contain cohort-level state variables, for example:
 ```{r, echo = TRUE}
 x$internalPhenology
 ```
 
-# Running the basic water balance model
+---
+#### Weather data frame
 
-## Water balance run {.smaller .build}
-
+Finally, we need a weather data frame:
 ```{r, echo = TRUE}
 data(examplemeteo)
 ```
 
-Now we are ready to call function `spwb()`:
+Now we are ready to use function `spwb()` !
+---
+layout: true
+### Using the basic water balance model
+
+---
+#### Water balance run
+
+The call to function `spwb()` needs the water balance input object, the weather data frame, latitude and elevation:
+
 ```{r, echo = TRUE, eval = FALSE}
 S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
 ```
 ```{r, include = FALSE, eval = TRUE}
 S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
 ```
+
+--
+
 Function `spwb()` returns an object of class with the same name, actually a list:
 ```{r, echo = TRUE}
 class(S)
 ```
+
+--
 It is interesting to inspect the list element names:
 ```{r, echo = TRUE}
 names(S)
 ```
 
-## Summaries {.smaller .build}
+---
+#### Summaries
 
 The package provides a `summary()` function for objects of class `spwb`. It can be used to extract/summarize the model's output at different temporal steps (i.e. weekly, annual, ...).
 
@@ -107,34 +153,36 @@ For example, to obtain the average soil moisture and water potentials by months 
 summary(S, freq="months",FUN=mean, output="Soil")
 ```
 
+--
+
 Parameter `output` indicates the element of the `spwb` object for which we desire a summary. Similarly, it is possible to calculate the average stress of plant cohorts by months:
 
 ```{r, echo = TRUE, eval = FALSE}
 summary(S, freq="months",FUN=mean, output="PlantStress")
 ```
 
+--
+
 The `summary` function can be also used to aggregate the output by species. In this case, the values of plant cohorts belonging to the same species will be averaged using LAI values as weights:
 ```{r, echo = TRUE, eval = FALSE}
 summary(S, freq="months", output="PlantStress", bySpecies = TRUE)
 ```
 
-## Plots {.smaller .build}
+---
+#### Plots 
 
-The package provides a `plot()` function for objects of class `spwb`. It can be used to show weather inputs and different components of the water balance:
+The package provides a `plot()` function for objects of class `spwb`. It can be used to show weather inputs and different components of the water balance, for example:
 
-<div class="columns-2">
-```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3}
+```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=6, fig.height = 4}
 plot(S, type = "PET_Precipitation")
 ```
 
-```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3}
-plot(S, type = "Export")
-```
-</div>
-
-## Interactive plots {.build}
+--
 
 The help page of `?plot.spwb` lists all the possible plots...
+
+---
+#### Interactive plots
 
 ... but instead of typing all plots, we can call the interactive plot function and explore them all:
 
@@ -142,20 +190,29 @@ The help page of `?plot.spwb` lists all the possible plots...
 shinyplot(S)
 ```
 
-## Post-processing functions {.smaller .build}
+---
+#### Post-processing functions
 
 The package provides some functions to extract or transform specific outputs from soil plant water balance simulations. 
+
+--
 
 Function `droughtStress()` allows calculating several plant stress indices, such as the maximum drought stress value per month:
 ```{r, echo = TRUE}
 DS <- droughtStress(S, index = "MDS", freq = "months", draw=FALSE)
 head(DS)
 ```
+
+--
+
 Other similar post-processing functions are `waterUseEfficiency()` or `fireHazard()`.
 
-# Running the advanced water balance model
+---
+layout: true
+### Advanced water balance model
 
-## Creating an input object for the advanced model {.smaller .build}
+---
+#### Creating an input object for the advanced model
 The most important step to run the advanced model is to specify the appropriate transpiration mode in the `control` parameters:
 ```{r, echo = TRUE}
 control <- defaultControl("Sperry")
@@ -169,19 +226,25 @@ The water balance input object contains some new elements:
 names(x_adv)
 ```
 
-## Creating an input object for the advanced model {.smaller .build}
+---
+#### Creating an input object for the advanced model
 ... but the main difference with the basic model is in the number of parameters, e.g.:
 ```{r, echo = TRUE}
 x_adv$paramsTranspiration
 ```
 
-## Static analysis of plant hydraulics
-## Water/energy balance run for a single day
-## Water/energy balance run for a multiple days
-## Summaries, plots and interactive plots
+---
+#### Static analysis of plant hydraulics
+#### Water/energy balance run for a single day
+#### Water/energy balance run for a multiple days
+#### Summaries, plots and interactive plots
 
-# Evaluating model performance
+---
+layout: true
+### Evaluating model performance
 
 
-# Modifying model inputs
+---
+layout: true
+### Modifying model inputs
 
