@@ -28,7 +28,7 @@ style_duo_accent(
 
 ```{r, include = FALSE}
 library(medfate)
-library(cowplot)
+library(sp)
 ```
 
 
@@ -59,7 +59,7 @@ Being able to anticipate the impact of global change on forest ecosystems is one
 
 --
 
-The R package `medfate` has been designed to study the characteristics and simulate the functioning and structural dynamics of forest ecosystems.
+The R package **medfate** (ver. `r utils::packageDescription("medfate",fields="Version")`) has been designed to study the characteristics and simulate the functioning and structural dynamics of forest ecosystems.
 
 --
 
@@ -72,20 +72,61 @@ Representation of vegetation accounts for structural and compositional variation
 ---
 #### Development context
 
+I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Two other competitive research projects have funded developments.
+
+--
+
+Developments were also supported by CTFC, the research institution until March 2021, and CREAF, my current institution where I coordinate its *Ecosystem Modelling Facility*.
+
+--
+
+A large number of people has contributed with *ideas*, *data* or *code* to the project:
+
+.pull-left[
+
++ Jordi Martínez-Vilalta (CREAF-UAB, Spain)
++ Maurizio Mencuccini (CREAF-ICREA, Spain)
++ Juli G. Pausas (CIDE-CSIC, Spain)
++ Pilar Llorens (CSIC, Spain)
++ Rafa Poyatos (CREAF, Spain)
++ Lluís Brotons (CREAF-CSIC, Spain)
++ Antoine Cabon (WSL, Switzerland)
++ Roberto Molowny (EMF-CREAF, Spain)
+
+]
+.pull-right[
+
++ Victor Granda (EMF-CREAF, Spain)
++ Lluís Coll (UdL, Spain)
++ Pere Casals (CTFC, Spain)
++ Mario Beltrán (CTFC, Spain)
++ Aitor Améztegui (UdL, Spain)
++ Nicolas Martin-StPaul (INRA, France)
++ Shengli Huang (USDA, USA)
++ Enric Batllori (UB-CREAF, Spain)
+
+]
 
 ---
+
 #### Companion packages
 
-During the development of **medfate** some functions have been originally placed there and then moved to more specialized packages which now evolve in parallel to **medfate**:
+During the development of **medfate** ancillary functions were also originally included in the package itself. 
 
 --
-  + Package [**meteoland**](https://github.com/emf-creaf/meteoland) allows generating daily weather input for simulation models.
+
+Many of them were later moved into more specialized packages, which now evolve in parallel to the main package:
+
+--
+1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating daily weather input for simulation models.
+
 --
 
-  + Package [**medfateland**](https://github.com/emf-creaf/medfateland) extends **medfate** by allowing simulations to be performed in a spatially explicit context.
+2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends **medfate** by allowing simulations to be performed in a spatially explicit context.
+
 --
 
-  + Package [**medfateutils**](https://github.com/emf-creaf/medfateutils) provides functions to help initializing vegetation, soil and species inputs.
+3. Package [**medfateutils**](https://github.com/emf-creaf/medfateutils)  (ver. `r utils::packageDescription("medfateutils",fields="Version")`) provides functions to help initializing vegetation, soil and species inputs.
 
 
 ---
@@ -111,6 +152,13 @@ This session we will also use package **medfateutils**:
 remotes::install_github("emf-creaf/medfateutils")
 ```
 
+--
+We load these and additional packages needed for the session:
+```{r}
+library(medfate)
+library(medfateutils)
+```
+
 
 ---
 layout: true
@@ -127,28 +175,61 @@ Three main simulation models can be executed in medfate, each building on the pr
 | `growth()` | Carbon balance, growth and mortality |
 | `fordyn()` | Forest dynamics, including recruitment and forest management |
 
+--
+
+#### Plot/summary functions
+
+Specific `summary()` and `plot()` functions are included to *extract* and *display* the time series included in the output of each simulation function. 
 
 ---
 #### Post-processing functions
 
+Some package functions are meant to be used on simulation results (some of them implementing static ancillary models) and produce time series of additional properties.
+
+
+--
+
+|  Function | Description                 |
+| --------- | --------------------------- |
+| `droughtStress()` | Plant drought stress indices    |
+| `waterUseEfficiency()` | Water use efficiency metrics    |
+| `resistances()` | Hydraulic resistances to water transport    |
+| `moisture_cohortFMC()` | Fuel moisture content    |
+| `fireHazard()` | Potential fire behaviour   |
+
 
 ---
-#### Submodel functions
+layout: true
+### 3. Overview of package functions
+#### Sub-model functions
+
+A large number of functions implement sub-models on which the simulation functions are built. They are included in the package for the sake of transparency, but most users are not expected to use them directly. 
 
 Sub-model functions are grouped by *subject*:
 
--   `biophysics_*`: Physical and biophysical utility functions.
--   `carbon_*`: Carbon balance.
--   `hydraulics_*`: Plant hydraulics.
--   `hydrology_*`: Canopy and soil hydrology.
--   `light_*`: Light extinction and absortion.
--   `moisture_*`: Live tissue moisture.
--   `pheno_*`: Leaf phenology.
--   `photo_*`: Leaf photosynthesis.
--   `root_*`: Root distribution and conductance calculations.
--   `soil_*`: Soil hydraulics and thermodynamics.
--   `transp_*`: Stomatal regulation, transpiration and photosynthesis.
--   `wind_*`: Canopy turbulence.
+---
+
+|  Group    | Description                 |
+| --------- | --------------------------- |
+|  `biophysics_*` | Physics and biophysics |
+|  `carbon_*` | Carbon balance |
+|  `fuel_*`  | Fuel properties |
+|  `fire_*`  | Fire behaviour |
+|  `hydraulics_*` | Plant hydraulics |
+|  `hydrology_*` | Canopy and soil hydrology |
+
+---
+
+|  Group    | Description                 |
+| --------- | --------------------------- |
+|  `light_*` | Light extinction and absortion |
+|  `moisture_*` | Live tissue moisture  |
+|  `pheno_*` | Leaf phenology  |
+|  `photo_*` | Leaf photosynthesis  |
+|  `root_*` | Root distribution and conductance calculations  |
+|  `soil_*` | Soil hydraulics and thermodynamics  |
+|  `transp_*` | Stomatal regulation, transpiration and photosynthesis  |
+|  `wind_*` | Canopy turbulence |
 
 ???
 Notes here
@@ -231,14 +312,22 @@ plant_LAI(forest, SpParamsMED)
 ---
 #### Aboveground data
 
-Simulation functions in `medfate` allow starting in a more general way using two data frames, one with **aboveground** information and the other with **belowground** information.
+An important information for simulation model is the estimation of initial leaf area index and crown dimensions for each plant cohort, which is normally done using *allometries*.
+
+--
+
+We can illustrate this step using function `forest2aboveground()`:
 
 ```{r, echo = TRUE}
 above <- forest2aboveground(forest, SpParamsMED)
 above
 ```
 
-The call to `forest2aboveground()` includes species parameters because species-specific values are needed to calculate leaf area from tree diameters or shrub cover.
+where species-specific allometric coefficients are taken from `SpParamsMED`.
+
+--
+
+Users will not normally call `forest2aboveground()`, but is important to understand what is going on behind the scenes.
 
 ---
 layout: true
@@ -315,6 +404,33 @@ print(spar)
 
 ---
 #### Drawing soil physical attributes from *SoilGrids*
+
+*SoilGrids* is a global database of soil properties:
+
+.center[
+*Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Blagotić A, et al. (2017) SoilGrids250m: Global gridded soil information based on machine learning. PLoS ONE 12(2): e0169748. doi:10.1371/journal.pone.0169748.*
+]
+
+--
+
+Package **medfateutils** allows retrieving Soilgrids data by connecting with the SoilGrids [REST API](https://rest.isric.org)
+
+--
+
+To start with, we need an object of class `SpatialPoints` (from package **sp**) containing the geographic coordinates of our target forest stand:
+
+```{r}
+cc <- matrix(c(1.32, 42.20), nrow=1)
+sp <- SpatialPoints(cc, proj4string = CRS(SRS_string = "EPSG:4326"))
+```
+
+--
+
+We then call `soilgridsParams()` along with a desired vertical width of soil layers:
+
+```{r, eval = FALSE}
+soilgridsParams(sp, widths = c(300, 700, 1000))
+```
 
 
 ---
