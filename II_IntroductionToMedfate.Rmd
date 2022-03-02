@@ -154,11 +154,10 @@ remotes::install_github("emf-creaf/medfateutils")
 
 --
 We load these and additional packages needed for the session:
-```{r}
+```{r, echo = TRUE, eval = TRUE, message=FALSE, warning=FALSE}
 library(medfate)
 library(medfateutils)
 ```
-
 
 ---
 layout: true
@@ -288,6 +287,22 @@ forest$shrubData
 
 ---
 #### Creating a 'forest' object from forest inventory data
+
+Forest inventories can be conducted in many different ways, which means that the starting form of forest data is very diverse.
+
+--
+
+Building `forest` objects from inventory data will always require some manual data wrangling, but package **medfateutils** provides functions that may be helpful:
+
+--
+
+|  Function | Description                 |
+| --------- | --------------------------- |
+| `forest_mapShrubTable()` | Helps filling `shrubData` table  |
+| `forest_mapTreeTable()` | Helps filling `treeData` table  |
+| `forest_mapWoodyTables()` | Helps filling a `forest` object  |
+| `IFN2forestlist()` | Creates a list of `forest` objects from Spanish forest inventory data   |
+
 
 
 ---
