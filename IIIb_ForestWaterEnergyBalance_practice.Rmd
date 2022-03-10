@@ -243,7 +243,7 @@ We can build our input object for function `spwb()` using the same function as b
 ```{r, echo = TRUE}
 x_adv <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
 ```
-The water balance input object contains some new elements:
+The water balance input object contains the same elements...
 ```{r, echo = TRUE}
 names(x_adv)
 ```

@@ -178,7 +178,7 @@ Three main simulation models can be executed in medfate, each building on the pr
 
 #### Plot/summary functions
 
-Specific `summary()` and `plot()` functions are included to *extract* and *display* the time series included in the output of each simulation function. 
+Specific `summary()`, `plot()` and `shinyplot()` functions are included to *extract* and *display* the time series included in the output of each simulation function. 
 
 ---
 #### Post-processing functions
@@ -193,7 +193,6 @@ Some package functions are meant to be used on simulation results (some of them 
 | `droughtStress()` | Plant drought stress indices    |
 | `waterUseEfficiency()` | Water use efficiency metrics    |
 | `resistances()` | Hydraulic resistances to water transport    |
-| `moisture_cohortFMC()` | Fuel moisture content    |
 | `fireHazard()` | Potential fire behaviour   |
 
 
@@ -410,7 +409,16 @@ layout: true
 ---
 #### Soil physical description
 
-Soil physical attributes can be initialized to default values, for a given number of layers, using function `defaultSoilParams()`:
+Soil physical characteristics are specified using a **data.frame** with soil layers in rows and attributes in columns:
+
+   + `widths` - layer widths, in mm.
+   + `clay` - Percentage of clay (within volume of soil particles). 
+   + `sand` - Percentage of sand (within volume of soil particles). 
+   + `om` - Percentage of organic matter per dry weight (within volume of soil particles).
+   + `bd` - Bulk density (g/cm3)
+   + `rfc` - Rock fragment content (in whole-soil volume).
+
+They can be initialized to default values using function `defaultSoilParams()`:
 
 ```{r, echo = TRUE}
 spar <- defaultSoilParams(2)

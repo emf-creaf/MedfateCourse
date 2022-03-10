@@ -5,6 +5,18 @@ date: "24/2/2022"
 output: html_document
 ---
 
+
+## Logistics
+
++ Dates - Juny 2022 (7-10/14-17/21-24)
++ Modalitat 
+    - Presencial (amb possible connexió d'oients via streaming?).
+    - Gratuït
++ Difusió - 
++ Inscripcions - 
++ Aula - 
++ Professorat - Miquel De Cáceres, Aitor Ameztegui?
+
 ## Temporal organization
 
 + Day 1 (~ 4.5h including 30-min break and 1h exercises): 
