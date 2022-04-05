@@ -1,29 +1,28 @@
 ---
 title: "II - Introduction to medfate"
-author: "Miquel De Cáceres (EMF)"
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: [resources/css/custom.css, default-fonts]
     lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
+      countIncrementalSlides: false
       ratio: 16:9
+    seal: false
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE, warning=FALSE}
-options(htmltools.dir.version = FALSE)
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r xaringan-themer, include=FALSE}
-library(xaringanthemer)
-style_duo_accent(
-  primary_color = "#1381B0",
-  secondary_color = "#FF961C",
-  inverse_header_color = "#FFFFFF"
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
 )
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include = FALSE}
@@ -31,29 +30,56 @@ library(medfate)
 library(sp)
 ```
 
+class: title-slide
 
-background-image: url(isotip-fons.png)
+# II - Introduction to medfate
 
-### Outline
+## Miquel De Cáceres
 
-  1. Purpose and development context
-  2. Package installation
-  3. Overview of package functions
-  4. Species parameters
-  5. Forest input
-  6. Vertical profiles
-  7. Soil input
-  8. Weather input
-  9. Simulation control
-  10. Simulation input object
+### Ecosystem Modelling Facility
+
+### `r Sys.Date()`
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=300>
+
+---
+class: center, middle
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+
+# Outline
+
+###  1. Purpose and development context
+###  2. Package installation
+###  3. Overview of package functions
+###  4. Species parameters
+###  5. Forest input
+###  6. Vertical profiles
+###  7. Soil input
+###  8. Weather input
+###  9. Simulation control
+###  10. Simulation input object
   
 
 ---
 layout: true
-### 1. Purpose and development context
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+# 1. Purpose and development context
+
+<div class=my-footer></div>
 
 ---
-#### Model scope
+
+## Model scope
 
 Being able to anticipate the impact of global change on forest ecosystems is one of the major environmental challenges in contemporary societies. 
 
@@ -70,7 +96,8 @@ Climatic conditions are the main environmental drivers, with a particular focus 
 Representation of vegetation accounts for structural and compositional variation but is not spatially-explicit (i.e. trees or shrubs do not have explicit coordinates within forest stands). 
 
 ---
-#### Development context
+
+## Development context
 
 I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Two other competitive research projects have funded developments.
 
@@ -109,7 +136,7 @@ A large number of people has contributed with *ideas*, *data* or *code* to the p
 
 ---
 
-#### Companion packages
+## Companion packages
 
 During the development of **medfate** ancillary functions were also originally included in the package itself. 
 
@@ -132,7 +159,13 @@ Many of them were later moved into more specialized packages, which now evolve i
 ---
 layout: false
 
-### 2. Package installation
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 2. Package installation
 
 From **CRAN** (stable versions):
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
@@ -160,11 +193,20 @@ library(medfateutils)
 ```
 
 ---
+
 layout: true
-### 3. Overview of package functions
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Overview of package functions
 
 ---
-#### Simulation functions
+
+## Simulation functions
 
 Three main simulation models can be executed in medfate, each building on the preceeding ones.
 
@@ -176,12 +218,13 @@ Three main simulation models can be executed in medfate, each building on the pr
 
 --
 
-#### Plot/summary functions
+## Plot/summary functions
 
 Specific `summary()`, `plot()` and `shinyplot()` functions are included to *extract* and *display* the time series included in the output of each simulation function. 
 
 ---
-#### Post-processing functions
+
+## Post-processing functions
 
 Some package functions are meant to be used on simulation results (some of them implementing static ancillary models) and produce time series of additional properties.
 
@@ -198,8 +241,15 @@ Some package functions are meant to be used on simulation results (some of them 
 
 ---
 layout: true
-### 3. Overview of package functions
-#### Sub-model functions
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Overview of package functions
+## Sub-model functions
 
 A large number of functions implement sub-models on which the simulation functions are built. They are included in the package for the sake of transparency, but most users are not expected to use them directly. 
 
@@ -233,8 +283,16 @@ Sub-model functions are grouped by *subject*:
 Notes here
 
 ---
+
 layout: false
-### 4. Species parameters
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 4. Species parameters
 
 Simulation models in **medfate** require a `data.frame` with species parameter values.
 
@@ -258,11 +316,19 @@ data("SpParamsDefinition")
 ---
 
 layout:true
-### 5. Forest input
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+
+# 5. Forest input
 
 ---
 
-#### Forest object
+## Forest object
 
 Each forest plot is represented in an object of class `forest`, a list that contains several elements. 
 
@@ -285,7 +351,8 @@ forest$shrubData
 ```
 
 ---
-#### Creating a 'forest' object from forest inventory data
+
+## Creating a 'forest' object from forest inventory data
 
 Forest inventories can be conducted in many different ways, which means that the starting form of forest data is very diverse.
 
@@ -306,7 +373,7 @@ Building `forest` objects from inventory data will always require some manual da
 
 ---
 
-#### Forest attributes
+## Forest attributes
 
 The package includes a number of functions to examine properties of the plants conforming the `forest` object:
 
@@ -324,7 +391,7 @@ plant_LAI(forest, SpParamsMED)
 ```
 
 ---
-#### Aboveground data
+## Aboveground data
 
 An important information for simulation model is the estimation of initial leaf area index and crown dimensions for each plant cohort, which is normally done using *allometries*.
 
@@ -344,30 +411,44 @@ where species-specific allometric coefficients are taken from `SpParamsMED`.
 Users will not normally call `forest2aboveground()`, but is important to understand what is going on behind the scenes.
 
 ---
+
 layout: true
-### 6. Vertical profiles
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 6. Vertical profiles
 
 ---
 
-#### Leaf distribution
+## Leaf distribution
 
 Vertical leaf area distribution (at the cohort-, species- or stand-level) can be examined using:
 
 .pull-left[
+
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_leafAreaDensity(forest, SpParamsMED, 
                          byCohorts = FALSE)
 ```
+
 ]
 
 .pull-right[
+
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_leafAreaDensity(forest, SpParamsMED, 
                          byCohorts = TRUE)
 ```
+
 ]
+
 ---
-#### Radiation extinction
+
+## Radiation extinction
 
 Radiation extinction (PAR or SWR) profile across the vertical axis can also be examined:
 
@@ -383,7 +464,8 @@ vprofile_SWRExtinction(forest, SpParamsMED)
 ]
 
 ---
-#### Belowground root distribution
+
+## Belowground root distribution
 
 Users can visually inspect the distribution of fine roots of `forest` objects by calling function `vprofile_rootDistribution()`:
 
@@ -392,7 +474,7 @@ vprofile_rootDistribution(forest, SpParamsMED)
 ```
 
 ---
-#### Interactive forest inspection
+## Interactive forest inspection
 
 Function `shinyplot()` is a more convenient way to display properties and profiles of `forest` objects:
 
@@ -403,11 +485,19 @@ shinyplot(forest, SpParamsMED)
 
 
 ---
+
 layout: true
-### 7. Soil input
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 7. Soil input
 
 ---
-#### Soil physical description
+## Soil physical description
 
 Soil physical characteristics are specified using a **data.frame** with soil layers in rows and attributes in columns:
 
@@ -426,7 +516,7 @@ print(spar)
 ```
 
 ---
-#### Drawing soil physical attributes from *SoilGrids*
+## Drawing soil physical attributes from *SoilGrids*
 
 *SoilGrids* is a global database of soil properties:
 
@@ -457,7 +547,7 @@ soilgridsParams(sp, widths = c(300, 700, 1000))
 
 
 ---
-#### Soil input object
+## Soil input object
 
 Soil input for simulations is an object of class `soil` (a list) that is created from physical description using a function with the same name:
 
@@ -467,7 +557,7 @@ class(examplesoil)
 ```
 
 ---
-#### Water retention curves
+## Water retention curves
 
 The **water retention curve** is used to represent the relationship between soil water content ( $\theta$ ; %) and soil water potential ( $\Psi$ ; MPa).
 
@@ -479,8 +569,17 @@ soil_retentionCurvePlot(examplesoil, model="both")
 
 
 ---
-layout: false
-### 8. Weather input
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+---
+
+# 8. Weather input
 
 All simulations in the package require **daily weather** inputs in form of a `data.frame` with dates as `row.names`. 
 
@@ -498,7 +597,7 @@ The weather variables that are required depend on the complexity of model we are
 
 
 ---
-### 9. Simulation control
+# 9. Simulation control
 The behaviour of simulation models can be controlled using a set of global parameters. 
 
 The default parameterization is obtained using function `defaultControl()`:
@@ -517,7 +616,7 @@ names(control)
 Control parameters should normally be left to their **default values** until their effect on simulations is fully understood.
 
 ---
-### 10. Simulation input object
+# 10. Simulation input object
 
 Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a **single input object** that is then passed to the corresponding simulation function along with weather data. 
 
@@ -536,16 +635,3 @@ Having this additional step is handy because initialized cohort-level parameters
 
 Function `fordyn()` is different from the other two models: the user enters forest, soil, weather, species parameters and simulation control inputs directly into the simulation function.
 
-
-
----
-class: center, middle
-
-# Thanks!
-
-Slides created via the R packages:
-
-[**xaringan**](https://github.com/yihui/xaringan)<br>
-[gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
-
-The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).

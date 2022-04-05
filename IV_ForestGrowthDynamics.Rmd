@@ -1,20 +1,28 @@
 ---
 title: "IV - Forest growth and dynamics"
-author: 
-  - "Miquel De Cáceres (EMF)"
-date: '`r Sys.Date()`'
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
+date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: [resources/css/custom.css, default-fonts]
+    lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
+      countIncrementalSlides: false
       ratio: 16:9
+    seal: false
+editor_options: 
+  chunk_output_type: console
 ---
 
 
 ```{r setup, include=FALSE, warning=FALSE}
-options(htmltools.dir.version = FALSE)
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
+)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -25,34 +33,50 @@ library(cowplot)
 ```
 
 
-```{r xaringan-themer, include=FALSE, warning=FALSE}
-library(xaringanthemer)
-style_duo_accent(
-  primary_color = "#1381B0",
-  secondary_color = "#FF961C",
-  inverse_header_color = "#FFFFFF"
-)
-```
+class: title-slide
 
+# IV - Forest growth and dynamics
 
+## Miquel De Cáceres
 
-background-image: url(isotip-fons.png)
+### Ecosystem Modelling Facility
 
-### Outline
+### `r Sys.Date()`
 
-  1. Forest growth inputs
-  2. Running forest growth
-  3. Evaluation of growth predictions
-  4. Running forest dynamics
+<img class="logo-title" src="resources/img/emf_logo.svg" width=300>
+
+---
+
+class: center, middle
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Outline
+
+##  1. Forest growth inputs
+##  2. Running forest growth
+##  3. Evaluation of growth predictions
+##  4. Running forest dynamics
 
   
 ---
 layout: true
-### 1. Forest growth inputs
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 1. Forest growth inputs
 
 ---
 
-#### Creating the forest growth input object
+## Creating the forest growth input object
 
 We assume we have an appropriate forest object and species parameter data frame:
 ```{r, echo = TRUE}
@@ -82,8 +106,15 @@ x <- forest2growthInput(exampleforestMED, examplesoil, SpParamsMED, control)
 
 ---
 layout: true
-### 1. Forest growth inputs
-#### Structure of the growth input object
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 1. Forest growth inputs
+## Structure of the growth input object
 
 ---
 
@@ -115,8 +146,15 @@ x$internalCarbon
 
 ---
 layout: true
-###  2. Running forest growth
-#### Forest growth run
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+#  2. Running forest growth
+## Forest growth run
 
 ---
 
@@ -154,11 +192,18 @@ New list elements, with respect to`spwb()`, are `LabileCarbonBalance` (component
 
 ---
 layout: true
-###  2. Running forest growth
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+#  2. Running forest growth
 
 ---
 
-#### Plots and summaries
+## Plots and summaries
 
 Users can inspect the output of `growth()` simulations using functions `summary()` and `plot()` on the simulation output. 
 
@@ -185,7 +230,14 @@ shinyplot(G)
 
 ---
 layout: true
-### 3. Evaluating model performance
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Evaluating model performance
 
 ---
 
@@ -218,12 +270,18 @@ evaluation_stats(G, exampleobs, "BAI", cohort = "T1_148",
 
 ---
 layout: true
-###  4. Running forest dynamics
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+#  4. Running forest dynamics
 
 ---
 
-#### Preparing model inputs
-adsfsd
+## Preparing model inputs
 
 In this vignette we will fake a three-year weather input by repeating the example weather data frame three times.
 ```{r}
@@ -236,7 +294,7 @@ Importantly, `fordyn()` operates on `forest` objects directly, instead of using 
  
 ---
 
-#### Executing function `fordyn()`
+## Executing function `fordyn()`
 
 Now we run the forest dynamics model using:
 
@@ -256,8 +314,15 @@ names(fd)
 
 ---
 layout: true
-###  4. Running forest dynamics
-#### Summaries and plots
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+#  4. Running forest dynamics
+## Summaries and plots
 
 ---
 
@@ -322,16 +387,3 @@ Finally, we can create interactive plots using function `shinyplot()`:
 shinyplot(fd)
 ```
 
-  
----
-layout: false
-class: center, middle
-
-# Thanks!
-
-Slides created via the R packages:
-
-[**xaringan**](https://github.com/yihui/xaringan)<br>
-[gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
-
-The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).

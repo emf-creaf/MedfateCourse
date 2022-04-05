@@ -8,14 +8,12 @@ output: html_document
 
 ## Logistics
 
-+ Dates - Juny 2022 (7-10/14-17/21-24)
-+ Modalitat 
-    - Presencial (amb possible connexió d'oients via streaming?).
-    - Gratuït
-+ Difusió - 
-+ Inscripcions - 
-+ Aula - 
-+ Professorat - Miquel De Cáceres, Aitor Ameztegui?
++ Title - Process-based forest modelling using the medfate R package
++ Who - Miquel De Cáceres (EMF) and Aitor Ameztegui (UdL)
++ When - 13-16 June 2022 (9-14h)
++ Recommended for - Researchers at any point of their career interested in learning how to conduct process-based forest modelling using the models included in the medfate R package
++ Where -  UAB multipurpose room (C5/1066)
++ Description - The main aims of the course are: (a) to provide participants with the basis to understand the formulation and parameterization of biophysical, physiological and ecological processes in the models of forest water balance, carbon balance and forest dynamics included in the R package medfate; (b) to show how to use  'medfate' and companion R packages to prepare model inputs, perform simulations and inspect the results.
 
 ## Temporal organization
 

@@ -1,29 +1,28 @@
 ---
 title: "III.b - Forest water and energy balances"
-author: "Miquel De Cáceres (EMF)"
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
 date: "`r Sys.Date()`"
-output: 
+output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: [resources/css/custom.css, default-fonts]
     lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
+      countIncrementalSlides: false
       ratio: 16:9
+    seal: false
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE, warning=FALSE}
-options(htmltools.dir.version = FALSE)
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r xaringan-themer, include=FALSE}
-library(xaringanthemer)
-style_duo_accent(
-  primary_color = "#1381B0",
-  secondary_color = "#FF961C",
-  inverse_header_color = "#FFFFFF"
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
 )
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include = FALSE}
@@ -31,24 +30,51 @@ library(medfate)
 library(cowplot)
 ```
 
-background-image: url(isotip-fons.png)
+class: title-slide
 
-### Outline
+# III.b - Forest water and energy balances
 
-  1. Water balance inputs
-  2. Basic water balance
-  3. Advanced water/energy balance
-  4. Evaluating model performance
-  5. Modifying model inputs
+## Miquel De Cáceres
 
+### Ecosystem Modelling Facility
+
+### `r Sys.Date()`
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=300>
 
 ---
+
+class: center, middle
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Outline
+
+###  1. Water balance inputs
+###  2. Basic water balance
+###  3. Advanced water/energy balance
+###  4. Evaluating model performance
+###  5. Modifying model inputs
+
+---
+
 layout: true
-### 1. Water balance inputs
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 1. Water balance inputs
 
 ---
 
-#### Creating the water balance input object
+## Creating the water balance input object
 
 We assume we have an appropriate forest object and species parameter data frame:
 ```{r, echo = TRUE}
@@ -77,7 +103,7 @@ x <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
 ```
 
 ---
-#### Structure of the water balance input object
+## Structure of the water balance input object
 
 The water balance input object is a `list` with several elements:
 ```{r, echo = TRUE}
@@ -97,7 +123,7 @@ x$cohorts
 
 ---
 
-#### Structure of the water balance input object
+## Structure of the water balance input object
 
 Element `above` contains above-ground description of vegetation:
 ```{r, echo = TRUE}
@@ -112,7 +138,7 @@ x$below
 ```
 
 ---
-#### Structure of the water balance input object
+## Structure of the water balance input object
 
 Elements `params*` contain cohort-level parameters, for example:
 ```{r, echo = TRUE}
@@ -127,7 +153,7 @@ x$internalPhenology
 ```
 
 ---
-#### Weather data frame
+## Weather data frame
 
 Finally, we need a weather data frame:
 ```{r, echo = TRUE}
@@ -137,11 +163,20 @@ data(examplemeteo)
 Now we are ready to use function `spwb()` !
 
 ---
+
 layout: true
-### 2. Basic water balance
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 2. Basic water balance
 
 ---
-#### Water balance run
+
+## Water balance run
 
 The call to function `spwb()` needs the water balance input object, the weather data frame, latitude and elevation:
 
@@ -166,7 +201,8 @@ names(S)
 ```
 
 ---
-#### Summaries
+
+## Summaries
 
 The package provides a `summary()` function for objects of class `spwb`. It can be used to extract/summarize the model's output at different temporal steps (i.e. weekly, annual, ...).
 
@@ -191,7 +227,7 @@ summary(S, freq="months", output="PlantStress", bySpecies = TRUE)
 ```
 
 ---
-#### Plots 
+## Plots 
 
 The package provides a `plot()` function for objects of class `spwb`. It can be used to show weather inputs and different components of the water balance, for example:
 
@@ -204,7 +240,7 @@ plot(S, type = "PET_Precipitation")
 The help page of `?plot.spwb` lists all the possible plots...
 
 ---
-#### Interactive plots
+## Interactive plots
 
 ... but instead of typing all plots, we can call the interactive plot function and explore them all:
 
@@ -213,7 +249,7 @@ shinyplot(S)
 ```
 
 ---
-#### Post-processing functions
+## Post-processing functions
 
 The package provides some functions to extract or transform specific outputs from soil plant water balance simulations. 
 
@@ -231,10 +267,17 @@ Other similar post-processing functions are `waterUseEfficiency()` or `fireHazar
 
 ---
 layout: true
-### 3. Advanced water/energy balance
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Advanced water/energy balance
 
 ---
-#### Creating an input object for the advanced model
+## Creating an input object for the advanced model
 The most important step to run the advanced model is to specify the appropriate transpiration mode in the `control` parameters:
 ```{r, echo = TRUE}
 control <- defaultControl("Sperry")
@@ -249,14 +292,14 @@ names(x_adv)
 ```
 
 ---
-#### Creating an input object for the advanced model
+## Creating an input object for the advanced model
 ... but the main difference with the basic model is in the number of parameters, e.g.:
 ```{r, echo = TRUE}
 x_adv$paramsTranspiration
 ```
 
 ---
-#### Vulnerability curves
+## Vulnerability curves
 
 We can inspect *hydraulic vulnerability curves* (i.e. how hydraulic conductance of a given segment changes with the water potential) for each plant cohort and each of the different segments of the soil-plant hydraulic network:
 
@@ -267,7 +310,7 @@ hydraulics_vulnerabilityCurvePlot(x_adv, type="stem", speciesNames = TRUE)
 The maximum values and shape of vulnerability curves for leaves and stems are regulated by parameters in `paramsTranspiration`.
 
 ---
-#### Supply functions
+## Supply functions
 
 The vulnerability curves conforming the hydraulic network are used in the model to build the **supply function**, which relates water flow (i.e. transpiration) with the drop of water potential along the whole hydraulic pathway. 
 
@@ -276,7 +319,7 @@ hydraulics_supplyFunctionPlot(x_adv, examplesoil, type="E", speciesNames = TRUE)
 ```
 
 ---
-#### Stomatal regulation
+## Stomatal regulation
 
 Stomatal conductance is determined after building a photosynthesis function corresponding to the supply function and finding the value of stomatal conductance that maximizes carbon revenue while avoiding hydraulic damage: the *profit-maximization* approach. 
 
@@ -286,14 +329,14 @@ transp_stomatalRegulationPlot(x_adv, examplemeteo, day = 100, timestep=12,
 ```
 
 ---
-#### Pressure-volume curves
+## Pressure-volume curves
 
 ```{r, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3.5}
 moisture_pressureVolumeCurvePlot(x_adv, segment="leaf", fraction="symplastic")
 ```
 
 ---
-#### Water/energy balance run for a single day
+## Water/energy balance run for a single day
 
 Since the model operates at a daily and sub-daily temporal scales, it is possible to perform soil water balance for one day only, by using function `spwb_day()`:
 ```{r, echo = TRUE}
@@ -311,7 +354,7 @@ names(sd1)
 ```
 
 ---
-#### Plotting single-day results
+## Plotting single-day results
 
 .pull-left[
 ```{r, fig=TRUE, fig.align="center", fig.width=7, fig.height = 4}
@@ -330,7 +373,7 @@ shinyplot(sd1)
 ```
 
 ---
-#### Resetting the input object
+## Resetting the input object
 
 However, running `spwb_day()` modified the input object. In particular, the soil moisture at the end of the simulation was:
 ```{r, echo = TRUE}
@@ -344,7 +387,7 @@ x_adv$soil$W
 ```
 
 ---
-#### Water/energy balance run for multiple days
+## Water/energy balance run for multiple days
 
 We can now run the advanced water balance model (which takes 1 min aprox.)
 
@@ -364,7 +407,7 @@ names(S_adv)
 ```
 
 ---
-#### Summaries, plots and interactive plots
+## Summaries, plots and interactive plots
 Summaries and plots can be obtained from simulation results, using functions `summary()`:
 
 ```{r, echo = TRUE, eval = FALSE}
@@ -388,11 +431,18 @@ shinyplot(S_adv)
 ---
 
 layout: true
-### 4. Evaluating model performance
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 4. Evaluating model performance
 
 ---
 
-#### Evaluation metrics
+## Evaluation metrics
 The package provides functions to compare predictions with observations (use `?evaluation` for details on how observations should be arranged).
 
 --
@@ -411,7 +461,7 @@ evaluation_stats(S_adv, exampleobs, type = "SWC")
 
 ---
 
-#### Evaluation plots and interactive evaluation
+## Evaluation plots and interactive evaluation
 
 Evaluation functions also allow visualizing the comparison as time series or scatter plots:
 ```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=8, fig.height = 4}
@@ -426,7 +476,14 @@ shinyplot(S_adv, exampleobs)
 
 ---
 layout: false
-### 5. Modifying model inputs
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 5. Modifying model inputs
 
 Let's imagine one is not happy with a particular cohort parameter. For example, LAI estimates produced by `forest2spwbInput()` do not match known values:
 ```{r, echo = TRUE}
@@ -447,15 +504,3 @@ x_mod <- modifyInputParams(x_adv, c("T2_168/LAI_live" = 1.1))
 
 which will display messages describing the parameters that are modified.
 
-
----
-class: center, middle
-
-# Thanks!
-
-Slides created via the R packages:
-
-[**xaringan**](https://github.com/yihui/xaringan)<br>
-[gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
-
-The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
