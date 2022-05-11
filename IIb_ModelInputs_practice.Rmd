@@ -1,0 +1,289 @@
+---
+title: "IIb - Generating Model inputs (exercise)"
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["resources/css/custom.css", "default-fonts", "default"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: 16:9
+    seal: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
+)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+library(medfate)
+library(sp)
+```
+
+# IIb - Generating model inputs (exercise)
+
+## Miquel De Cáceres
+
+### Ecosystem Modelling Facility
+
+### `r Sys.Date()`
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=300>
+
+
+---
+layout: false
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Exercise setting
+
+## Goal
+
+Learn some of the common issues that arise in the process of preparing model inputs.
+
+--
+
+## Objectives
+
+  1. Build `forest` objects from a tree data frame of forest inventory data
+  2. Retrieve soil physical properties from SoilGrids
+  3. Interpolate daily weather on the plot location
+
+--
+
+## Data
+
+Package **medfateutils** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. As a result of the abandonment of coppicing in the area, there is a high density of stems per individual.
+
+   + *Location*: Poblet (Catalonia, Spain); long/lat: 1.0219º, 41.3443º
+   + *Topography*: elevation = 850 m, slope = 15.1º, aspect = 15º
+   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. The management involved a reduction of the number of stems per individual. The data includes the forest inventory before and after thinning.
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Exercise resolution
+
+---
+
+## Loading packages and data
+
+You may need to install **medfateutils** from GitHub:
+```{r, eval=FALSE}
+devtools::install_github("emf-creaf/medfateutils")
+```
+
+--
+
+We begin by loading packages **medfate**, **medfateutils** and **meteoland**
+```{r, message=FALSE}
+library(medfate)
+library(medfateutils)
+library(meteoland)
+```
+
+--
+Normally, tree data will be in a CSV or XLSX file. Here, we simply load the tree data from Poblet included in the package:
+
+```{r}
+data("poblet_trees")
+```
+
+---
+
+## Data set inspection
+
+We can inspect its content, for example using:
+
+```{r}
+summary(poblet_trees)
+```
+
+--
+
+The data frame includes tree data corresponding to three forest inventories:
+
+```{r}
+table(poblet_trees$Plot.Code)
+```
+
+---
+
+## Mapping trees from the control forest (1)
+
+We initialize an empty forest object using function `emptyforest()` from package **medfate**:
+
+```{r, echo = FALSE}
+forest_ctl <- emptyforest("POBL_CTL")
+```
+
+--
+
+To fill data for element `treeData` in the `forest` object, we need to define a mapping from column names in `poblet_trees` to variables in `treeData`. The mapping can be defined using a **named string vector**, i.e. a vector where element names are variable names in `treeData` and vector elements are strings of the variable names in `poblet_trees`:
+
+```{r}
+mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm")
+```
+
+--
+
+We can now replace the empty `treeData` in `forest_ctl` using function `forest_mapTreeTable()` from **medfateutils**:
+
+```{r}
+forest_ctl$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_CTL",], 
+                                           mapping = mapping, SpParams = SpParamsMED)
+```
+
+---
+
+## Mapping trees from the control forest (2)
+
+We can inspect the result using:
+
+```{r, eval = FALSE}
+summary(forest_ctl$treeData)
+```
+
+Some data are missing, but we will not worry about it now. One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary` function defined in **medfate** for this object class:
+
+```{r}
+summary(forest_ctl, SpParamsMED)
+```
+
+---
+
+## Mapping trees from the control forest (3)
+
+We are told that forest stand sampling was done using a circular plot whose radius was 15 m. We can calculate the sampled area using:
+
+```{r}
+sampled_area = pi*15^2
+```
+
+--
+
+and use this information to map the tree data again, where we specify parameter `plot.size`:
+
+```{r}
+forest_ctl$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_CTL",], 
+                                           mapping = mapping, SpParams = SpParamsMED, 
+                                           plot.size = sampled_area)
+```
+
+--
+
+We run again the summary:
+
+```{r, eval = FALSE}
+summary(forest_ctl, SpParamsMED)
+```
+
+---
+
+
+## Mapping trees from the control forest (4)
+
+Another issue that we see is the percentage of PAR and SWR that reaches the ground, which have missing values. This indicates that medfate cannot calculate the light extinction profile, in our case because tree heights are missing. Thus, we should somehow estimate tree heights, for example using an allometric relationship:
+
+```{r}
+poblet_trees$Height.cm = 100 * 1.806*poblet_trees$Diameter.cm^0.518
+summary(poblet_trees$Height.cm)
+```
+
+So trees are between 5 and 10 m height. Once tree heights are defined, we can include them in our mapping:
+
+```{r}
+mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm",
+            "Height" = "Height.cm")
+```
+
+and rerun the tree data mapping.
+
+```{r, include = FALSE}
+forest_ctl$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_CTL",], 
+                                           mapping = mapping, SpParams = SpParamsMED, 
+                                           plot.size = sampled_area)
+```
+
+---
+
+## Mapping trees from the managed forest (1)
+
+Here we can repeat our mapping for the managed forest plot, which has two codes corresponding to before and after the thinning intervention. Let us first address the pre-thinning state:
+
+```{r}
+forest_thi_bef = emptyforest()
+forest_thi_bef$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_THI_BEF",], 
+                                mapping = mapping, SpParams = SpParamsMED, 
+                                plot.size = sampled_area)
+
+summary(forest_thi_bef$treeData)
+```
+
+---
+
+## Mapping trees from the managed forest (2)
+
+The `Species` variable contains two missing values. This will normally happen when some species cannot be identified. We can verify if this happens for other parts of the Poblet tree data:
+
+```{r}
+sum(!(poblet_trees$Species %in% SpParamsMED$Name))
+```
+
+If we display species counts we can identify which species is not being parsed:
+
+```{r}
+table(poblet_trees$Species)
+```
+
+In this case, the name used for the downy oak (*Quercus humilis*) is a synonym and needs to be replaced by its accepted name (*Quercus pubescens*), which we can do:
+
+```{r}
+poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] = "Quercus pubescens"
+```
+
+---
+
+## Mapping trees from the managed forest (3)
+
+Now we repeat our mapping:
+
+```{r, eval = FALSE}
+forest_thi_bef$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_THI_BEF",], 
+                                mapping = mapping, SpParams = SpParamsMED, 
+                                plot.size = sampled_area)
+
+summary(forest_thi_bef, SpParamsMED)
+```
+
+Like the control plot, these statistics indicate a dense oak forest. We can repeat the same operations with the forest plot after the thinning intervention:
+
+```{r, eval = FALSE}
+forest_thi_aft = emptyforest()
+forest_thi_aft$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_THI_AFT",], 
+                                mapping = mapping, SpParams = SpParamsMED, 
+                                plot.size = sampled_area)
+
+summary(forest_thi_aft, SpParamsMED)
+```

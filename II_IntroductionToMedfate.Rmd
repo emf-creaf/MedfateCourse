@@ -5,7 +5,7 @@ institute: "Ecosystem Modelling Facility, CREAF"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: [resources/css/custom.css, default-fonts]
+    css: ["resources/css/custom.css", "default-fonts", "default"]
     lib_dir: libs
     nature:
       highlightStyle: github
@@ -29,8 +29,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(medfate)
 library(sp)
 ```
-
-class: title-slide
 
 # II - Introduction to medfate
 
@@ -73,15 +71,16 @@ layout: true
     <img class="emf-logo" src="resources/img/emf_logo.svg">
 </div>
 
+<div class=my-footer></div>
+
 # 1. Purpose and development context
 
-<div class=my-footer></div>
 
 ---
 
 ## Model scope
 
-Being able to anticipate the impact of global change on forest ecosystems is one of the major environmental challenges in contemporary societies. 
+Being able to anticipate the impact of global change on forest ecosystems is one of the major environmental challenges in contemporary societies.
 
 --
 
@@ -121,6 +120,7 @@ A large number of people has contributed with *ideas*, *data* or *code* to the p
 + Roberto Molowny (EMF-CREAF, Spain)
 
 ]
+
 .pull-right[
 
 + Victor Granda (EMF-CREAF, Spain)
@@ -284,7 +284,7 @@ Notes here
 
 ---
 
-layout: false
+layout:true
 
 <div class=my-header>
     <img class="emf-logo" src="resources/img/emf_logo.svg">
@@ -293,6 +293,8 @@ layout: false
 <div class=my-footer></div>
 
 # 4. Species parameters
+
+---
 
 Simulation models in **medfate** require a `data.frame` with species parameter values.
 
@@ -310,6 +312,14 @@ A large number of parameters (columns) can be found in `SpParamsMED`. Not all pa
 
 ```{r, echo = TRUE}
 data("SpParamsDefinition")
+```
+
+---
+
+
+```{r, eval= require("DT"), tidy = FALSE, echo = FALSE}
+DT::datatable(SpParamsDefinition,
+              fillContainer = FALSE, options=list(pageLength = 4))
 ```
 
 
@@ -352,6 +362,33 @@ forest$shrubData
 
 ---
 
+.pull-left[
+## Tree data
+
+| Variable | Definition |
+| -------- | --------------------- |
+|`Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
+| `N` | Percentage of clay (within volume of soil particles) |
+| `DBH` | Tree diameter at breast height (in cm) |
+| `Height` | Tree total height (in cm) |
+| `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
+| `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
+]
+
+.pull-right[
+
+## Shrub data
+
+| Variable | Definition |
+| -------- | --------------------- |
+| `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
+| `Cover` | Shrub cover (%)  |
+| `Height` | Shrub total height (in cm) |
+| `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
+| `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
+
+]   
+---
 ## Creating a 'forest' object from forest inventory data
 
 Forest inventories can be conducted in many different ways, which means that the starting form of forest data is very diverse.

@@ -5,7 +5,7 @@ institute: "Ecosystem Modelling Facility, CREAF"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: [resources/css/custom.css, default-fonts]
+    css: ["resources/css/custom.css", "default-fonts", "default"]
     lib_dir: libs
     nature:
       highlightStyle: github
