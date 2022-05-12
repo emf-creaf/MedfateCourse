@@ -54,10 +54,10 @@ class: center, middle
 
 # Outline
 
-##  1. Water balance inputs
+##  1. Water balance input object
 ##  2. Basic water balance
-##  3. Advanced water/energy balance
-##  4. Evaluating model performance
+##  3. Evaluating model performance
+##  4. Advanced water/energy balance
 ##  5. Modifying model inputs
 
 ---
@@ -70,13 +70,14 @@ layout: true
 
 <div class=my-footer></div>
 
-# 1. Water balance inputs
+# 1. Water balance input object
 
 ---
 
 ## Creating the water balance input object
 
-We assume we have an appropriate forest object and species parameter data frame:
+We assume we have an appropriate `forest` object and species parameter data frame:
+
 ```{r, echo = TRUE}
 data(exampleforestMED)
 data(SpParamsMED)
@@ -84,13 +85,13 @@ data(SpParamsMED)
 
 --
 
-a soil input object:
+a `soil` object:
 ```{r, echo = TRUE}
 examplesoil <- soil(defaultSoilParams(4))
 ```
 
 --
-and simulation control list:
+and a simulation control list:
 ```{r, echo = TRUE}
 control <- defaultControl("Granier")
 ```
@@ -103,7 +104,7 @@ x <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
 ```
 
 ---
-## Structure of the water balance input object
+## Structure of the water balance input object (1)
 
 The water balance input object is a `list` with several elements:
 ```{r, echo = TRUE}
@@ -123,7 +124,7 @@ x$cohorts
 
 ---
 
-## Structure of the water balance input object
+## Structure of the water balance input object (2)
 
 Element `above` contains above-ground description of vegetation:
 ```{r, echo = TRUE}
@@ -138,29 +139,36 @@ x$below
 ```
 
 ---
-## Structure of the water balance input object
+## Structure of the water balance input object (3)
 
-Elements `params*` contain cohort-level parameters, for example:
+Elements `params*` contain cohort-level parameters, for example...
 ```{r, echo = TRUE}
 x$paramsTranspiration
 ```
 
 --
+or ...
+--
+```{r, echo = TRUE}
+x$paramsAnatomy
+```
+
+---
+
+## Structure of the water balance input object (4)
 
 Elements `internal*` contain cohort-level state variables, for example:
 ```{r, echo = TRUE}
 x$internalPhenology
 ```
 
----
-## Weather data frame
+--
+or...
 
-Finally, we need a weather data frame:
 ```{r, echo = TRUE}
-data(examplemeteo)
+x$internalWater
 ```
 
-Now we are ready to use function `spwb()` !
 
 ---
 
@@ -178,6 +186,11 @@ layout: true
 
 ## Water balance run
 
+Let us assume we have an appropriate weather data frame:
+```{r, echo = TRUE}
+data(examplemeteo)
+```
+
 The call to function `spwb()` needs the water balance input object, the weather data frame, latitude and elevation:
 
 ```{r, echo = TRUE, eval = FALSE}
@@ -194,11 +207,35 @@ Function `spwb()` returns an object of class with the same name, actually a list
 class(S)
 ```
 
---
+---
+
+## Water balance output object (1)
+
 It is interesting to inspect the list element names:
 ```{r, echo = TRUE}
 names(S)
 ```
+
+--
+
+| Elements | Information   |
+| ----- | -------------- |
+| `latitude`, `topography`, `weather`, `spwbInput` | Copies of the information used in the call to `spwb()` |
+| `spwbOutput` | State variables at the end of the simulation (can be used as input to a subsequent one) |
+| `WaterBalance`, `Soil`,  `Stand`,  `Plants` | Daily outputs (days as rows, variables as columns) |
+| `subdaily` | Sub-daily outputs (not relevant here) |
+
+---
+
+## Water balance output object (2)
+
+
+Actually, `Plants` is itself a list with several data frames of results by cohort (days as rows, cohorts as columns):
+
+```{r, echo = TRUE}
+names(S$Plants)
+```
+
 
 ---
 
@@ -251,7 +288,7 @@ shinyplot(S)
 ---
 ## Post-processing functions
 
-The package provides some functions to extract or transform specific outputs from soil plant water balance simulations. 
+The package provides some functions to extract or transform specific outputs from `spwb()` simulations. 
 
 --
 
@@ -265,6 +302,55 @@ head(DS)
 
 Other similar post-processing functions are `waterUseEfficiency()` or `fireHazard()`.
 
+They (should) also work on the output of functions `growth()` and `fordyn()`.
+
+
+---
+
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Evaluating model performance
+
+---
+
+## Evaluation metrics
+The package provides functions to compare predictions with observations (use `?evaluation` for details on how observations should be arranged).
+
+--
+
+For example, a single evaluation metric can be calculated:
+```{r, echo = TRUE}
+evaluation_metric(S, exampleobs, type = "SWC", metric = "MAE")
+```
+
+--
+
+or many of them:
+```{r, echo = TRUE}
+evaluation_stats(S, exampleobs, type = "SWC")
+```
+
+---
+
+## Evaluation plots and interactive evaluation
+
+Evaluation functions also allow visualizing the comparison as time series or scatter plots:
+```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=9, fig.height = 3}
+evaluation_plot(S, exampleobs, type = "SWC", plotType = "dynamics")
+```
+
+Alternatively, the observed data can be supplied as an additional parameter to `shinyplot()` for interactive graphics including model evaluation:
+```{r, echo = TRUE, eval = FALSE}
+shinyplot(S, exampleobs)
+```
+
+
 ---
 layout: true
 
@@ -274,7 +360,7 @@ layout: true
 
 <div class=my-footer></div>
 
-# 3. Advanced water/energy balance
+# 4. Advanced water/energy balance
 
 ---
 ## Creating an input object for the advanced model
@@ -396,12 +482,13 @@ S_adv <- spwb(x_adv, examplemeteo, latitude = 41.82592, elevation = 100)
 ```
 
 ```{r, echo = FALSE}
-S_adv <- readRDS("Rdata/IIIb_spwb_adv.rds")
+S_adv <- readRDS("Rdata/spwb_adv.rds")
 ```
 
 --
 
 Function `spwb()` returns a list of class `spwb`, like the basic water balance model, but which contains more information:
+
 ```{r}
 names(S_adv)
 ```
@@ -425,52 +512,6 @@ plot(S_adv, type="LeafPsiMin", bySpecies = TRUE)
 Alternatively, one can interactively create plots using function `shinyplot()`, e.g.:
 ```{r, eval = FALSE, echo = TRUE}
 shinyplot(S_adv)
-```
-
-
----
-
-layout: true
-
-<div class=my-header>
-    <img class="emf-logo" src="resources/img/emf_logo.svg">
-</div>
-
-<div class=my-footer></div>
-
-# 4. Evaluating model performance
-
----
-
-## Evaluation metrics
-The package provides functions to compare predictions with observations (use `?evaluation` for details on how observations should be arranged).
-
---
-
-For example, a single evaluation metric can be calculated:
-```{r, echo = TRUE}
-evaluation_metric(S_adv, exampleobs, type = "SWC", metric = "MAE")
-```
-
---
-
-or many of them:
-```{r, echo = TRUE}
-evaluation_stats(S_adv, exampleobs, type = "SWC")
-```
-
----
-
-## Evaluation plots and interactive evaluation
-
-Evaluation functions also allow visualizing the comparison as time series or scatter plots:
-```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=8, fig.height = 4}
-evaluation_plot(S_adv, exampleobs, type = "SWC", plotType = "dynamics")
-```
-
-Alternatively, the observed data can be supplied as an additional parameter to `shinyplot()` for interactive graphics including model evaluation:
-```{r, echo = TRUE, eval = FALSE}
-shinyplot(S_adv, exampleobs)
 ```
 
 

@@ -80,16 +80,16 @@ Unguided practice (45 min) - Resolution (45 min)
 
 + Suggested exercises: Obtain vegetation, soil and weather inputs from coordinates and forest inventory data (meteoland's interpolator object supplied). 
 
-### III - Forest water and energy balance
+### 3.1 - Forest water and energy balance (theory)
 
-#### 3.1 Theory (1h 30min)
+Theory (1h 30min)
 
 + Forest hydrology (fluxes, compartments at different scales)
 + Forest energy balance
 + Plant hydraulics and regulation of transpiration
 + Effect of water limitation on forests
 
-#### 3.2 Guided practice (2h)
+### 3.2 - Forest water and energy balance (practice)
 
 + Water balance input object
 + Running the basic water balance model
