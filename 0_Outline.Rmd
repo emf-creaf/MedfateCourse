@@ -25,48 +25,60 @@ output: html_document
  + Have you used process-based forest models in the past? If yes, indicate which models did you use.
  + Have you used the *medfate* R package so far? If yes, briefly explain the context.
    
-## Temporal organization
+## Content and temporal organization
 
 + Day 1 (~ 4.5h including 30-min break and 1h exercises): 
-  - Introduction to process-based forest modelling
-  - Introduction to the *medfate* R package
-  - Generating model inputs
+  - Introduction to process-based forest modelling (TODO)
+  - Introduction to the *medfate* R package (done)
+  - Exercise: Generating model inputs (almost done)
 + Day 2 (~ 5h including 30-min break and 1h exercises)
-  - Design and formulation of forest water/energy balance in *medfate*
-  - Running water/energy balance simulations with function *spwb()*
+  - Design and formulation of forest water/energy balance in *medfate* (to revise)
+  - Running water/energy balance simulations with function *spwb()*  (done)
+  - Exercises (TODO)
 + Day 3 (~ 5h including 30-min break and 1h30min exercises): 
-  - Design and formulation of forest carbon balance and forest dynamics in *medfate*
-  - Running simulations of carbon balance and forest dynamics with functions *growth()* and *fordyn()*
+  - Design and formulation of forest carbon balance and forest dynamics in *medfate* (TODO)
+  - Running simulations of carbon balance and forest dynamics with functions *growth()* and *fordyn()* (done)
+  - Exercises (TODO)
 + Day 4 (~ 4h including 30-min break):
-  - Large-scale simulations: parameterization, initialization and climate forcing
-  - Closure and feedback 
+  - Large-scale simulations: parameterization, initialization and climate forcing (TODO)
+  - Closure and feedback (TODO)
 
-## Content
+## Detailed content
 
-### I - Introduction to process-based forest modelling
+### 1.1 - Introduction to process-based forest modelling
 
-#### 1.1 Theory (1h 30min)
+Theory (30 min)
 
 + General modelling concepts: conceptual models, computational models, spatial and temporal scales, state variables, boundary conditions, etc.
 + Model development process: design, implementation, verification, calibration, evaluation, sensitivity analysis, uncertainty analysis, etc.
 + Overview of existing process-based forest modelling approaches and model examples
 
-### II - Introduction to medfate
+### 1.2 - Introduction to medfate
 
-#### 2.1 Guided practice (1h 30min)
+Guided practice (30 min):
 
 + Scope and history
 + Package installation
 + Overview of package functions
++ Companion packages
+
+### Break
+
+### 1.3 - Model inputs
+
+Guided practice (1 h):
+
 + Vegetation input
 + Soil input
 + Weather input
 + Simulation control
 + Simulation input object
 
-#### 2.2 Exercises (1h)
+### 1.4 - Model inputs (exercise)
 
-+ Suggested exercises: Obtain vegetation, soil and weather inputs from coordinates and forest inventory data (meteoland's interpolator object supplied).
+Unguided practice (45 min) - Resolution (45 min)
+
++ Suggested exercises: Obtain vegetation, soil and weather inputs from coordinates and forest inventory data (meteoland's interpolator object supplied). 
 
 ### III - Forest water and energy balance
 

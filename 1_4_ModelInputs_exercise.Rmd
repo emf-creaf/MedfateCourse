@@ -1,5 +1,5 @@
 ---
-title: "IIb - Generating Model inputs (exercise)"
+title: "1.4 - Model inputs (exercise)"
 author: "Miquel De Cáceres"
 institute: "Ecosystem Modelling Facility, CREAF"
 date: "`r Sys.Date()`"
@@ -30,7 +30,7 @@ library(medfate)
 library(sp)
 ```
 
-# IIb - Generating model inputs (exercise)
+# 1.4 - Model inputs (exercise)
 
 ## Miquel De Cáceres
 

@@ -1,0 +1,295 @@
+---
+title: "1.2 - Introduction to medfate"
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["resources/css/custom.css", "default-fonts", "default"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: 16:9
+    seal: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
+)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+library(medfate)
+library(sp)
+```
+
+# 1.2 - Introduction to medfate
+
+## Miquel De Cáceres
+
+### Ecosystem Modelling Facility
+
+### `r Sys.Date()`
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=300>
+
+---
+class: center, middle
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+
+# Outline
+
+##  1. Purpose and development context
+##  2. Companion packages
+##  3. Package installation
+##  4. Overview of package functions
+
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 1. Purpose and development context
+
+
+---
+
+## Model scope
+
+Being able to anticipate the impact of global change on forest ecosystems is one of the major environmental challenges in contemporary societies.
+
+--
+
+The R package **medfate** (ver. `r utils::packageDescription("medfate",fields="Version")`) has been designed to study the characteristics and simulate the functioning and structural dynamics of forest ecosystems.
+
+--
+
+Climatic conditions are the main environmental drivers, with a particular focus on drought impacts under Mediterranean conditions. 
+
+--
+
+Representation of vegetation accounts for structural and compositional variation but is not spatially-explicit (i.e. trees or shrubs do not have explicit coordinates within forest stands). 
+
+---
+
+## Development context
+
+I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Two other competitive research projects have funded developments.
+
+--
+
+Developments were also supported by CTFC, the research institution until March 2021, and CREAF, my current institution where I coordinate its *Ecosystem Modelling Facility*.
+
+--
+
+A large number of people has contributed with *ideas*, *data* or *code* to the project:
+
+.pull-left[
+
++ Jordi Martínez-Vilalta (CREAF-UAB, Spain)
++ Maurizio Mencuccini (CREAF-ICREA, Spain)
++ Juli G. Pausas (CIDE-CSIC, Spain)
++ Pilar Llorens (CSIC, Spain)
++ Rafa Poyatos (CREAF, Spain)
++ Lluís Brotons (CREAF-CSIC, Spain)
++ Antoine Cabon (WSL, Switzerland)
++ Roberto Molowny (EMF-CREAF, Spain)
+
+]
+
+.pull-right[
+
++ Victor Granda (EMF-CREAF, Spain)
++ Lluís Coll (UdL, Spain)
++ Pere Casals (CTFC, Spain)
++ Mario Beltrán (CTFC, Spain)
++ Aitor Améztegui (UdL, Spain)
++ Nicolas Martin-StPaul (INRA, France)
++ Shengli Huang (USDA, USA)
++ Enric Batllori (UB-CREAF, Spain)
+
+]
+
+---
+
+layout: false
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 2. Companion packages
+
+During the development of **medfate** ancillary functions were also originally included in the package itself. 
+
+--
+
+Many of them were later moved into more specialized packages, which now evolve in parallel to the main package:
+
+--
+1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating daily weather input for simulation models.
+
+--
+
+2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends **medfate** by allowing simulations to be performed in a spatially explicit context.
+
+--
+
+3. Package [**medfateutils**](https://github.com/emf-creaf/medfateutils)  (ver. `r utils::packageDescription("medfateutils",fields="Version")`) provides functions to help initializing vegetation, soil and species inputs.
+
+
+
+---
+layout: false
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Package installation
+
+From **CRAN** (stable versions):
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+install.packages("medfate")
+```
+--
+
+From **GitHub** (frequent updates):
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+remotes::install_github("emf-creaf/medfate")
+```
+
+--
+
+This session we will also use package **medfateutils**:
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+remotes::install_github("emf-creaf/medfateutils")
+```
+
+--
+We should load the packages needed for the session:
+```{r, echo = TRUE, eval = TRUE, message=FALSE, warning=FALSE}
+library(meteoland)
+library(medfate)
+library(medfateutils)
+```
+
+---
+
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Overview of package functions
+
+---
+
+## Simulation functions
+
+Three main simulation models can be executed in medfate, each building on the preceeding ones.
+
+|  Function | Description                 |
+| --------- | --------------------------- |
+| `spwb()` | Water and energy balance    |
+| `growth()` | Carbon balance, growth and mortality |
+| `fordyn()` | Forest dynamics, including recruitment and forest management |
+
+--
+
+## Plot/summary functions
+
+Specific `summary()`, `plot()` and `shinyplot()` functions are included to *extract* and *display* the time series included in the output of each simulation function. 
+
+---
+
+## Post-processing functions
+
+Some package functions are meant to be used on simulation results (some of them implementing static ancillary models) and produce time series of additional properties.
+
+
+--
+
+|  Function | Description                 |
+| --------- | --------------------------- |
+| `droughtStress()` | Plant drought stress indices    |
+| `waterUseEfficiency()` | Water use efficiency metrics    |
+| `resistances()` | Hydraulic resistances to water transport    |
+| `fireHazard()` | Potential fire behaviour   |
+
+
+---
+layout: false
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Overview of package functions
+## Sub-model functions
+
+A large number of functions implement sub-models on which the simulation functions are built. They are included in the package for the sake of transparency, but most users are not expected to use them directly. 
+
+Sub-model functions are grouped by *subject*:
+
+--
+.pull-left[
+
+|  Group    | Description                 |
+| --------- | --------------------------- |
+|  `biophysics_*` | Physics and biophysics |
+|  `carbon_*` | Carbon balance |
+|  `fuel_*`  | Fuel properties |
+|  `fire_*`  | Fire behaviour |
+|  `hydraulics_*` | Plant hydraulics |
+|  `hydrology_*` | Canopy and soil hydrology |
+|  `light_*` | Light extinction and absortion |
+|  `moisture_*` | Live tissue moisture  |
+
+]
+
+--
+
+.pull-right[
+
+|  Group    | Description                 |
+| --------- | --------------------------- |
+|  `pheno_*` | Leaf phenology  |
+|  `photo_*` | Leaf photosynthesis  |
+|  `root_*` | Root distribution and conductance calculations  |
+|  `soil_*` | Soil hydraulics and thermodynamics  |
+|  `transp_*` | Stomatal regulation, transpiration and photosynthesis  |
+|  `wind_*` | Canopy turbulence |
+
+]
+
+???
+Notes here
+
