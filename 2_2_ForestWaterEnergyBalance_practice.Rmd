@@ -1,5 +1,5 @@
 ---
-title: "III.b - Forest water and energy balances"
+title: "2.2 - Forest water and energy balance (practice)"
 author: "Miquel De Cáceres"
 institute: "Ecosystem Modelling Facility, CREAF"
 date: "`r Sys.Date()`"
@@ -32,7 +32,7 @@ library(cowplot)
 
 class: title-slide
 
-# III.b - Forest water and energy balances
+# 2.2 - Forest water and energy balance (practice)
 
 ## Miquel De Cáceres
 
@@ -54,11 +54,11 @@ class: center, middle
 
 # Outline
 
-###  1. Water balance inputs
-###  2. Basic water balance
-###  3. Advanced water/energy balance
-###  4. Evaluating model performance
-###  5. Modifying model inputs
+##  1. Water balance inputs
+##  2. Basic water balance
+##  3. Advanced water/energy balance
+##  4. Evaluating model performance
+##  5. Modifying model inputs
 
 ---
 

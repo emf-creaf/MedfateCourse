@@ -1,5 +1,5 @@
 ---
-title: "IV - Forest growth and dynamics"
+title: "3.2 - Forest growth and dynamics (practice)"
 author: "Miquel De Cáceres"
 institute: "Ecosystem Modelling Facility, CREAF"
 date: "`r Sys.Date()`"
@@ -35,7 +35,7 @@ library(cowplot)
 
 class: title-slide
 
-# IV - Forest growth and dynamics
+# 3.2 - Forest growth and dynamics (practice)
 
 ## Miquel De Cáceres
 
