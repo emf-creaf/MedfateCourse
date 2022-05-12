@@ -26,6 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include = FALSE}
+library(meteoland)
 library(medfate)
 library(sp)
 ```
@@ -104,7 +105,7 @@ library(meteoland)
 ```
 
 --
-Normally, tree data will be in a CSV or XLSX file. Here, we simply load the tree data from Poblet included in the package:
+Normally, tree data would be in a **.csv** or **.xlsx** file. Here, we simply load the tree data from Poblet included in the package:
 
 ```{r}
 data("poblet_trees")
@@ -134,8 +135,8 @@ table(poblet_trees$Plot.Code)
 
 We initialize an empty forest object using function `emptyforest()` from package **medfate**:
 
-```{r, echo = FALSE}
-forest_ctl <- emptyforest("POBL_CTL")
+```{r, echo = TRUE}
+pobl_ctl <- emptyforest("POBL_CTL")
 ```
 
 --
@@ -148,11 +149,11 @@ mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm")
 
 --
 
-We can now replace the empty `treeData` in `forest_ctl` using function `forest_mapTreeTable()` from **medfateutils**:
+We can now replace the empty `treeData` in `pobl_ctl` using functions `subset()` and `forest_mapTreeTable()` from **medfateutils**:
 
 ```{r}
-forest_ctl$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_CTL",], 
-                                           mapping = mapping, SpParams = SpParamsMED)
+pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
+                                         mapping = mapping, SpParams = SpParamsMED)
 ```
 
 ---
@@ -162,20 +163,22 @@ forest_ctl$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code==
 We can inspect the result using:
 
 ```{r, eval = FALSE}
-summary(forest_ctl$treeData)
+summary(pobl_ctl$treeData)
 ```
 
-Some data are missing, but we will not worry about it now. One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary` function defined in **medfate** for this object class:
+--
+
+One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary()` function defined in **medfate** for this object class:
 
 ```{r}
-summary(forest_ctl, SpParamsMED)
+summary(pobl_ctl, SpParamsMED)
 ```
 
 ---
 
 ## Mapping trees from the control forest (3)
 
-We are told that forest stand sampling was done using a circular plot whose radius was 15 m. We can calculate the sampled area using:
+We are told that forest stand sampling was done using a *circular plot* whose radius was 15 m. We can calculate the sampled area using:
 
 ```{r}
 sampled_area = pi*15^2
@@ -183,62 +186,68 @@ sampled_area = pi*15^2
 
 --
 
-and use this information to map the tree data again, where we specify parameter `plot.size`:
+and use this information to map the tree data again, where we specify the parameter `plot.size`:
 
 ```{r}
-forest_ctl$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_CTL",], 
-                                           mapping = mapping, SpParams = SpParamsMED, 
-                                           plot.size = sampled_area)
+pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
+                                         mapping = mapping, SpParams = SpParamsMED, 
+                                         plot.size = sampled_area)
 ```
 
 --
 
-We run again the summary:
+We run again the summary and check whether basal area and leaf area index make sense:
 
 ```{r, eval = FALSE}
-summary(forest_ctl, SpParamsMED)
+summary(pobl_ctl, SpParamsMED)
 ```
 
 ---
 
-
 ## Mapping trees from the control forest (4)
 
-Another issue that we see is the percentage of PAR and SWR that reaches the ground, which have missing values. This indicates that medfate cannot calculate the light extinction profile, in our case because tree heights are missing. Thus, we should somehow estimate tree heights, for example using an allometric relationship:
+Another issue that we see is the `summary()` concerns percentage of PAR and SWR that reaches the ground, which have missing values. This indicates that light extinction cannot be calculated, in our case because tree heights are missing. 
+
+--
+
+We should somehow estimate tree heights, for example using an allometric relationship:
 
 ```{r}
 poblet_trees$Height.cm = 100 * 1.806*poblet_trees$Diameter.cm^0.518
 summary(poblet_trees$Height.cm)
 ```
 
-So trees are between 5 and 10 m height. Once tree heights are defined, we can include them in our mapping:
+--
+
+Once tree heights are defined, we can include them in our mapping:
 
 ```{r}
-mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm",
-            "Height" = "Height.cm")
+mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm", "Height" = "Height.cm")
 ```
+
+--
 
 and rerun the tree data mapping.
 
 ```{r, include = FALSE}
-forest_ctl$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_CTL",], 
-                                           mapping = mapping, SpParams = SpParamsMED, 
-                                           plot.size = sampled_area)
+pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
+                                         mapping = mapping, SpParams = SpParamsMED, 
+                                         plot.size = sampled_area)
 ```
 
 ---
 
 ## Mapping trees from the managed forest (1)
 
-Here we can repeat our mapping for the managed forest plot, which has two codes corresponding to before and after the thinning intervention. Let us first address the pre-thinning state:
+Now we can address the *managed* stand, which has two codes corresponding to *before* and *after* the thinning intervention. Let us first deal with the pre-thinning state:
 
 ```{r}
-forest_thi_bef = emptyforest()
-forest_thi_bef$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_THI_BEF",], 
-                                mapping = mapping, SpParams = SpParamsMED, 
-                                plot.size = sampled_area)
+pobl_thi_bef = emptyforest("POBL_THI_BEF")
+pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_THI_BEF"), 
+                                             mapping = mapping, SpParams = SpParamsMED, 
+                                             plot.size = sampled_area)
 
-summary(forest_thi_bef$treeData)
+summary(pobl_thi_bef$treeData)
 ```
 
 ---
@@ -267,23 +276,134 @@ poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] = "Quercus pubesce
 
 ## Mapping trees from the managed forest (3)
 
-Now we repeat our mapping:
+Now we repeat our mapping and check the results:
 
 ```{r, eval = FALSE}
-forest_thi_bef$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_THI_BEF",], 
+pobl_thi_bef$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_THI_BEF",], 
+                                             mapping = mapping, SpParams = SpParamsMED, 
+                                             plot.size = sampled_area)
+summary(pobl_thi_bef, SpParamsMED)
+```
+
+Like the control plot, the `summary()` indicates a dense oak forest. We can finally map tree data for the forest plot after the thinning intervention:
+
+```{r, eval = FALSE}
+pobl_thi_aft = emptyforest("POBL_THI_AFT")
+pobl_thi_aft$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_THI_AFT",], 
                                 mapping = mapping, SpParams = SpParamsMED, 
                                 plot.size = sampled_area)
 
-summary(forest_thi_bef, SpParamsMED)
+summary(pobl_thi_aft, SpParamsMED)
 ```
 
-Like the control plot, these statistics indicate a dense oak forest. We can repeat the same operations with the forest plot after the thinning intervention:
+And check the reduction caused by the thinning.
+
+---
+
+## Retrieving SoilGrids data
+
+Retrieval of soil properties from SoilGrids can be done using function `soilgridsParams()` from package **medfateutils**. Assuming we know the plot coordinates, we first create an object `SpatialPoints` (see package **sp**):
+```{r}
+cc = cbind(1.0219, 41.3443)
+coords_sp <- SpatialPoints(cc, CRS(SRS_string = "EPSG:4326"))
+```
+
+--
+
+This object can be used to query SoilGrids using `soilgridsParams()`:
 
 ```{r, eval = FALSE}
-forest_thi_aft = emptyforest()
-forest_thi_aft$treeData <- forest_mapTreeTable(poblet_trees[poblet_trees$Plot.Code=="POBL_THI_AFT",], 
-                                mapping = mapping, SpParams = SpParamsMED, 
-                                plot.size = sampled_area)
-
-summary(forest_thi_aft, SpParamsMED)
+pobl_soil_props <- soilgridsParams(coords_sp, widths = c(300, 700, 1000))
 ```
+
+```{r, include=FALSE}
+pobl_soil_props = readRDS("Rdata/pobl_soil_props.rds")
+```
+
+
+--
+
+This function returns a data frame of soil properties:
+
+```{r}
+pobl_soil_props
+```
+
+
+---
+
+## Building the soil object
+
+This data frame is a physical description of the soil. Remember that the soil data structure for **medfate** simulations is built using function `soil()`:
+
+```{r}
+pobl_soil <- soil(pobl_soil_props)
+```
+
+We can inspect the soil definition using `print()`
+
+--
+
+SoilGrids usually underestimates the amount of rocks in the soil, because soil samples do not normally contain large stones or blocks. Realistic simulations should reduce the soil water holding capacity by increasing `rfc`. For example, here we will assume that the third layer contains 80% of rocks:
+
+```{r}
+pobl_soil_props$rfc[3] = 80
+```
+
+--
+
+If we rebuild the soil object and inspect its properties:
+
+```{r, eval= FALSE}
+pobl_soil <- soil(pobl_soil_props)
+```
+
+---
+
+## Interpolating weather (1)
+
+Obtaining daily weather data suitable for simulations is not straightforward either. Here we illustrate one way of obtaining such data with package **meteoland**. 
+
+--
+
+We begin by building an object of S4 class `SpatialPointsTopography`, which extends `SpatialPoints`and contains both the coordinates of our site as well as topographic variables.
+
+```{r}
+pobl_spt <- SpatialPointsTopography(coords_sp,
+                                    elevation = 850, slope = 15.1, aspect = 15)
+```
+
+--
+
+The more difficult part of using package **meteoland** is to assemble weather data from surface weather stations into an object of class `MeteorologyInterpolationData`. 
+
+--
+
+Here we will assume that such an object is already available, by using the example object provided in the **meteoland** package.
+
+```{r}
+data("exampleinterpolationdata")
+```
+
+---
+
+## Interpolating weather (2)
+
+Once we have this interpolator, obtaining interpolated weather for a set of target points is rather straightforward using function `interpolationpoints()` from **meteoland**:
+
+```{r, warning = FALSE}
+meteo <- interpolationpoints(exampleinterpolationdata, pobl_spt)
+```
+
+Note that a **warning** was raised, because the boundary box of the interpolator does not include the location of the Poblet forests. In this case, the result of the interpolation is not reliable and should not be used. 
+--
+
+The output of function `interpolationpoints()` is an object of S4 class `SpatialPointsMeteorology`. We can access the weather data frame by subsetting the appropriate element of slot `data`:
+
+```{r, eval = FALSE}
+pobl_weather <- meteo@data[[1]]
+head(pobl_weather, 2)
+```
+
+
+
