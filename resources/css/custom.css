@@ -1,7 +1,13 @@
 .font80 {
   font-size: 80%;
 }
+.font90 {
+  font-size: 90%;
+}
 
+.code80 .remark-code {
+  font-size: 80%;
+}
 .code70 .remark-code {
   font-size: 70%;
 }
@@ -50,7 +56,7 @@ div.my-footer {
 
 .remark-slide-content {
   background-color: #F8F9FA;
-  font-size: 1.2rem;
+  font-size: 1.0rem;
   color: black;
 }
 
@@ -61,17 +67,17 @@ div.my-footer {
 }
 
 .remark-slide-content h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 400;
 }
 
 .remark-slide-content h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 400;
 }
 
 .remark-slide-content h3 {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 400;
 }
 

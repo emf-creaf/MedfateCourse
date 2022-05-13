@@ -11,7 +11,6 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-      ratio: 16:9
     seal: false
 editor_options: 
   chunk_output_type: console
@@ -82,11 +81,11 @@ The R package **medfate** (ver. `r utils::packageDescription("medfate",fields="V
 
 --
 
-Climatic conditions are the main environmental drivers, with a particular focus on drought impacts under Mediterranean conditions. 
+Climatic conditions are the main environmental drivers, with a particular focus on drought impacts under Mediterranean conditions.
 
 --
 
-Representation of vegetation accounts for structural and compositional variation but is not spatially-explicit (i.e. trees or shrubs do not have explicit coordinates within forest stands). 
+Representation of vegetation accounts for structural and compositional variation but is not spatially-explicit (i.e. trees or shrubs do not have explicit coordinates within forest stands).
 
 ---
 
@@ -103,7 +102,6 @@ Developments were also supported by CTFC, the research institution until March 2
 A large number of people has contributed with *ideas*, *data* or *code* to the project:
 
 .pull-left[
-
 + Jordi Martínez-Vilalta (CREAF-UAB, Spain)
 + Maurizio Mencuccini (CREAF-ICREA, Spain)
 + Juli G. Pausas (CIDE-CSIC, Spain)
@@ -112,11 +110,9 @@ A large number of people has contributed with *ideas*, *data* or *code* to the p
 + Lluís Brotons (CREAF-CSIC, Spain)
 + Antoine Cabon (WSL, Switzerland)
 + Roberto Molowny (EMF-CREAF, Spain)
-
 ]
 
 .pull-right[
-
 + Victor Granda (EMF-CREAF, Spain)
 + Lluís Coll (UdL, Spain)
 + Pere Casals (CTFC, Spain)
@@ -125,7 +121,6 @@ A large number of people has contributed with *ideas*, *data* or *code* to the p
 + Nicolas Martin-StPaul (INRA, France)
 + Shengli Huang (USDA, USA)
 + Enric Batllori (UB-CREAF, Spain)
-
 ]
 
 ---
@@ -140,23 +135,22 @@ layout: false
 
 # 2. Companion packages
 
-During the development of **medfate** ancillary functions were also originally included in the package itself. 
+During the development of **medfate** ancillary functions were also originally included in the package itself.
 
 --
 
 Many of them were later moved into more specialized packages, which now evolve in parallel to the main package:
 
 --
-1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating daily weather input for simulation models.
+
+1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating daily weather input for simulation models.]
 
 --
 
-2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends **medfate** by allowing simulations to be performed in a spatially explicit context.
+2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends **medfate** by allowing simulations to be performed in a spatially explicit context.]
 
 --
-
 3. Package [**medfateutils**](https://github.com/emf-creaf/medfateutils)  (ver. `r utils::packageDescription("medfateutils",fields="Version")`) provides functions to help initializing vegetation, soil and species inputs.
-
 
 
 ---
@@ -171,6 +165,7 @@ layout: false
 # 3. Package installation
 
 From **CRAN** (stable versions):
+
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 install.packages("medfate")
 ```
@@ -183,13 +178,15 @@ remotes::install_github("emf-creaf/medfate")
 
 --
 
-This session we will also use package **medfateutils**:
+This session we will also use packages **meteoland** and **medfateutils**:
+
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
-remotes::install_github("emf-creaf/medfateutils")
+install.packages("meteoland")
+remotes::install_github("emf-creaf/medfateutils") # Not on CRAN
 ```
 
 --
-We should load the packages needed for the session:
+.font90[We should load the packages needed for the session:]
 ```{r, echo = TRUE, eval = TRUE, message=FALSE, warning=FALSE}
 library(meteoland)
 library(medfate)
@@ -212,19 +209,20 @@ layout: true
 
 ## Simulation functions
 
-Three main simulation models can be executed in medfate, each building on the preceeding ones.
+Three main simulation models can be executed in medfate, each building on the preceeding ones:
 
+.font90[
 |  Function | Description                 |
 | --------- | --------------------------- |
 | `spwb()` | Water and energy balance    |
 | `growth()` | Carbon balance, growth and mortality |
 | `fordyn()` | Forest dynamics, including recruitment and forest management |
-
+]
 --
 
 ## Plot/summary functions
 
-Specific `summary()`, `plot()` and `shinyplot()` functions are included to *extract* and *display* the time series included in the output of each simulation function. 
+Specific `summary()`, `plot()` and `shinyplot()` functions are included to *extract* and *display* the time series included in the output of each simulation function.
 
 ---
 
@@ -235,13 +233,14 @@ Some package functions are meant to be used on simulation results (some of them 
 
 --
 
+.font90[
 |  Function | Description                 |
 | --------- | --------------------------- |
 | `droughtStress()` | Plant drought stress indices    |
 | `waterUseEfficiency()` | Water use efficiency metrics    |
 | `resistances()` | Hydraulic resistances to water transport    |
 | `fireHazard()` | Potential fire behaviour   |
-
+]
 
 ---
 layout: false
@@ -255,13 +254,13 @@ layout: false
 # 3. Overview of package functions
 ## Sub-model functions
 
-A large number of functions implement sub-models on which the simulation functions are built. They are included in the package for the sake of transparency, but most users are not expected to use them directly. 
+A large number of functions implement sub-models on which the simulation functions are built. They are included in the package for the sake of transparency, but most users are not expected to use them directly.
 
 Sub-model functions are grouped by *subject*:
 
 --
 .pull-left[
-
+.font90[
 |  Group    | Description                 |
 | --------- | --------------------------- |
 |  `biophysics_*` | Physics and biophysics |
@@ -272,13 +271,13 @@ Sub-model functions are grouped by *subject*:
 |  `hydrology_*` | Canopy and soil hydrology |
 |  `light_*` | Light extinction and absortion |
 |  `moisture_*` | Live tissue moisture  |
-
+]
 ]
 
 --
 
 .pull-right[
-
+.font90[
 |  Group    | Description                 |
 | --------- | --------------------------- |
 |  `pheno_*` | Leaf phenology  |
@@ -287,7 +286,7 @@ Sub-model functions are grouped by *subject*:
 |  `soil_*` | Soil hydraulics and thermodynamics  |
 |  `transp_*` | Stomatal regulation, transpiration and photosynthesis  |
 |  `wind_*` | Canopy turbulence |
-
+]
 ]
 
 ???

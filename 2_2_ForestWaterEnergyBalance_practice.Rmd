@@ -11,7 +11,6 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-      ratio: 16:9
     seal: false
 editor_options: 
   chunk_output_type: console
@@ -76,99 +75,125 @@ layout: true
 
 ## Creating the water balance input object
 
-We assume we have an appropriate `forest` object and species parameter data frame:
-
+.font90[We assume we have an appropriate `forest` object and species parameter data frame:]
+.code80[
 ```{r, echo = TRUE}
 data(exampleforestMED)
 data(SpParamsMED)
 ```
+]
 
 --
 
-a `soil` object:
+.font90[a `soil` object:]
+.code80[
 ```{r, echo = TRUE}
 examplesoil <- soil(defaultSoilParams(4))
 ```
+]
 
 --
-and a simulation control list:
+.font90[and a simulation control list:]
+.code80[
 ```{r, echo = TRUE}
 control <- defaultControl("Granier")
 ```
+]
 
 --
 
-With these four elements we can build our input object for function `spwb()`:
+.font90[With these four elements we can build our input object for function `spwb()`:]
+.code80[
 ```{r, echo = TRUE}
 x <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
 ```
+]
 
 ---
 ## Structure of the water balance input object (1)
 
-The water balance input object is a `list` with several elements:
+.font90[The water balance input object is a `list` with several elements:]
+.code70[
 ```{r, echo = TRUE}
 names(x)
 ```
+]
 
 --
 
-Elements `soil` and `control` contain copies of the parameters used in the call to `forest2spwbInput()`.
+.font90[Elements `soil` and `control` contain copies of the parameters used in the call to `forest2spwbInput()`.]
 
 --
 
-Element `cohorts` contains the species identity of each cohort:
+.font90[Element `cohorts` contains the species identity of each cohort:]
+
+.code80[
 ```{r, echo = TRUE}
 x$cohorts
 ```
+]
 
 ---
 
 ## Structure of the water balance input object (2)
 
-Element `above` contains above-ground description of vegetation:
+.font90[Element `above` contains above-ground description of vegetation:]
+.code80[
 ```{r, echo = TRUE}
 x$above
 ```
+]
 
 --
 
-Element `below` contains below-ground description of vegetation:
+.font90[Element `below` contains below-ground description of vegetation:]
+.code80[
 ```{r, echo = TRUE}
 x$below
 ```
+]
 
 ---
 ## Structure of the water balance input object (3)
 
-Elements `params*` contain cohort-level parameters, for example...
+.font90[Elements `params*` contain cohort-level parameters, for example...]
+
+.code70[
 ```{r, echo = TRUE}
 x$paramsTranspiration
 ```
+]
 
 --
-or ...
---
+
+.font90[or ...]
+
+.code70[
 ```{r, echo = TRUE}
 x$paramsAnatomy
 ```
+]
 
 ---
 
 ## Structure of the water balance input object (4)
 
-Elements `internal*` contain cohort-level state variables, for example:
+.font90[Elements `internal*` contain cohort-level state variables, for example:]
+
+.code70[
 ```{r, echo = TRUE}
 x$internalPhenology
 ```
+]
 
 --
-or...
+.font90[or...]
 
+.code70[
 ```{r, echo = TRUE}
 x$internalWater
 ```
-
+]
 
 ---
 
@@ -186,12 +211,12 @@ layout: true
 
 ## Water balance run
 
-Let us assume we have an appropriate weather data frame:
+.font90[Let us assume we have an appropriate weather data frame:]
 ```{r, echo = TRUE}
 data(examplemeteo)
 ```
 
-The call to function `spwb()` needs the water balance input object, the weather data frame, latitude and elevation:
+.font90[The call to function `spwb()` needs the water balance input object, the weather data frame, latitude and elevation:]
 
 ```{r, echo = TRUE, eval = FALSE}
 S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
@@ -202,7 +227,7 @@ S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
 
 --
 
-Function `spwb()` returns an object of class with the same name, actually a list:
+.font90[Function `spwb()` returns an object of class with the same name, actually a list:]
 ```{r, echo = TRUE}
 class(S)
 ```
@@ -211,46 +236,53 @@ class(S)
 
 ## Water balance output object (1)
 
-It is interesting to inspect the list element names:
+.font90[It is interesting to inspect the list element names:]
+
+.code70[
 ```{r, echo = TRUE}
 names(S)
 ```
-
+]
 --
 
+
+.font80[
 | Elements | Information   |
 | ----- | -------------- |
 | `latitude`, `topography`, `weather`, `spwbInput` | Copies of the information used in the call to `spwb()` |
 | `spwbOutput` | State variables at the end of the simulation (can be used as input to a subsequent one) |
 | `WaterBalance`, `Soil`,  `Stand`,  `Plants` | Daily outputs (days as rows, variables as columns) |
 | `subdaily` | Sub-daily outputs (not relevant here) |
+]
 
 ---
 
 ## Water balance output object (2)
 
 
-Actually, `Plants` is itself a list with several data frames of results by cohort (days as rows, cohorts as columns):
+.font90[Actually, `Plants` is itself a list with several data frames of results by cohort (days as rows, cohorts as columns):]
 
+.code70[
 ```{r, echo = TRUE}
 names(S$Plants)
 ```
-
+]
 
 ---
 
 ## Summaries
 
-The package provides a `summary()` function for objects of class `spwb`. It can be used to extract/summarize the model's output at different temporal steps (i.e. weekly, annual, ...).
+.font90[The package provides a `summary()` function for objects of class `spwb`. It can be used to extract/summarize the model's output at different temporal steps (i.e. weekly, annual, ...).]
 
-For example, to obtain the average soil moisture and water potentials by months one can use:
+.font90[For example, to obtain the average soil moisture and water potentials by months one can use:]
+
 ```{r, echo = TRUE, eval = FALSE}
 summary(S, freq="months",FUN=mean, output="Soil")
 ```
 
 --
 
-Parameter `output` indicates the element of the `spwb` object for which we desire a summary. Similarly, it is possible to calculate the average stress of plant cohorts by months:
+.font90[Parameter `output` indicates the element of the `spwb` object for which we desire a summary. Similarly, it is possible to calculate the average stress of plant cohorts by months:]
 
 ```{r, echo = TRUE, eval = FALSE}
 summary(S, freq="months",FUN=mean, output="PlantStress")
@@ -258,7 +290,8 @@ summary(S, freq="months",FUN=mean, output="PlantStress")
 
 --
 
-The `summary` function can be also used to aggregate the output by species. In this case, the values of plant cohorts belonging to the same species will be averaged using LAI values as weights:
+.font90[The `summary` function can be also used to aggregate the output by species. In this case, the values of plant cohorts belonging to the same species will be averaged using LAI values as weights:]
+
 ```{r, echo = TRUE, eval = FALSE}
 summary(S, freq="months", output="PlantStress", bySpecies = TRUE)
 ```
@@ -266,7 +299,7 @@ summary(S, freq="months", output="PlantStress", bySpecies = TRUE)
 ---
 ## Plots 
 
-The package provides a `plot()` function for objects of class `spwb`. It can be used to show weather inputs and different components of the water balance, for example:
+.font90[The package provides a `plot()` function for objects of class `spwb`. It can be used to show weather inputs and different components of the water balance, for example:]
 
 ```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=6, fig.height = 4}
 plot(S, type = "PET_Precipitation")
@@ -274,12 +307,12 @@ plot(S, type = "PET_Precipitation")
 
 --
 
-The help page of `?plot.spwb` lists all the possible plots...
+.font90[The help page of `?plot.spwb` lists all the possible plots...]
 
 ---
 ## Interactive plots
 
-... but instead of typing all plots, we can call the interactive plot function and explore them all:
+.font90[... but instead of typing all plots, we can call the interactive plot function and explore them all:]
 
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 shinyplot(S)
@@ -288,21 +321,24 @@ shinyplot(S)
 ---
 ## Post-processing functions
 
-The package provides some functions to extract or transform specific outputs from `spwb()` simulations. 
+.font90[The package provides some functions to extract or transform specific outputs from `spwb()` simulations.]
 
 --
 
-Function `droughtStress()` allows calculating several plant stress indices, such as the maximum drought stress value per month:
+.font90[Function `droughtStress()` allows calculating several plant stress indices, such as the maximum drought stress value per month:]
+
+.code80[
 ```{r, echo = TRUE}
 DS <- droughtStress(S, index = "MDS", freq = "months", draw=FALSE)
 head(DS)
 ```
+]
 
 --
 
-Other similar post-processing functions are `waterUseEfficiency()` or `fireHazard()`.
+.font90[Other similar post-processing functions are `waterUseEfficiency()` or `fireHazard()`.]
 
-They (should) also work on the output of functions `growth()` and `fordyn()`.
+.font90[They (should) also work on the output of functions `growth()` and `fordyn()`.]
 
 
 ---
@@ -320,32 +356,34 @@ layout: true
 ---
 
 ## Evaluation metrics
-The package provides functions to compare predictions with observations (use `?evaluation` for details on how observations should be arranged).
+.font90[The package provides functions to compare predictions with observations (use `?evaluation` for details on how observations should be arranged).]
 
 --
 
-For example, a single evaluation metric can be calculated:
+.font90[For example, a single evaluation metric can be calculated:]
+.code80[
 ```{r, echo = TRUE}
 evaluation_metric(S, exampleobs, type = "SWC", metric = "MAE")
 ```
-
+]
 --
 
-or many of them:
+.font90[or many of them:]
+.code70[
 ```{r, echo = TRUE}
 evaluation_stats(S, exampleobs, type = "SWC")
 ```
-
+]
 ---
 
 ## Evaluation plots and interactive evaluation
 
-Evaluation functions also allow visualizing the comparison as time series or scatter plots:
+.font90[Evaluation functions also allow visualizing the comparison as time series or scatter plots:]
 ```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=9, fig.height = 3}
 evaluation_plot(S, exampleobs, type = "SWC", plotType = "dynamics")
 ```
 
-Alternatively, the observed data can be supplied as an additional parameter to `shinyplot()` for interactive graphics including model evaluation:
+.font90[Alternatively, the observed data can be supplied as an additional parameter to `shinyplot()` for interactive graphics including model evaluation:]
 ```{r, echo = TRUE, eval = FALSE}
 shinyplot(S, exampleobs)
 ```
@@ -364,67 +402,81 @@ layout: true
 
 ---
 ## Creating an input object for the advanced model
-The most important step to run the advanced model is to specify the appropriate transpiration mode in the `control` parameters:
+.font90[The most important step to run the advanced model is to specify the appropriate transpiration mode in the `control` parameters:]
+.code80[
 ```{r, echo = TRUE}
 control <- defaultControl("Sperry")
 ```
-We can build our input object for function `spwb()` using the same function as before:
+]
+.font90[We can build our input object for function `spwb()` using the same function as before:]
+.code80[
 ```{r, echo = TRUE}
 x_adv <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
 ```
-The water balance input object contains the same elements...
+]
+.font90[The water balance input object contains the same elements...]
+.code70[
 ```{r, echo = TRUE}
 names(x_adv)
 ```
-
+]
 ---
 ## Creating an input object for the advanced model
-... but the main difference with the basic model is in the number of parameters, e.g.:
+.font90[... but the main difference with the basic model is in the number of parameters, e.g.:]
+.code70[
 ```{r, echo = TRUE}
 x_adv$paramsTranspiration
 ```
-
+]
 ---
 ## Vulnerability curves
 
-We can inspect *hydraulic vulnerability curves* (i.e. how hydraulic conductance of a given segment changes with the water potential) for each plant cohort and each of the different segments of the soil-plant hydraulic network:
+.font90[We can inspect *hydraulic vulnerability curves* (i.e. how hydraulic conductance of a given segment changes with the water potential) for each plant cohort and each of the different segments of the soil-plant hydraulic network:]
 
+.code80[
 ```{r, fig=TRUE, fig.align="center", fig.width=6, fig.height = 3.5, echo = TRUE}
 hydraulics_vulnerabilityCurvePlot(x_adv, type="stem", speciesNames = TRUE)
 ```
-
-The maximum values and shape of vulnerability curves for leaves and stems are regulated by parameters in `paramsTranspiration`.
+]
+.font90[The maximum values and shape of vulnerability curves for leaves and stems are regulated by parameters in `paramsTranspiration`.]
 
 ---
 ## Supply functions
 
-The vulnerability curves conforming the hydraulic network are used in the model to build the **supply function**, which relates water flow (i.e. transpiration) with the drop of water potential along the whole hydraulic pathway. 
+.font90[The vulnerability curves conforming the hydraulic network are used in the model to build the **supply function**, which relates water flow (i.e. transpiration) with the drop of water potential along the whole hydraulic pathway. ]
 
+.code80[
 ```{r, fig=TRUE, fig.align="center", fig.width=6, fig.height = 3.5, echo = TRUE}
 hydraulics_supplyFunctionPlot(x_adv, examplesoil, type="E", speciesNames = TRUE)
 ```
+]
 
 ---
 ## Stomatal regulation
 
-Stomatal conductance is determined after building a photosynthesis function corresponding to the supply function and finding the value of stomatal conductance that maximizes carbon revenue while avoiding hydraulic damage: the *profit-maximization* approach. 
+.font90[Stomatal conductance is determined after building a photosynthesis function corresponding to the supply function and finding the value of stomatal conductance that maximizes carbon revenue while avoiding hydraulic damage: the *profit-maximization* approach. ]
 
+.code80[
 ```{r, fig=TRUE, fig.align="center", fig.width=8, fig.height = 4, echo = TRUE}
 transp_stomatalRegulationPlot(x_adv, examplemeteo, day = 100, timestep=12,
                               latitude = 41.82592, elevation = 100, type="E")
 ```
+]
 
 ---
 ## Pressure-volume curves
 
+.code80[
 ```{r, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3.5}
 moisture_pressureVolumeCurvePlot(x_adv, segment="leaf", fraction="symplastic")
 ```
+]
 
 ---
 ## Water/energy balance run for a single day
 
-Since the model operates at a daily and sub-daily temporal scales, it is possible to perform soil water balance for one day only, by using function `spwb_day()`:
+.font90[Since the model operates at a daily and sub-daily temporal scales, it is possible to perform soil water balance for one day only, by using function `spwb_day()`:]
+.code70[
 ```{r, echo = TRUE}
 d = 100
 sd1<-spwb_day(x_adv, rownames(examplemeteo)[d],  
@@ -434,26 +486,21 @@ sd1<-spwb_day(x_adv, rownames(examplemeteo)[d],
              latitude = 41.82592, elevation = 100, 
              slope= 0, aspect = 0, prec = examplemeteo$Precipitation[d])
 ```
-The output of `spwb_day()` is a list with several elements:
+]
+.font90[The output of `spwb_day()` is a list with several elements:]
+.code70[
 ```{r, echo = TRUE}
 names(sd1)
 ```
-
+]
 ---
 ## Plotting single-day results
 
-.pull-left[
 ```{r, fig=TRUE, fig.align="center", fig.width=7, fig.height = 4}
 plot(sd1, type = "LeafTranspiration", bySpecies = TRUE)
 ```
-]
-.pull-right[
-```{r, fig=TRUE, fig.align="center", fig.width=7, fig.height = 4}
-plot(sd1, type = "LeafGrossPhotosynthesis", bySpecies = TRUE)
-```
-]
 
-More conveniently, you can examine multiple plots interactively:
+.font90[More conveniently, you can examine multiple plots interactively:]
 ```{r, eval=FALSE, echo=TRUE}
 shinyplot(sd1)
 ```
@@ -461,12 +508,12 @@ shinyplot(sd1)
 ---
 ## Resetting the input object
 
-However, running `spwb_day()` modified the input object. In particular, the soil moisture at the end of the simulation was:
+.font90[However, running `spwb_day()` modified the input object. In particular, the soil moisture at the end of the simulation was:]
 ```{r, echo = TRUE}
 x_adv$soil$W
 ```
 
-We simply use function `resetInputs()` to reset state variables to their default values, so that the new simulation is not affected by the end state of the previous simulation:
+.font90[We simply use function `resetInputs()` to reset state variables to their default values, so that the new simulation is not affected by the end state of the previous simulation:]
 ```{r, echo = TRUE}
 resetInputs(x_adv)
 x_adv$soil$W
@@ -475,41 +522,44 @@ x_adv$soil$W
 ---
 ## Water/energy balance run for multiple days
 
-We can now run the advanced water balance model (which takes 1 min aprox.)
+.font90[We can now run the advanced water balance model (which takes 1 min aprox.)]
 
+.code80[
 ```{r, eval = FALSE, echo = TRUE}
 S_adv <- spwb(x_adv, examplemeteo, latitude = 41.82592, elevation = 100)
 ```
-
+]
 ```{r, echo = FALSE}
 S_adv <- readRDS("Rdata/spwb_adv.rds")
 ```
 
 --
 
-Function `spwb()` returns a list of class `spwb`, like the basic water balance model, but which contains more information:
+.font90[Function `spwb()` returns a list of class `spwb`, like the basic water balance model, but which contains more information:]
 
+.code80[
 ```{r}
 names(S_adv)
 ```
-
+]
 ---
 ## Summaries, plots and interactive plots
-Summaries and plots can be obtained from simulation results, using functions `summary()`:
+.font90[Summaries and plots can be obtained from simulation results, using functions `summary()`:]
 
 ```{r, echo = TRUE, eval = FALSE}
 summary(S_adv, freq="months", output="PlantStress", bySpecies = TRUE)
 ```
 
 --
-and `plot()`:
+.font90[and `plot()`:]
+
 ```{r, echo = TRUE, eval = FALSE}
 plot(S_adv, type="LeafPsiMin", bySpecies = TRUE)
 ```
 
 --
 
-Alternatively, one can interactively create plots using function `shinyplot()`, e.g.:
+.font90[Alternatively, one can interactively create plots using function `shinyplot()`, e.g.:]
 ```{r, eval = FALSE, echo = TRUE}
 shinyplot(S_adv)
 ```
@@ -527,9 +577,12 @@ layout: false
 # 5. Modifying model inputs
 
 Let's imagine one is not happy with a particular cohort parameter. For example, LAI estimates produced by `forest2spwbInput()` do not match known values:
+
+.code70[
 ```{r, echo = TRUE}
 x_adv$above
 ```
+]
 
 --
 
@@ -539,9 +592,10 @@ We should not manually modify `x_adv` because some parameters are related and we
 
 Instead, we should use function `modifyInputParams()`:
 
+.code80[
 ```{r, echo = TRUE}
 x_mod <- modifyInputParams(x_adv, c("T2_168/LAI_live" = 1.1))
 ```
-
+]
 which will display messages describing the parameters that are modified.
 

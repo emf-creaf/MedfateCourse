@@ -11,7 +11,6 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-      ratio: 16:9
     seal: false
 editor_options: 
   chunk_output_type: console
@@ -65,7 +64,6 @@ library(medfate)
 library(medfateutils)
 ```
 
-
 ---
 
 layout:true
@@ -100,12 +98,12 @@ data("SpParamsDefinition")
 
 ---
 
-
+.font80[
 ```{r, eval= require("DT"), tidy = FALSE, echo = FALSE}
 DT::datatable(SpParamsDefinition,
-              fillContainer = FALSE, options=list(pageLength = 4))
+              fillContainer = FALSE, options=list(pageLength = 6))
 ```
-
+]
 
 ---
 
@@ -133,6 +131,7 @@ forest <- exampleforestMED
 --
 
 The most important items are two data frames, `treeData` (for trees):
+
 ```{r, echo = TRUE}
 forest$treeData
 ```
@@ -140,6 +139,7 @@ forest$treeData
 --
 
 and `shrubData` (for shrubs):
+
 ```{r, echo = TRUE}
 forest$shrubData
 ```
@@ -149,6 +149,7 @@ forest$shrubData
 .pull-left[
 ## Tree data
 
+.font90[
 | Variable | Definition |
 | -------- | --------------------- |
 |`Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
@@ -158,13 +159,14 @@ forest$shrubData
 | `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
 | `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
 ]
-
+]
 --
 
 .pull-right[
 
 ## Shrub data
 
+.font90[
 | Variable | Definition |
 | -------- | --------------------- |
 | `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
@@ -172,7 +174,7 @@ forest$shrubData
 | `Height` | Shrub total height (in cm) |
 | `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
 | `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
-
+]
 ]
 
 ---
@@ -186,14 +188,14 @@ Forest inventories can be conducted in many different ways, which means that the
 Building `forest` objects from inventory data will always require some manual data wrangling, but package **medfateutils** provides functions that may be helpful:
 
 --
-
+.font90[
 |  Function | Description                 |
 | --------- | --------------------------- |
 | `forest_mapShrubTable()` | Helps filling `shrubData` table  |
 | `forest_mapTreeTable()` | Helps filling `treeData` table  |
 | `forest_mapWoodyTables()` | Helps filling a `forest` object  |
 | `IFN2forestlist()` | Creates a list of `forest` objects from Spanish forest inventory data   |
-
+]
 
 
 ---
@@ -206,14 +208,19 @@ The package includes a number of functions to examine properties of the plants c
 -   `species_*`: Species-level attributes (e.g. basal area, leaf area index).
 -   `stand_*`: Stand-level attributes (e.g. basal area).
 
+.pull-left[
 ```{r, echo = TRUE}
 plant_basalArea(forest)
 ```
+]
 
+--
 
+.pull-right[
 ```{r, echo = TRUE}
 plant_LAI(forest, SpParamsMED)
 ```
+]
 
 ---
 ## Aboveground data
@@ -224,10 +231,12 @@ An important information for simulation model is the estimation of initial leaf 
 
 We can illustrate this step using function `forest2aboveground()`:
 
+.code80[
 ```{r, echo = TRUE}
 above <- forest2aboveground(forest, SpParamsMED)
 above
 ```
+]
 
 where species-specific allometric coefficients are taken from `SpParamsMED`.
 
@@ -254,18 +263,22 @@ layout: true
 Vertical leaf area distribution (at the cohort-, species- or stand-level) can be examined using:
 
 .pull-left[
+.code70[
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_leafAreaDensity(forest, SpParamsMED)
 ```
+]
 ]
 
 --
 
 .pull-right[
+.code70[
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
-vprofile_leafAreaDensity(forest, SpParamsMED, 
-          byCohorts = TRUE, bySpecies = TRUE)
+  vprofile_leafAreaDensity(forest, SpParamsMED, 
+      byCohorts = TRUE, bySpecies = TRUE)
 ```
+]
 ]
 
 ---
@@ -275,17 +288,21 @@ vprofile_leafAreaDensity(forest, SpParamsMED,
 Radiation extinction (PAR or SWR) profile across the vertical axis can also be examined:
 
 .pull-left[
+.code80[
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_PARExtinction(forest, SpParamsMED)
 ```
+]
 ]
 
 --
 
 .pull-right[
+.code80[
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_SWRExtinction(forest, SpParamsMED)
 ```
+]
 ]
 
 ---
@@ -294,9 +311,14 @@ vprofile_SWRExtinction(forest, SpParamsMED)
 
 Users can visually inspect the distribution of fine roots of `forest` objects by calling function `vprofile_rootDistribution()`:
 
-```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
+.center[
+.code80[
+```{r, fig = TRUE, fig.width= 6, fig.height=4, echo=TRUE}
 vprofile_rootDistribution(forest, SpParamsMED)
 ```
+]
+]
+
 
 ---
 ## Interactive forest inspection
@@ -322,6 +344,7 @@ layout: true
 # 4. Soil input
 
 ---
+
 ## Soil physical description
 
 Soil physical characteristics are specified using a **data.frame** with soil layers in rows and attributes in columns:
@@ -335,10 +358,12 @@ Soil physical characteristics are specified using a **data.frame** with soil lay
 
 They can be initialized to default values using function `defaultSoilParams()`:
 
+.code80[
 ```{r, echo = TRUE}
 spar <- defaultSoilParams(2)
 print(spar)
 ```
+]
 
 ---
 ## Drawing soil physical attributes from *SoilGrids*
@@ -346,7 +371,9 @@ print(spar)
 *SoilGrids* is a global database of soil properties:
 
 .center[
-*Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Blagotić A, et al. (2017) SoilGrids250m: Global gridded soil information based on machine learning. PLoS ONE 12(2): e0169748. doi:10.1371/journal.pone.0169748.*
+.font90[
+*Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Blagotic A, et al. (2017) SoilGrids250m: Global gridded soil information based on machine learning. PLoS ONE 12(2): e0169748. doi:10.1371/journal.pone.0169748.*
+]
 ]
 
 --
@@ -386,12 +413,17 @@ class(examplesoil)
 
 The **water retention curve** is used to represent the relationship between soil water content ( $\theta$ ; %) and soil water potential ( $\Psi$ ; MPa).
 
+--
+
 The following code calls function `soil_retentionCurvePlot()` to illustrate the difference between the two water retention models in this soil:
 
-```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
+.center[
+.code80[
+```{r, fig = TRUE, fig.width= 6, fig.height=4, echo=TRUE}
 soil_retentionCurvePlot(examplesoil, model="both")
 ```
-
+]
+]
 
 ---
 layout: true
@@ -406,15 +438,18 @@ layout: true
 
 # 5. Weather input
 
-All simulations in the package require **daily weather** inputs in form of a `data.frame` with dates as `row.names`. 
+All simulations in the package require **daily weather** inputs in form of a `data.frame` with dates as `row.names`.
 
 --
 
 An example of daily weather data frame: 
+
+.code80[
 ```{r, echo = TRUE}
 data(examplemeteo)
 head(examplemeteo, 2)
 ```
+]
 
 --
 
@@ -423,7 +458,8 @@ The weather variables that are required depend on the complexity of model we are
 
 ---
 # 6. Simulation control
-The behaviour of simulation models can be controlled using a set of global parameters. 
+
+The behaviour of simulation models can be controlled using a set of global parameters.
 
 The default parameterization is obtained using function `defaultControl()`:
 
@@ -443,7 +479,7 @@ Control parameters should normally be left to their **default values** until the
 ---
 # 7. Simulation input object
 
-Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a **single input object** that is then passed to the corresponding simulation function along with weather data. 
+Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a **single input object** that is then passed to the corresponding simulation function along with weather data.
 
 --
 
@@ -454,6 +490,7 @@ x <- forest2spwbInput(forest, examplesoil, SpParamsMED, control)
 ```
 
 --
+
 Having this additional step is handy because initialized cohort-level parameters and state variables can then be modified before calling the actual simulation functions.
 
 --

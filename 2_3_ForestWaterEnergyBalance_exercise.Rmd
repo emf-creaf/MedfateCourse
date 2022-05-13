@@ -11,7 +11,6 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-      ratio: 16:9
     seal: false
 editor_options: 
   chunk_output_type: console
@@ -43,7 +42,7 @@ library(sp)
 
 
 ---
-layout: false
+layout: true
 
 <div class=my-header>
     <img class="emf-logo" src="resources/img/emf_logo.svg">
@@ -53,27 +52,58 @@ layout: false
 
 # Exercise setting
 
-## Goal
+---
+## Overall goal
 
-Learn some of the common issues that arise in the process of preparing model inputs.
-
---
-
-## Objectives
-
-  1. Build `forest` objects from a tree data frame of forest inventory data
-  2. Retrieve soil physical properties from SoilGrids
-  3. Interpolate daily weather on the plot location
+Obtain some practice using medfate for forest water balance simulations.
 
 --
 
-## Data
+## Specific objectives
 
-Package **medfateutils** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. As a result of the abandonment of coppicing in the area, there is a high density of stems per individual.
+  1. Perform a basic water balance run on a real-case data and inspect the results
+  2. Evaluate the performance of the water balance model with observed data
+  3. Perform an advanced water balance run on the same data and inspect the results
+  4. Compare the results and performance between the two models
+  
 
-   + *Location*: Poblet (Catalonia, Spain); long/lat: 1.0219º, 41.3443º
-   + *Topography*: elevation = 850 m, slope = 15.1º, aspect = 15º
-   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. The management involved a reduction of the number of stems per individual. The data includes the forest inventory before and after thinning.
+---
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+## Font-Blanche research forest
+.font90[
+ + The Font-Blanche research forest, located in southeastern France (43º14′27″ N 5°40′45″ E, 420 m elevation), is composed of a top strata of *Pinus halepensis* (Aleppo pine) reaching about 12 m, a lower strata of *Quercus ilex* (holm oak), reaching about 6 m, and an understorey strata dominated by *Quercus coccifera* and *Phillyrea latifolia*. 
+]
+
+--
+
+.font90[
+ + The forest grows on rocky and shallow soils that have a low retention capacity and are of Jurassic limestone origin. The climate is Mediterranean, with a water stress period in summer, cold or mild winters and most precipitation occurring between September and May. 
+]
+ 
+--
+
+## Target stand
+
+.font90[
++ The experimental site, which is dedicated to study forest carbon and water cycles, has an enclosed area of 80×80 m but our target stand is a quadrat of dimensions 25x25 m. 
+]
+
+--
+
+.font90[
++ The following observations are available for year 2014:
+
+   + Stand total evapotranspiration estimated using an Eddy-covariance flux tower.
+   + Soil moisture content of the topmost (0-30 cm) layer.
+   + Cohort transpiration estimates derived from sapflow measurements for *Q. ilex* and *P. halepensis*.
+   + Pre-dawn and midday leaf water potentials for *Q. ilex* and *P. halepensis*.
+]
 
 ---
 layout: true
@@ -87,14 +117,172 @@ layout: true
 # Exercise resolution
 
 ---
+## Loading Font-Blanche data
 
-## Loading packages and data
-
-You may need to install **medfateutils** from GitHub:
-```{r, eval=FALSE}
-devtools::install_github("emf-creaf/medfateutils")
+```{r, include=FALSE}
+library(medfate)
+library(ggplot2)
+library(cowplot)
 ```
 
+```{r}
+fb = readRDS("Rdata/fb_data.rds")
+names(fb)
+```
 --
 
+In our case soil physical attributes are already defined in the data bundled for FontBlanche:
+```{r}
+fb$soilData
+```
 
+```{r}
+fb_soil = soil(fb$soilData)
+```
+
+---
+
+## Species parameters
+
+```{r}
+data("SpParamsMED")
+```
+However, sometimes one may wish to override species defaults with custom values. In the case of FontBlanche there is a table of preferred parameters:
+```{r}
+fb$customParams
+```
+
+We can use function `modifySpParams()` to replace the values of parameters for the desired traits, leaving the rest unaltered:
+```{r}
+SpParamsFB = modifySpParams(SpParamsMED, fb$customParams)
+```
+
+---
+
+## Basic water balance
+
+```{r}
+fb_forest <- emptyforest("FB") 
+fb_forest$treeData <- fb$treeData
+fb_forest$shrubData <- fb$shrubData
+```
+
+```{r}
+fb_control <- defaultControl("Granier")
+```
+```{r, include=FALSE}
+fb_control$verbose = FALSE
+```
+
+
+```{r}
+fb_x <- forest2spwbInput(fb_forest, fb_soil, SpParamsFB, fb_control)
+```
+
+```{r, eval=TRUE}
+fb_basic <- spwb(fb_x, fb$meteoData,  elevation = 420, latitude = 43.24083)
+```
+
+
+---
+
+## Inspect results
+
+```{r, eval = FALSE}
+shinyplot(fb_basic)
+```
+
+---
+
+## Evaluation of evapotranspiration (1)
+
+```{r}
+fb_observed = fb$measuredData
+```
+
+Package `medfate` contains several functions to assist the evaluation of model results. We can first compare the observed vs modelled total evapotranspiration. We can plot the two time series:
+```{r fig=TRUE, fig.align="center", fig.width=10, fig.height = 4, warning=FALSE}
+evaluation_plot(fb_basic, fb_observed, type = "ETR", plotType="dynamics")
+```
+
+---
+
+## Evaluation of evapotranspiration (2)
+
+It is easy to see that in rainy days the predicted evapotranspiration is much higher than that of the observed data. We repeat the comparison but excluding the intercepted water from modeled results:
+
+.pull-left[
+### Time series plot:
+```{r fig=TRUE, fig.align="center", fig.width=8, fig.height = 4, warning=FALSE}
+evaluation_plot(fb_basic, fb_observed, 
+    type = "SE+TR", plotType="dynamics")+
+  theme(legend.position = c(0.8,0.85))
+```
+]
+
+.pull-right[
+### Scatter plot:
+```{r, fig=TRUE, fig.align="center", fig.width=5, fig.height = 4, warning=FALSE, message=FALSE}
+evaluation_plot(fb_basic, fb_observed, 
+    type = "SE+TR", plotType="scatter")
+```
+]
+
+---
+
+## Evaluation of evapotranspiration (3)
+
+Where we see a reasonably good relationship, but the model tends to underestimate total evapotranspiration during seasons with low evaporative demand. Function `evaluation_stats()` allows us to generate evaluation statistics:
+
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_basic, fb_observed, type = "SE+TR")
+```
+
+---
+
+## Evaluation of soil moisture content (1)
+
+```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=3}
+evaluation_plot(fb_basic, fb_observed, type = "SWC", plotType="dynamics")
+```
+
+---
+## Evaluation of soil moisture content (2)
+
+.pull-left[
+### Time series plot:
+```{r fig=TRUE, fig.align="center", fig.width=8, fig.height = 4, warning=FALSE}
+evaluation_plot(fb_basic, fb_observed, 
+    type = "REW", plotType="dynamics")+
+  theme(legend.position = c(0.8,0.85))
+```
+]
+
+.pull-right[
+### Scatter plot:
+```{r, fig=TRUE, fig.align="center", fig.width=5, fig.height = 4, warning=FALSE, message=FALSE}
+evaluation_plot(fb_basic, fb_observed, 
+    type = "REW", plotType="scatter")
+```
+]
+
+---
+## Evaluation of tree transpiration (1)
+
+The following plots display the observed and predicted transpiration dynamics for *Pinus halepensis* and *Quercus ilex*:
+.pull-left[
+```{r fig.width = 8, fig.height=4, warning=FALSE, message=FALSE}
+evaluation_plot(fb_basic, fb_observed, 
+                cohort = "T2_148",
+                type="E", plotType = "dynamics")+
+  theme(legend.position = c(0.85,0.83))
+```
+]
+.pull_right[
+```{r fig.width = 8, fig.height=4, warning=FALSE, message=FALSE}
+evaluation_plot(fb_basic, fb_observed, 
+                cohort = "T3_168",
+                type="E", plotType = "dynamics")+
+  theme(legend.position = c(0.85,0.83))
+```
+]

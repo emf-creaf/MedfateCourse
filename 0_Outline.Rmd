@@ -30,7 +30,7 @@ output: html_document
 + Day 1 (~ 4.5h including 30-min break and 1h exercises): 
   - Introduction to process-based forest modelling (TODO)
   - Introduction to the *medfate* R package (done)
-  - Exercise: Generating model inputs (almost done)
+  - Exercise: Generating model inputs (done)
 + Day 2 (~ 5h including 30-min break and 1h exercises)
   - Design and formulation of forest water/energy balance in *medfate* (to revise)
   - Running water/energy balance simulations with function *spwb()*  (done)
