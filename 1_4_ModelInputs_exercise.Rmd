@@ -30,13 +30,15 @@ library(medfate)
 library(sp)
 ```
 
+class: title-slide
+
 # 1.4 - Model inputs (exercise)
 
 ## Miquel De Cáceres
 
 ### Ecosystem Modelling Facility
 
-### `r Sys.Date()`
+### `r as.Date("2022-06-13")`
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=300>
 
@@ -114,7 +116,7 @@ data("poblet_trees")
 
 ## Data set inspection
 
-.font90[We can inspect its content, for example using:]
+We can inspect its content, for example using:
 
 .code80[
 ```{r}
@@ -124,7 +126,7 @@ summary(poblet_trees)
 
 --
 
-.font90[The data frame includes tree data corresponding to three forest inventories:]
+The data frame includes tree data corresponding to three forest inventories:
 
 .code80[
 ```{r}
@@ -134,27 +136,31 @@ table(poblet_trees$Plot.Code)
 
 ---
 
-## Mapping trees from the control forest (1)
+## Mapping trees from the control stand (1)
 
-.font90[We initialize an empty forest object using function `emptyforest()` from package **medfate**:]
+We initialize an empty forest object using function `emptyforest()` from package **medfate**:
 
+.code80[
 ```{r, echo = TRUE}
 pobl_ctl <- emptyforest("POBL_CTL")
 ```
+]
 
 --
 
-.font90[To fill data for element `treeData` in the `forest` object, we need to define a mapping from column names in `poblet_trees` to variables in `treeData`. The mapping can be defined using a **named string vector**, i.e. a vector where element names are variable names in `treeData` and vector elements are strings of the variable names in `poblet_trees`:]
+To fill data for element `treeData` in the `forest` object, we need to define a mapping from column names in `poblet_trees` to variables in `treeData`. The mapping can be defined using a **named string vector**, i.e. a vector where element names are variable names in `treeData` and vector elements are strings of the variable names in `poblet_trees`:
 
+.code80[
 ```{r}
 mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm")
 ```
+]
 
 --
 
-.font90[We can now replace the empty `treeData` in `pobl_ctl` using functions `subset()` and `forest_mapTreeTable()` from **medfateutils**:]
+We can now replace the empty `treeData` in `pobl_ctl` using functions `subset()` and `forest_mapTreeTable()` from **medfateutils**:
 
-.code70[
+.code80[
 ```{r}
 pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
                                          mapping = mapping, SpParams = SpParamsMED)
@@ -163,9 +169,9 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 
 ---
 
-## Mapping trees from the control forest (2)
+## Mapping trees from the control stand (2)
 
-.font90[We can inspect the result using:]
+We can inspect the result using:
 
 .code80[
 ```{r, eval = FALSE}
@@ -175,19 +181,19 @@ summary(pobl_ctl$treeData)
 
 --
 
-.font90[One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary()` function defined in **medfate** for this object class:]
+One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary()` function defined in **medfate** for this object class:
 
 .code80[
-```{r}
+```{r, highlight.output= c(2,5)}
 summary(pobl_ctl, SpParamsMED)
 ```
 ]
 
 ---
 
-## Mapping trees from the control forest (3)
+## Mapping trees from the control stand (3)
 
-.font90[We are told that forest stand sampling was done using a *circular plot* whose radius was 15 m. We can calculate the sampled area using:]
+We are told that forest stand sampling was done using a *circular plot* whose radius was 15 m. We can calculate the sampled area using:
 
 .code80[
 ```{r}
@@ -197,9 +203,9 @@ sampled_area = pi*15^2
 
 --
 
-.font90[and use this information to map the tree data again, where we specify the parameter `plot.size`:]
+and use this information to map the tree data again, where we specify the parameter `plot.size`:
 
-.code70[
+.code80[
 ```{r}
 pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
                                          mapping = mapping, SpParams = SpParamsMED, 
@@ -209,7 +215,7 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 
 --
 
-.font90[We run again the summary and check whether basal area and leaf area index make sense:]
+We run again the summary and check whether basal area and leaf area index make sense:
 
 .code80[
 ```{r, eval = FALSE}
@@ -219,13 +225,13 @@ summary(pobl_ctl, SpParamsMED)
 
 ---
 
-## Mapping trees from the control forest (4)
+## Mapping trees from the control stand (4)
 
-.font90[Another issue that we see is the `summary()` concerns percentage of PAR and SWR that reaches the ground, which have missing values. This indicates that light extinction cannot be calculated, in our case because tree heights are missing.]
+Another issue that we see is the `summary()` concerns percentage of PAR and SWR that reaches the ground, which have missing values. This indicates that light extinction cannot be calculated, in our case because tree heights are missing.
 
 --
 
-.font90[We should somehow estimate tree heights, for example using an allometric relationship:]
+We should somehow estimate tree heights, for example using an allometric relationship:
 
 .code80[
 ```{r}
@@ -236,9 +242,9 @@ summary(poblet_trees$Height.cm)
 
 --
 
-.font90[Once tree heights are defined, we can include them in our mapping:]
+Once tree heights are defined, we can include them in our mapping vector:
 
-.code70[
+.code80[
 ```{r}
 mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm", "Height" = "Height.cm")
 ```
@@ -246,9 +252,9 @@ mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm", "Height" = "Heigh
 
 --
 
-.font90[and rerun the tree data mapping.]
+and rerun the tree data mapping function.
 
-.code70[
+.code80[
 ```{r, include = FALSE}
 pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
                                          mapping = mapping, SpParams = SpParamsMED, 
@@ -258,44 +264,43 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 
 ---
 
-## Mapping trees from the managed forest (1)
+## Mapping trees from the managed stand (1)
 
-.font90[Now we can address the *managed* stand, which has two codes corresponding to *before* and *after* the thinning intervention. Let us first deal with the pre-thinning state:]
+Now we can address the *managed* stand, which has two codes corresponding to *before* and *after* the thinning intervention. Let us first deal with the pre-thinning state:
 
-.code70[
+.code80[
 ```{r}
-pobl_thi_bef = emptyforest("POBL_THI_BEF")
-pobl_thi_bef$treeData = forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
-                                            mapping = mapping, SpParams = SpParamsMED, 
-                                            plot.size = sampled_area)
-
+pobl_thi_bef <- emptyforest("POBL_THI_BEF")
+pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
+                                             mapping = mapping, SpParams = SpParamsMED, 
+                                             plot.size = sampled_area)
 summary(pobl_thi_bef$treeData)
 ```
 ]
 
 ---
 
-## Mapping trees from the managed forest (2)
+## Mapping trees from the managed stand (2)
 
-.font90[The `Species` variable contains two missing values. This will normally happen when some species cannot be identified. We can verify if this happens for other parts of the Poblet tree data:]
+The `Species` variable contains two missing values. This will normally happen when some species cannot be identified. We can verify if this happens for other parts of the Poblet tree data:
 
-.code70[
+.code80[
 ```{r}
 sum(!(poblet_trees$Species %in% SpParamsMED$Name))
 ```
 ]
 
-.font90[If we display species counts we can identify which species is not being parsed:]
+If we display species counts we can identify which species is not being parsed:
 
-.code70[
+.code80[
 ```{r}
 table(poblet_trees$Species)
 ```
 ]
 
-.font90[In this case, the name used for the downy oak (*Quercus humilis*) is a synonym and needs to be replaced by its accepted name (*Quercus pubescens*), which we can do:]
+In this case, the name used for the downy oak (*Quercus humilis*) is a synonym and needs to be replaced by its accepted name (*Quercus pubescens*), which we can do:
 
-.code70[
+.code80[
 ```{r}
 poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] = "Quercus pubescens"
 ```
@@ -303,39 +308,108 @@ poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] = "Quercus pubesce
 
 ---
 
-## Mapping trees from the managed forest (3)
+## Mapping trees from the managed stand (3)
 
-.font90[Now we repeat our mapping and check the results:]
+Now we repeat our mapping and check the results:
 
-.code70[
-```{r, eval = FALSE}
-pobl_thi_bef$treeData = forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
+.code80[
+```{r, eval = TRUE, highlight.output=c(2,5)}
+pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
                                              mapping = mapping, SpParams = SpParamsMED, 
                                              plot.size = sampled_area)
 summary(pobl_thi_bef, SpParamsMED)
 ```
 ]
 
-.font90[Like the control plot, the `summary()` indicates a dense oak forest. We can finally map tree data for the forest plot after the thinning intervention:]
+Like the control plot, the `summary()` indicates a dense oak forest.
 
-.code70[
-```{r, eval = FALSE}
-pobl_thi_aft = emptyforest("POBL_THI_AFT")
-pobl_thi_aft$treeData = forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_AFT"), 
-                                mapping = mapping, SpParams = SpParamsMED, 
-                                plot.size = sampled_area)
+---
 
+## Mapping trees from the managed stand (4)
+
+We can finally map tree data for the forest plot after the thinning intervention:
+
+.code80[
+```{r, eval = TRUE, highlight.output=c(2,5)}
+pobl_thi_aft <- emptyforest("POBL_THI_AFT")
+pobl_thi_aft$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_AFT"), 
+                                             mapping = mapping, SpParams = SpParamsMED, 
+                                             plot.size = sampled_area)
 summary(pobl_thi_aft, SpParamsMED)
 ```
 ]
 
-.font90[And check the reduction caused by the thinning.]
+And check the reduction caused by the thinning.
+
+---
+
+## Reducing the number of cohorts (1)
+
+So far we have considered that each tree record should correspond to a woody cohort. We can check the number of tree cohorts in each `forest` structure using:
+
+.code80[
+```{r}
+nrow(pobl_ctl$treeData)
+nrow(pobl_thi_bef$treeData)
+nrow(pobl_thi_aft$treeData)
+```
+]
+
+--
+
+This large amount of cohorts can slow done simulations considerably.
+
+
+
+---
+
+## Reducing the number of cohorts (2)
+
+One way of reducing the number of cohorts is via function `forest_mergeTrees()` from package **medfate**:
+
+.code80[
+```{r}
+pobl_ctl <- forest_mergeTrees(pobl_ctl)
+pobl_thi_bef <- forest_mergeTrees(pobl_thi_bef)
+pobl_thi_aft <- forest_mergeTrees(pobl_thi_aft)
+```
+]
+
+By default, the function will pool tree cohorts of the same species and diameter class (defined every 5 cm). 
+
+--
+
+We can check the new number of tree cohorts using again:
+.code80[
+```{r}
+nrow(pobl_ctl$treeData)
+nrow(pobl_thi_bef$treeData)
+nrow(pobl_thi_aft$treeData)
+```
+]
+
+
+---
+
+## Reducing the number of cohorts (3)
+
+We can check whether stand properties were altered using the `summary()` function:
+
+.code80[
+```{r, highlight.output=c(2,5)}
+summary(pobl_thi_aft, SpParamsMED)
+```
+]
+
+Function `forest_mergeTrees()` will preserve the stand density and basal area that the stand description had before merging cohorts. Other properties like leaf area index may be slightly modified.
+
+In general, it is advisable to reduce the number of woody cohorts before running simulation models in **medfate**.
 
 ---
 
 ## Retrieving SoilGrids data
 
-.font90[Retrieval of soil properties from SoilGrids can be done using function `soilgridsParams()` from package **medfateutils**. Assuming we know the plot coordinates, we first create an object `SpatialPoints` (see package **sp**):]
+Retrieval of soil properties from SoilGrids can be done using function `soilgridsParams()` from package **medfateutils**. Assuming we know the plot coordinates, we first create an object `SpatialPoints` (see package **sp**):
 
 .code80[
 ```{r}
@@ -346,7 +420,7 @@ coords_sp <- SpatialPoints(cc, CRS(SRS_string = "EPSG:4326"))
 
 --
 
-.font90[This object can be used to query SoilGrids using `soilgridsParams()`:]
+This object can be used to query SoilGrids using `soilgridsParams()`:
 
 .code80[
 ```{r, eval = FALSE}
@@ -360,7 +434,7 @@ pobl_soil_props = readRDS("Rdata/pobl_soil_props.rds")
 
 --
 
-.font90[This function returns a data frame of soil properties:]
+This function returns a data frame of soil properties:
 
 .code80[
 ```{r}
@@ -372,39 +446,45 @@ pobl_soil_props
 
 ## Building the soil object
 
-.font90[This data frame is a physical description of the soil. Remember that the soil data structure for **medfate** simulations is built using function `soil()`:]
+This data frame is a physical description of the soil. Remember that the soil data structure for **medfate** simulations is built using function `soil()`:
 
+.code80[
 ```{r}
 pobl_soil <- soil(pobl_soil_props)
 ```
+]
 
-.font90[We can inspect the soil definition using `print()`]
+We can inspect the soil definition using `print()`
 
 --
 
-.font90[SoilGrids usually underestimates the amount of rocks in the soil, because soil samples do not normally contain large stones or blocks. Realistic simulations should reduce the soil water holding capacity by increasing `rfc`. For example, here we will assume that the third layer contains 80% of rocks:]
+*SoilGrids* usually underestimates the amount of rocks in the soil, because soil samples do not normally contain large stones or blocks. Realistic simulations should reduce the soil water holding capacity by increasing `rfc`. For example, here we will assume that the third layer contains 80% of rocks:
 
+.code80[
 ```{r}
 pobl_soil_props$rfc[3] = 80
 ```
+]
 
 --
 
-.font90[If we rebuild the soil object and inspect its properties:]
+If we rebuild the soil object and inspect its properties:
 
+.code80[
 ```{r, eval= FALSE}
 pobl_soil <- soil(pobl_soil_props)
 ```
+]
 
 ---
 
 ## Interpolating weather (1)
 
-.font90[Obtaining daily weather data suitable for simulations is not straightforward either. Here we illustrate one way of obtaining such data with package **meteoland**. ]
+Obtaining daily weather data suitable for simulations is not straightforward either. Here we illustrate one way of obtaining such data with package **meteoland**. 
 
 --
 
-.font90[We begin by building an object of S4 class `SpatialPointsTopography`, which extends `SpatialPoints`and contains both the coordinates of our site as well as topographic variables.]
+We begin by building an object of S4 class `SpatialPointsTopography`, which extends `SpatialPoints`and contains both the coordinates of our site as well as topographic variables.
 
 .code80[
 ```{r}
@@ -415,11 +495,11 @@ pobl_spt <- SpatialPointsTopography(coords_sp,
 
 --
 
-.font90[The more difficult part of using package **meteoland** is to assemble weather data from surface weather stations into an object of class `MeteorologyInterpolationData`. ]
+The more difficult part of using package **meteoland** is to assemble weather data from surface weather stations into an object of class `MeteorologyInterpolationData`.
 
 --
 
-.font90[Here we will assume that such an object is already available, by using the example object provided in the **meteoland** package.]
+Here we will assume that such an object is already available, by using the example object provided in the **meteoland** package.
 
 ```{r}
 data("exampleinterpolationdata")
@@ -429,20 +509,23 @@ data("exampleinterpolationdata")
 
 ## Interpolating weather (2)
 
-.font90[Once we have this interpolator, obtaining interpolated weather for a set of target points is rather straightforward using function `interpolationpoints()` from **meteoland**:]
+Once we have this interpolator, obtaining interpolated weather for a set of target points is rather straightforward using function `interpolationpoints()` from **meteoland**:
 
-```{r, warning = FALSE}
+.code80[
+```{r, warning = TRUE}
 meteo <- interpolationpoints(exampleinterpolationdata, pobl_spt)
 ```
+]
 
-.font90[Note that a **warning** was raised, because the boundary box of the interpolator does not include the location of the Poblet forests. In this case, the result of the interpolation is not reliable and should not be used. ]
+Note that a **warning** was raised, because the boundary box of the interpolator does not include the location of the Poblet forests. In this case, the result of the interpolation is not reliable and should not be used.
 
 --
 
-.font90[The output of function `interpolationpoints()` is an object of S4 class `SpatialPointsMeteorology`. We can access the weather data frame by subsetting the appropriate element of slot `data`:]
+The output of function `interpolationpoints()` is an object of S4 class `SpatialPointsMeteorology`. We can access the weather data frame by subsetting the appropriate element of slot `data`:
 
+.code80[
 ```{r, eval = FALSE}
 pobl_weather <- meteo@data[[1]]
 head(pobl_weather, 2)
 ```
-
+]

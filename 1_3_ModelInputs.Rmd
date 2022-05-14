@@ -29,13 +29,15 @@ library(medfate)
 library(sp)
 ```
 
+class: title-slide
+
 # I.3 - Model inputs
 
 ## Miquel De Cáceres
 
 ### Ecosystem Modelling Facility
 
-### `r Sys.Date()`
+### `r as.Date("2022-06-13")`
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=300>
 
@@ -84,17 +86,21 @@ Simulation models in **medfate** require a `data.frame` with species parameter v
 
 The package includes a default data set of parameter values for a set of Mediterranean species.
 
+.code80[
 ```{r, echo = TRUE}
 data("SpParamsMED")
 ```
+]
 
 --
 
 A large number of parameters (columns) can be found in `SpParamsMED`. Not all parameters are needed for all models. You can find parameter definitions in table `SpParamsDefinition`:
 
+.code80[
 ```{r, echo = TRUE}
 data("SpParamsDefinition")
 ```
+]
 
 ---
 
@@ -124,25 +130,31 @@ layout:true
 
 Each forest plot is represented in an object of class `forest`, a list that contains several elements. 
 
+.code80[
 ```{r, include = TRUE, echo = TRUE}
 forest <- exampleforestMED
 ```
+]
 
 --
 
 The most important items are two data frames, `treeData` (for trees):
 
+.code80[
 ```{r, echo = TRUE}
 forest$treeData
 ```
+]
 
 --
 
 and `shrubData` (for shrubs):
 
+.code80[
 ```{r, echo = TRUE}
 forest$shrubData
 ```
+]
 
 ---
 
@@ -209,17 +221,21 @@ The package includes a number of functions to examine properties of the plants c
 -   `stand_*`: Stand-level attributes (e.g. basal area).
 
 .pull-left[
+.code80[
 ```{r, echo = TRUE}
 plant_basalArea(forest)
 ```
+]
 ]
 
 --
 
 .pull-right[
+.code80[
 ```{r, echo = TRUE}
 plant_LAI(forest, SpParamsMED)
 ```
+]
 ]
 
 ---
@@ -477,17 +493,20 @@ names(control)
 Control parameters should normally be left to their **default values** until their effect on simulations is fully understood.
 
 ---
+
 # 7. Simulation input object
 
-Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a **single input object** that is then passed to the corresponding simulation function along with weather data.
+Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a *single input object*.
 
 --
 
-The combination of inputs is done via functions `spwbInput()` and `growthInput()`, respectively, or the more convenient `forest2spwbInput()` and `forest2growthInput()`:
+The combination can be done via functions  `forest2spwbInput()` and `forest2growthInput()`:
 
+.code80[
 ```{r, echo = TRUE}
-x <- forest2spwbInput(forest, examplesoil, SpParamsMED, control)
+{{x <- forest2spwbInput(forest, examplesoil, SpParamsMED, control)}}
 ```
+]
 
 --
 
@@ -495,5 +514,5 @@ Having this additional step is handy because initialized cohort-level parameters
 
 --
 
-Function `fordyn()` is different from the other two models: the user enters forest, soil, weather, species parameters and simulation control inputs directly into the simulation function.
+Function `fordyn()` is different from the other two models: the user enters forest, soil, weather, species parameters and simulation control inputs *directly* into the simulation function.
 

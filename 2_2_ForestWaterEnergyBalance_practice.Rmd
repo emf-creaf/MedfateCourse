@@ -37,7 +37,7 @@ class: title-slide
 
 ### Ecosystem Modelling Facility
 
-### `r Sys.Date()`
+### `r as.Date("2022-06-14")`
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=300>
 
@@ -212,29 +212,32 @@ layout: true
 ## Water balance run
 
 .font90[Let us assume we have an appropriate weather data frame:]
+.code80[
 ```{r, echo = TRUE}
 data(examplemeteo)
 ```
+]
 
 .font90[The call to function `spwb()` needs the water balance input object, the weather data frame, latitude and elevation:]
 
-```{r, echo = TRUE, eval = FALSE}
-S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
+.code80[
+```{r, echo = TRUE, eval = TRUE}
+{{S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)}}
 ```
-```{r, include = FALSE, eval = TRUE}
-S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
-```
+]
 
---
-
-.font90[Function `spwb()` returns an object of class with the same name, actually a list:]
-```{r, echo = TRUE}
-class(S)
-```
 
 ---
 
 ## Water balance output object (1)
+
+.font90[Function `spwb()` returns an object of class with the same name, actually a list:]
+
+.code80[
+```{r, echo = TRUE}
+class(S)
+```
+]
 
 .font90[It is interesting to inspect the list element names:]
 
@@ -262,7 +265,7 @@ names(S)
 
 .font90[Actually, `Plants` is itself a list with several data frames of results by cohort (days as rows, cohorts as columns):]
 
-.code70[
+.code80[
 ```{r, echo = TRUE}
 names(S$Plants)
 ```
@@ -276,34 +279,45 @@ names(S$Plants)
 
 .font90[For example, to obtain the average soil moisture and water potentials by months one can use:]
 
+.code80[
 ```{r, echo = TRUE, eval = FALSE}
 summary(S, freq="months",FUN=mean, output="Soil")
 ```
+]
 
 --
 
 .font90[Parameter `output` indicates the element of the `spwb` object for which we desire a summary. Similarly, it is possible to calculate the average stress of plant cohorts by months:]
 
+.code80[
 ```{r, echo = TRUE, eval = FALSE}
 summary(S, freq="months",FUN=mean, output="PlantStress")
 ```
+]
 
 --
 
 .font90[The `summary` function can be also used to aggregate the output by species. In this case, the values of plant cohorts belonging to the same species will be averaged using LAI values as weights:]
 
+.code80[
 ```{r, echo = TRUE, eval = FALSE}
 summary(S, freq="months", output="PlantStress", bySpecies = TRUE)
 ```
+]
 
 ---
+
 ## Plots 
 
 .font90[The package provides a `plot()` function for objects of class `spwb`. It can be used to show weather inputs and different components of the water balance, for example:]
 
-```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=6, fig.height = 4}
+.center[
+.code80[
+```{r, echo = TRUE, fig=TRUE, fig.width=6, fig.height = 4}
 plot(S, type = "PET_Precipitation")
 ```
+]
+]
 
 --
 

@@ -27,18 +27,19 @@ output: html_document
    
 ## Content and temporal organization
 
-+ Day 1 (~ 4.5h including 30-min break and 1h exercises): 
-  - Introduction to process-based forest modelling (TODO)
-  - Introduction to the *medfate* R package (done)
-  - Exercise: Generating model inputs (done)
++ Day 1: 
+  - 1.1 Introduction to process-based forest modelling (TODO)
+  - 1.2 Introduction to the *medfate* R package (done)
+  - 1.3 Model inputs (done)
+  - 1.4 Model inputs - exercise (done)
 + Day 2 (~ 5h including 30-min break and 1h exercises)
-  - Design and formulation of forest water/energy balance in *medfate* (to revise)
-  - Running water/energy balance simulations with function *spwb()*  (done)
-  - Exercises (TODO)
+  - 2.1 Design and formulation of forest water/energy balance in *medfate* (to revise)
+  - 2.2 Forest water/energy balance - practice  (done)
+  - 2.3 Forest water/energy balance - exercise (in progress)
 + Day 3 (~ 5h including 30-min break and 1h30min exercises): 
-  - Design and formulation of forest carbon balance and forest dynamics in *medfate* (TODO)
-  - Running simulations of carbon balance and forest dynamics with functions *growth()* and *fordyn()* (done)
-  - Exercises (TODO)
+  - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (TODO)
+  - 3.2 Forest growth and dynamics - practice (done)
+  - 3.3 Forest growth and dynamics - exercise (TODO)
 + Day 4 (~ 4h including 30-min break):
   - Large-scale simulations: parameterization, initialization and climate forcing (TODO)
   - Closure and feedback (TODO)
@@ -80,7 +81,7 @@ Unguided practice (45 min) - Resolution (45 min)
 
 + Suggested exercises: Obtain vegetation, soil and weather inputs from coordinates and forest inventory data (meteoland's interpolator object supplied). 
 
-### 3.1 - Forest water and energy balance (theory)
+### 2.1 - Forest water and energy balance (theory)
 
 Theory (1h 30min)
 
@@ -89,7 +90,7 @@ Theory (1h 30min)
 + Plant hydraulics and regulation of transpiration
 + Effect of water limitation on forests
 
-### 3.2 - Forest water and energy balance (practice)
+### 2.2 - Forest water and energy balance (practice)
 
 + Water balance input object
 + Running the basic water balance model
@@ -98,7 +99,7 @@ Theory (1h 30min)
 + Evaluating model performance
 + Modifying model inputs
 
-#### 3.3 Exercises (1h)
+### 2.3 Exercises (1h)
 
 + Suggested exercises: Run the water balance model on a particular stand (e.g. FontBlanche experimental site) and answer a set of questions by examining simulation results and fit to observed data.
 
