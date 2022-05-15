@@ -1,0 +1,90 @@
+---
+title: "3.3 - Forest growth and dynamics balance (exercise)"
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["resources/css/custom.css", "default-fonts", "default"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    seal: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
+)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+library(meteoland)
+library(medfate)
+library(sp)
+```
+
+class: title-slide
+
+
+# 3.3 - Forest growth/dynamics (exercise)
+
+## Miquel De Cáceres
+
+### Ecosystem Modelling Facility
+
+### `r as.Date("2022-06-14")`
+
+
+<img class= "escher-title" src="resources/img/Escher_concaveconvex.jpg" width=450>
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Exercise setting
+
+---
+## Overall goal
+
+--
+
+## Specific objectives
+
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Exercise resolution
+
+---
+layout: false
+class: back-slide
+
+
+# M.C. Escher - Concave and convex
+
+.center[
+<img src="resources/img/Escher_concaveconvex.jpg" width=550>
+]
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>

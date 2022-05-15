@@ -31,7 +31,7 @@ library(cowplot)
 
 class: title-slide
 
-# 2.2 - Forest water and energy balance (practice)
+# 2.2 - Forest water/energy balance (practice)
 
 ## Miquel De Cáceres
 
@@ -39,7 +39,9 @@ class: title-slide
 
 ### `r as.Date("2022-06-14")`
 
-<img class="logo-title" src="resources/img/emf_logo.svg" width=300>
+<img class="escher-title" src="resources/img/Escher_nightday.jpg" width=500>
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
 
 ---
 
@@ -613,3 +615,15 @@ x_mod <- modifyInputParams(x_adv, c("T2_168/LAI_live" = 1.1))
 ]
 which will display messages describing the parameters that are modified.
 
+---
+
+class: back-slide
+
+
+# M.C. Escher - Night and day
+
+.center[
+<img src="resources/img/Escher_nightday.jpg" width=600>
+]
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>

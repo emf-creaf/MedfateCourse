@@ -39,7 +39,9 @@ class: title-slide
 
 ### `r as.Date("2022-06-13")`
 
-<img class="logo-title" src="resources/img/emf_logo.svg" width=300>
+<img class="escher-title" src="resources/img/Escher_reptiles.png" width=400>
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
 
 ---
 class: center, middle
@@ -294,3 +296,15 @@ Sub-model functions are grouped by *subject*:
 ???
 Notes here
 
+---
+
+class: back-slide
+
+
+# M.C. Escher - Reptiles
+
+.center[
+<img src="resources/img/Escher_reptiles.png" width=500>
+]
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>

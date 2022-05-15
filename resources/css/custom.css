@@ -60,10 +60,16 @@ div.my-footer {
   color: black;
 }
 
+.escher-title {
+  position: absolute;
+  right: 30px;
+  bottom: 100px;
+}
+
 .logo-title {
   position: absolute;
   right: 10px;
-  bottom: 30px;
+  bottom: 20px;
 }
 
 .remark-slide-content h1 {
@@ -91,5 +97,13 @@ div.my-footer {
 .title-slide h1 {
   font-size: 4rem;
   font-weight: 400;
-  margin-top: 5rem;
+  margin-top: 4rem;
 }
+
+.back-slide {
+  background-color: #475E5B;
+  border-top: 0 solid #475E5B;
+  background-position: right center;
+  color: white;
+}
+

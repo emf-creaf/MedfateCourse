@@ -39,7 +39,9 @@ class: title-slide
 
 ### `r as.Date("2022-06-13")`
 
-<img class="logo-title" src="resources/img/emf_logo.svg" width=300>
+<img class="escher-title" src="resources/img/Escher_dragon.jpg" width=350>
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
 
 ---
 class: center, middle
@@ -515,4 +517,17 @@ Having this additional step is handy because initialized cohort-level parameters
 --
 
 Function `fordyn()` is different from the other two models: the user enters forest, soil, weather, species parameters and simulation control inputs *directly* into the simulation function.
+
+---
+layout: false
+class: back-slide
+
+
+# M.C. Escher - Dragon
+
+.center[
+<img src="resources/img/Escher_dragon.jpg" width=400>
+]
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
 
