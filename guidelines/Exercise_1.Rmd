@@ -1,0 +1,29 @@
+---
+title: "Exercise 1 guidelines"
+author: "Miquel De Cáceres"
+date: '2022-05-16'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+``` 
+
+## Exercise objectives
+
+  1. Build `forest` objects from a tree data frame of forest inventory data
+  2. Retrieve soil physical properties from SoilGrids
+  3. Interpolate daily weather on the plot location
+
+## Exercise data
+
+Package **medfateutils** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. As a result of the abandonment of coppicing in the area, there is a high density of stems per individual.
+
+   + *Location*: Poblet (Catalonia, Spain); long/lat: 1.0219º, 41.3443º
+   + *Topography*: elevation = 850 m, slope = 15.1º, aspect = 15º
+   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. The management involved a reduction of the number of stems per individual. The data includes the forest inventory before and after thinning.
+
+
+## Guidelines
+
+

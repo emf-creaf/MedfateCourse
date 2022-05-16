@@ -216,10 +216,6 @@ fb_control <- defaultControl("Granier")
 ```
 ]
 
-```{r, include=FALSE}
-fb_control$verbose = FALSE
-```
-
 and we assemble our inputs into a `spwbInput` object, using:
 
 .code80[
@@ -238,14 +234,96 @@ nrow(fb_meteo)
 
 Now, we are ready to launch the simulation:
 .code80[
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 fb_basic <- spwb(fb_x, fb_meteo,  elevation = 420, latitude = 43.24083)
+```
+]
+
+```{r include = FALSE}
+fb_basic <- readRDS("Rdata/spwb_basic.rds")
+```
+
+---
+
+## Inspect results: Precipitation events, runoff and drainage
+
+.code80[
+```{r fig=TRUE, fig.width=10, fig.height = 5}
+g1<-plot(fb_basic)+scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = "none")
+g2<-plot(fb_basic, "Export")+scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = c(0.35,0.60))
+plot_grid(g1,g2, ncol=1, rel_heights = c(0.7,1))
 ```
 ]
 
 ---
 
-## Inspect results
+## Inspect results: Evapotranspiration flows
+
+.code80[
+```{r fig=TRUE, fig.width=10, fig.height = 5}
+g1<-plot(fb_basic)+scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = "none")
+g2<-plot(fb_basic, "Evapotranspiration")+scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = c(0.13,0.73))
+plot_grid(g1,g2, ncol=1, rel_heights = c(0.7,1))
+```
+]
+
+
+---
+
+## Inspect results: Soil water potential dynamics
+
+We can display the dynamics of water potential in different soil layers using:
+.center[
+.code80[
+```{r fig=TRUE, fig.width=10, fig.height = 4}
+plot(fb_basic, "SoilPsi")
+```
+]
+]
+
+Normally, we should expect lower layers to have a less dynamic behaviour...
+
+
+---
+
+## Inspect results: Plant transpiration and water potential
+
+.pull-left[
+.code80[
+```{r fig=TRUE, fig.width=10, fig.height = 4}
+plot(fb_basic, "Transpiration", bySpecies = TRUE)
+```
+]
+]
+
+.pull-right[
+.code80[
+```{r fig=TRUE, fig.width=10, fig.height = 4}
+plot(fb_basic, "PlantPsi", bySpecies = TRUE)
+```
+]
+]
+
+---
+
+## Inspect results: Drought stress and PLC
+
+.pull-left[
+.code80[
+```{r fig=TRUE, fig.width=10, fig.height = 4}
+plot(fb_basic, "PlantStress", bySpecies = TRUE)
+```
+]
+]
+
+.pull-right[
+.code80[
+```{r fig=TRUE, fig.width=10, fig.height = 4}
+plot(fb_basic, "StemPLC", bySpecies = TRUE)
+```
+]
+]
+---
 
 ```{r, eval = FALSE}
 shinyplot(fb_basic)
@@ -253,7 +331,7 @@ shinyplot(fb_basic)
 
 ---
 
-## Evaluation of evapotranspiration (1)
+## Evaluation of stand evapotranspiration (1)
 
 .code80[
 ```{r}
@@ -270,9 +348,10 @@ evaluation_plot(fb_basic, fb_observed, type = "ETR", plotType="dynamics")
 ```
 ]
 ]
+
 ---
 
-## Evaluation of evapotranspiration (2)
+## Evaluation of stand evapotranspiration (2)
 
 It is easy to see that in rainy days the predicted evapotranspiration is much higher than that of the observed data. We repeat the comparison but excluding the intercepted water from modeled results:
 
@@ -300,13 +379,15 @@ evaluation_plot(fb_basic, fb_observed,
 
 ---
 
-## Evaluation of evapotranspiration (3)
+## Evaluation of stand evapotranspiration (3)
 
 Where we see a reasonably good relationship, but the model tends to underestimate total evapotranspiration during seasons with low evaporative demand. Function `evaluation_stats()` allows us to generate evaluation statistics:
 
+.code80[
 ```{r, warning=FALSE, message=FALSE}
 evaluation_stats(fb_basic, fb_observed, type = "SE+TR")
 ```
+]
 
 ---
 
@@ -344,6 +425,13 @@ evaluation_plot(fb_basic, fb_observed,
 ]
 ]
 
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_basic, fb_observed, type = "REW")
+```
+]
+
 ---
 ## Evaluation of tree transpiration (1)
 
@@ -369,6 +457,95 @@ evaluation_plot(fb_basic, fb_observed,
   theme(legend.position = c(0.85,0.83))
 ```
 ]
+]
+
+---
+## Advanced water/energy balance
+
+Since we are about to run a advanced water balance simulation, we initialize a simulation control parameter list with `transpirationMode = "Sperry"`, i.e.:
+
+.code80[
+```{r}
+fb_control <- defaultControl("Sperry")
+```
+]
+
+and we assemble our inputs into a `spwbInput` object, using:
+
+.code80[
+```{r}
+fb_x <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
+```
+]
+
+And we launch the simulation (takes 1-2 minures):
+.code80[
+```{r, eval=FALSE}
+fb_adv <- spwb(fb_x, fb_meteo,  elevation = 420, latitude = 43.24083)
+```
+]
+
+```{r include = FALSE}
+fb_adv <- readRDS("Rdata/spwb_adv.rds")
+```
+
+---
+
+## Comparing the performance of the two models (1)
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_basic, fb_observed, type = "REW")
+```
+]
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_adv, fb_observed, type = "REW")
+```
+]
+
+--
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_basic, fb_observed, type = "SE+TR")
+```
+]
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_adv, fb_observed, type = "SE+TR")
+```
+]
+
+---
+
+## Comparing the performance of the two models (2)
+
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_basic, fb_observed, cohort = "T2_148", type="E")
+```
+]
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_adv, fb_observed, cohort = "T2_148", type="E")
+```
+]
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_basic, fb_observed, cohort = "T3_168", type="E")
+```
+]
+
+.code80[
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_adv, fb_observed, cohort = "T3_168", type="E")
+```
 ]
 
 ---
