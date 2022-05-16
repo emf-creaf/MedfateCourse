@@ -2,7 +2,9 @@
 title: "Outline"
 author: "Miquel De Cáceres"
 date: "24/2/2022"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 
@@ -28,21 +30,21 @@ output: html_document
 ## Content and temporal organization
 
 + Day 1: 
-  - 1.1 Introduction to process-based forest modelling (TODO)
-  - 1.2 Introduction to the *medfate* R package (done)
-  - 1.3 Model inputs (done)
-  - 1.4 Model inputs - exercise (done)
-+ Day 2
-  - 2.1 Design and formulation of forest water/energy balance in *medfate* (to revise)
-  - 2.2 Forest water/energy balance - practice  (done)
-  - 2.3 Forest water/energy balance - exercise (in progress)
-+ Day 3 
-  - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (TODO)
-  - 3.2 Forest growth and dynamics - practice (done)
-  - 3.3 Forest growth and dynamics - exercise (TODO)
-+ Day 4 (~ 4h including 30-min break):
-  - Large-scale simulations: parameterization, initialization and climate forcing (TODO)
-  - Closure and feedback (TODO)
+  - 1.1 Introduction to process-based forest modelling (30 min; TODO)
+  - 1.2 Introduction to the *medfate* R package (30 min)
+  - 1.3 Model inputs (1h)
+  - 1.4 Model inputs - exercise (2h)
++ Day 2:
+  - 2.1 Design and formulation of forest water/energy balance in *medfate* (1h; to revise)
+  - 2.2 Forest water/energy balance - practice (1h)
+  - 2.3 Forest water/energy balance - exercise (2h; in progress)
++ Day 3:
+  - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (1h; TODO)
+  - 3.2 Forest growth and dynamics - practice (1h)
+  - 3.3 Forest growth and dynamics - exercise (2h; TO DO)
++ Day 4:
+  - 4.1 Large-scale simulations: parameterization, initialization and climate forcing (TODO)
+  - 4.2 Closure and feedback (TODO)
 
 ## Detailed content
 
@@ -103,13 +105,13 @@ Theory (1h 30min)
 
 + Suggested exercises: Run the water balance model on a particular stand (e.g. FontBlanche experimental site) and answer a set of questions by examining simulation results and fit to observed data.
 
-### 4.1 - Plant growth and forest dynamics - Theory (1h 30min)
+### 3.1 - Plant growth and forest dynamics - Theory (1h 30min)
 
 + Carbon balance and carbon allocation in process-based models
 + Secondary growth and sink limitations in process-based models
 + Mortality and recruitment in process-based models
 
-### 4.2 Guided practice (1h 30min)
+### 3.2 Guided practice (1h 30min)
 
 + Growth input object
 + Running growth simulations and examining output
@@ -117,14 +119,11 @@ Theory (1h 30min)
 + Running forest dynamics simulations and examining output
 + Forest management and forest dynamics
 
-### 4.3 Exercises (1h 30min)
+### 3.3 Exercises (1h 30min)
 
 + Suggested exercises: Run the growth model on a particular stand (e.g. FUN2FUN plot) and answer a set of questions by examining simulation results and fit to observed growth data. Project forest dynamics to the future for the same plot and summarize the results focusing on a particular question.
 
-
-### V - Advanced topics
-
-#### 5.1 Guided practice (2h 30min)
+### 4.1 Guided practice (2h 30min)
 
 + Sensitivity analysis
 + Parameterization using functional trait databases
@@ -132,9 +131,7 @@ Theory (1h 30min)
 + Brief introduction to meteoland package
 + Parallelization and medfateland package
 
-### VI - Closure and feedback 
-
-#### 6.1 Open debate (1h)
+### 4.2 Open debate (1h)
 
 + Open debate on medfate's design and usability
 + Future prospects of developments in medfate and companion packages

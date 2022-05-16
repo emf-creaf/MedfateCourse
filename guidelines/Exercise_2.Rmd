@@ -1,7 +1,7 @@
 ---
 title: "Exercise 2 guidelines"
 author: "Miquel De Cáceres"
-date: '2022-05-16'
+date: '2022-06-14'
 output: html_document
 ---
 
@@ -65,13 +65,118 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 5. Assemble a water balance input object and examine the dates of the weather dataset included in the input data
+
 ```{r}
 
 ```
 
 6. Run a basic water balance simulation and make sure you understand the console output
+
 ```{r}
 
 ```
 
-7. 
+7. Compare the precipitation events and the generation of surface runoff and/or deep drainage (hint: use S3 function `plot()` for objects `spwb` or function `shinyplot()`).
+
+```{r}
+
+```
+
+8. Examine the evapotranspiration flows (intercepted water, plant transpiration, bare soil evaporation), their seasonality and importance for the overall evapotranspiration.
+
+```{r}
+
+```
+
+9. Examine the dynamics of water potential in the different soil layers. Which ones are more dynamic? What could be wrong in the model parameterization if our expectation in this respect would not be met?
+
+```{r}
+
+```
+
+10. Examine the seasonality of plant drought stress (as defined in the model) and stem percent loss of conductance. What are the differences between the two plant drought indicators? What species parameters are governing these estimates? Are their values correct?
+
+```{r}
+
+```
+
+11. Examine the observed (measured) data set. Make sure you understand the column names. Try plotting a comparison of the observed vs. simulated stand evapotranspiration (hint: see documentation for function `?evaluation_plot`). 
+
+```{r}
+
+```
+
+12. The observed data does not have the same spikes as modelled data corresponding to precipitation events. Repeat the comparison but excluding the intercepted water (hint: see option `type = "SE+TR"` in the documentation of `evaluation_plot`).
+
+```{r}
+
+```
+
+13. Generate the evaluation statistics for the evapotranspiration comparison (hint: use function `evaluation_stats()`)
+
+```{r}
+
+```
+
+14. Compare the observed vs. modelled soil water content. Why are the two series not scaled? Try repeating the comparison with relativized values (hint: `type = REW`). Calculate evaluation statistics.
+
+```{r}
+
+```
+
+15. Create a new water balance input object for the advanced model (i.e. use `transpirationMode = "Sperry"`) and launch a new water balance simulation (this will take 1-2 minutes).
+
+```{r}
+
+```
+
+16. Compare the performance of the first simulation to the second, in terms of their fit to observed soil moisture and stand evapotranspiration data.
+
+```{r}
+
+```
+
+17. Compare the soil layer moisture dynamics of the two simulations. Which model produces stronger coupling between soil layers? Why?
+
+```{r}
+
+```
+
+18. Using the results of the advanced water balance model, draw the plant extraction from soil layers (`"PlantExtraction"`) and the water input from hydraulic redistribution (`"HydraulicRedistribution"`) to understand the upward and downward water flows.
+
+```{r}
+
+```
+
+19. Compare the plant transpiration dynamics of the two simulations, at the cohort-level and leaf area level. Which species starts closing its stomata earlier? Are the two models consistent in this respect? Which functional parameters govern plant transpiration dynamics?
+
+```{r}
+
+```
+
+20. Evaluate the plant transpiration flows predicted by the advanced model for *Pinus halepensis* and *Quercus ilex* using observed sap-flow data. For which species does the model perform better in terms of absolute values? For which species is the correlation between observed and modelled values higher?
+
+```{r}
+
+```
+
+21. Draw the daily drop in leaf water potential predicted by the advanced model for the three species in the stand (hint: use `"LeafPsiRange"`). Which species has a stronger stomatal control?
+
+```{r}
+
+```
+
+22. Compare the predicted vs. observed leaf water potentials (pre-dawn and midday). Is the model  appropriately estimating leaf water potential dynamics with the amount of information available?
+
+```{r}
+
+```
+
+23. Examine the seasonality of plant drought stress and stem percent loss of hydraulic conductance produced by the advanced water balance model, and compare the results with those of the basic water balance model. Are they similar?
+
+```{r}
+
+```
+
+
+
