@@ -1,7 +1,7 @@
 ---
 title: "Exercise 1 guidelines"
 author: "Miquel De Cáceres"
-date: '2022-05-16'
+date: '2022-06-13'
 output: html_document
 ---
 
@@ -26,4 +26,105 @@ Package **medfateutils** includes a data frame (`poblet_trees`), corresponding t
 
 ## Guidelines
 
+1. Install packages **medfate**, **meteoland** and **medfateutils** (hint: this last one from GitHub) and load them in your session.
+
+```{r}
+
+```
+
+2. Load the data set `"poblet_trees"` included in package **medfateutils** and examine its content. How many and which forest structures are described?
+
+```{r}
+
+```
+
+3. Create a `forest` object and populate its tree data from the appropriate subset of `"poblet_trees"` (hint: define a named string vector to specify a column mapping and use function `forest_mapTreeTable()` for the actual mapping).
+
+```{r}
+
+```
+
+4. What is the stand basal area of the forest after mapping data? And the stand leaf area index? Are these values acceptable for a dense oak forest? (hint: use function `summary()` for objects of class `forest`)
+
+```{r}
+
+```
+
+5. Calculate the area of the plot used for sampling tree data and use it to repeat the tree mapping. Check the new values of stand basal area and leaf area index.
+
+```{r}
+
+```
+
+6. Why is the amount of light reaching the ground missing in the forest summary? What tree measurements are needed to estimate light extinction through the canopy? Try to complete the information in `"poblet_trees"` using an allometric relationship and repeat the tree mapping. Check that the light reaching the ground can now be estimated.
+
+```{r}
+
+```
+
+7. Try to map the tree data of the *managed* forest stand *before* the intervention. Why is the summary function returning an error? Are there missing values in some variables of `treeData`? Why is this happening?
+
+```{r}
+
+```
+
+8. Which species names in the `"poblet_trees"` dataset are not included in `SpParamsMED` and determine the reason. Correct the species names in `"poblet_trees"`, repeat the tree mapping and check the results.
+
+```{r}
+
+```
+
+9. Map the tree data of the *managed* forest stand *after* the intervention and compare its summary with that of the stand *before* the intervention.
+
+```{r}
+
+```
+
+10. What is the number of tree cohorts in each of the forest structures? What is the density of each cohort? What can be the consequences of such a large number of cohorts for simulations? 
+
+```{r}
+
+```
+
+11. Merge tree cohorts by DBH class using function `forest_mergeTrees()` and check the resulting number of tree cohorts.
+
+```{r}
+
+```
+
+12. Build a matrix with the geographic coordinates of Poblet stands and create an object of class `SpatialPoints` (package **sp**).
+
+```{r}
+
+```
+
+13. Retrieve a data frame of soil physical properties from SoilGrids using function `soilgridsParams()`, included in **medfateutils**.
+
+```{r}
+
+```
+
+14. Build an object of class `soil` using the data frame of the previous step examine the result. Is the soil water capacity high or low?
+
+```{r}
+
+```
+
+15. Modify the column `rfc` of the data frame of soil physical properties to increase the percentage of rocks in layer #3 and rebuild the `soil` object.
+
+```{r}
+
+```
+
+16. Build an object of the S4 class `SpatialPointsTopography` (defined in package **meteoland**), containing the `SpatialPoints` and the topographic variables (elevation, slope, aspect).
+
+```{r}
+
+```
+
+17. Load the `"exampleinterpolationdata"` object provided in package **meteoland** and interpolate daily weather on the location of the Poblet stands (hint: use function `interpolationpoints()`). What do the warnings mean?
+
+```{r}
+
+```
 
