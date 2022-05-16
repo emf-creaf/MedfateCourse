@@ -2,7 +2,9 @@
 title: "Exercise 1 guidelines"
 author: "Miquel De Cáceres"
 date: '2022-06-13'
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -24,7 +26,7 @@ Package **medfateutils** includes a data frame (`poblet_trees`), corresponding t
    + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. The management involved a reduction of the number of stems per individual. The data includes the forest inventory before and after thinning.
 
 
-## Guidelines
+## Guidelines by steps
 
 1. Install packages **medfate**, **meteoland** and **medfateutils** (hint: this last one from GitHub) and load them in your session.
 

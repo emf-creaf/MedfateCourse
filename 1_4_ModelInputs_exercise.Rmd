@@ -91,7 +91,7 @@ layout: true
 
 ---
 
-## Loading packages and data
+## Step 1. Loading packages
 
 You may need to install **medfateutils** from GitHub:
 ```{r, eval=FALSE}
@@ -108,6 +108,9 @@ library(meteoland)
 ```
 
 --
+
+## Step 2. Load and inspect Font-Blanche data
+
 Normally, tree data would be in a **.csv** or **.xlsx** file. Here, we simply load the tree data from Poblet included in the package:
 
 ```{r}
@@ -116,7 +119,7 @@ data("poblet_trees")
 
 ---
 
-## Data set inspection
+## Step 2. Load and inspect Font-Blanche data
 
 We can inspect its content, for example using:
 
@@ -138,7 +141,7 @@ table(poblet_trees$Plot.Code)
 
 ---
 
-## Mapping trees from the control stand (1)
+## Step 3. Mapping trees from the control stand
 
 We initialize an empty forest object using function `emptyforest()` from package **medfate**:
 
@@ -171,7 +174,7 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 
 ---
 
-## Mapping trees from the control stand (2)
+## Step 4. Check the mapping result
 
 We can inspect the result using:
 
@@ -193,7 +196,7 @@ summary(pobl_ctl, SpParamsMED)
 
 ---
 
-## Mapping trees from the control stand (3)
+## Step 5. Specifying plot size
 
 We are told that forest stand sampling was done using a *circular plot* whose radius was 15 m. We can calculate the sampled area using:
 
@@ -227,7 +230,7 @@ summary(pobl_ctl, SpParamsMED)
 
 ---
 
-## Mapping trees from the control stand (4)
+## Step 6. Adding tree heights
 
 Another issue that we see is the `summary()` concerns percentage of PAR and SWR that reaches the ground, which have missing values. This indicates that light extinction cannot be calculated, in our case because tree heights are missing.
 
@@ -266,7 +269,7 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 
 ---
 
-## Mapping trees from the managed stand (1)
+## Step 7. Mapping trees from the managed stand
 
 Now we can address the *managed* stand, which has two codes corresponding to *before* and *after* the thinning intervention. Let us first deal with the pre-thinning state:
 
@@ -282,7 +285,7 @@ summary(pobl_thi_bef$treeData)
 
 ---
 
-## Mapping trees from the managed stand (2)
+## Step 8. Fixing species nomenclature
 
 The `Species` variable contains two missing values. This will normally happen when some species cannot be identified. We can verify if this happens for other parts of the Poblet tree data:
 
@@ -310,7 +313,7 @@ poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] = "Quercus pubesce
 
 ---
 
-## Mapping trees from the managed stand (3)
+## Step 8. Fixing species nomenclature
 
 Now we repeat our mapping and check the results:
 
@@ -327,9 +330,9 @@ Like the control plot, the `summary()` indicates a dense oak forest.
 
 ---
 
-## Mapping trees from the managed stand (4)
+## Step 9. Mapping trees from the managed stand
 
-We can finally map tree data for the forest plot after the thinning intervention:
+We can finally map tree data for the forest plot *after* the thinning intervention:
 
 .code80[
 ```{r, eval = TRUE, highlight.output=c(2,5)}
@@ -345,7 +348,7 @@ And check the reduction caused by the thinning.
 
 ---
 
-## Reducing the number of cohorts (1)
+## Step 10. Checking the number of cohorts
 
 So far we have considered that each tree record should correspond to a woody cohort. We can check the number of tree cohorts in each `forest` structure using:
 
@@ -365,7 +368,7 @@ This large amount of cohorts can slow done simulations considerably.
 
 ---
 
-## Reducing the number of cohorts (2)
+## Step 11. Reducing the number of cohorts
 
 One way of reducing the number of cohorts is via function `forest_mergeTrees()` from package **medfate**:
 
@@ -393,7 +396,7 @@ nrow(pobl_thi_aft$treeData)
 
 ---
 
-## Reducing the number of cohorts (3)
+## Step 11. Reducing the number of cohorts
 
 We can check whether stand properties were altered using the `summary()` function:
 
@@ -409,7 +412,7 @@ In general, it is advisable to reduce the number of woody cohorts before running
 
 ---
 
-## Retrieving SoilGrids data
+## Steps 12-13. Retrieving SoilGrids data
 
 Retrieval of soil properties from SoilGrids can be done using function `soilgridsParams()` from package **medfateutils**. Assuming we know the plot coordinates, we first create an object `SpatialPoints` (see package **sp**):
 
@@ -446,7 +449,7 @@ pobl_soil_props
 
 ---
 
-## Building the soil object
+## Steps 14-15. Building the soil object
 
 This data frame is a physical description of the soil. Remember that the soil data structure for **medfate** simulations is built using function `soil()`:
 
@@ -480,7 +483,7 @@ pobl_soil <- soil(pobl_soil_props)
 
 ---
 
-## Interpolating weather (1)
+## Steps 16-17. Interpolating weather
 
 Obtaining daily weather data suitable for simulations is not straightforward either. Here we illustrate one way of obtaining such data with package **meteoland**. 
 
@@ -509,7 +512,7 @@ data("exampleinterpolationdata")
 
 ---
 
-## Interpolating weather (2)
+## Steps 16-17. Interpolating weather
 
 Once we have this interpolator, obtaining interpolated weather for a set of target points is rather straightforward using function `interpolationpoints()` from **meteoland**:
 
