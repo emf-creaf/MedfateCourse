@@ -13,9 +13,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise objectives
 
-  1. Perform a basic water balance run on a real-case data and inspect the results
+  1. Perform simulations of forest growth and forest dynamics with medfate
+  2. Evaluate tree growth predictions with tree ring data
+  3. Compare simulated forest dynamics between inventories with observed changes
+  4. Project forest dynamics with/without forest management
 
 ## Exercise data
+
+### Forest inventory plot
+
+
+### Tree ring data
+
 
 ## Guidelines
 
@@ -25,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-2. Estimate the leaf area index (LAI) and basal area of the forest stand at SNFI3 (year 2000) and at SNFI4 (year 2015).
+2. Estimate the leaf area index (LAI) and basal area of the forest stand at SNFI3 (year 2000), as well as the contribution of the different species present.
 
 ```{r}
 
@@ -37,3 +46,34 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
+4. Examine the simulation results using `shinyplot()`. Which decreased in leaf area index? 
+
+```{r}
+
+```
+
+
+5. Evaluate visually the performance of the model with respect to the annual basal area increment of those trees for which ring measurements are available. Is the model performing appropriately? If not, which model parameter can we change so that fit to data increases?
+
+```{r}
+
+```
+
+6. Repeat the growth simulation after modifying the appropriate model parameter. Did the visual fit to tree ring data improved?
+
+```{r}
+
+```
+
+ 7. Run a simulation of forest dynamics using function `fordyn()`.
+ 
+```{r}
+
+```
+ 
+ 8. Compare the final `forest` state with the one derived from SNFI4. Is the final stand density and basal area predicted acceptably? What about shrub cover?
+ 
+```{r}
+
+```
+ 

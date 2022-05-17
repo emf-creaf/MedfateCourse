@@ -106,15 +106,6 @@ summary(alepo$forest_snfi3, SpParamsMED)
 ]
 
 .code80[
-```{r, highlight.output = c(2,5)}
-summary(alepo$forest_snfi4, SpParamsMED)
-```
-]
-
----
-## Step 2. Forest stand metrics
-
-.code80[
 ```{r}
 species_basalArea(alepo$forest_snfi3, SpParamsMED)
 ```
@@ -122,7 +113,186 @@ species_basalArea(alepo$forest_snfi3, SpParamsMED)
 
 .code80[
 ```{r}
-species_basalArea(alepo$forest_snfi4, SpParamsMED)
+species_LAI(alepo$forest_snfi3, SpParamsMED)
+```
+]
+
+---
+
+## Step 3. Growth simulation between SNFI3 and SNFI4
+
+.code80[
+```{r}
+alepo$soil <- soil(alepo$soildesc)
+```
+]
+
+.code80[
+```{r}
+x_alepo <- forest2growthInput(x = alepo$forest_snfi3,
+                              soil = alepo$soil,
+                              SpParams = SpParamsMED,
+                              control = defaultControl())
+```
+]
+
+.code80[
+```{r}
+alepo$soil <- soil(alepo$soildesc)
+```
+]
+
+---
+
+## Step 3. Growth simulation between SNFI3 and SNFI4 
+.code80[
+```{r, eval = FALSE}
+G_34 <- growth(x = x_alepo, 
+               meteo = alepo$historic_weather,
+               latitude = 41, 
+               elevation = alepo$spt$elevation,
+               slope = alepo$spt$slope,
+               aspect = alepo$spt$aspect)
+```
+]
+
+---
+
+## Step 4. Examine growth results
+
+
+---
+
+## Step 5. Evaluate tree basal area increment
+
+```{r, include = FALSE}
+G_34 <- readRDS("Rdata/growth_snfi34.rds")
+```
+
+.code80[
+```{r, fig=TRUE, fig.width=10, fig.height=5}
+g1<-evaluation_plot(G_34, alepo$observed_growth, type="BAI",
+                    cohort = "T20_148", temporalResolution = "year")
+g2<-evaluation_plot(G_34, alepo$observed_growth, type="BAI",
+                 cohort = "T14_148", temporalResolution = "year")
+g3<-evaluation_plot(G_34, alepo$observed_growth, type="BAI",
+                 cohort = "T25_148", temporalResolution = "year")
+g4<-evaluation_plot(G_34, alepo$observed_growth, type="BAI",
+                 cohort = "T3_148", temporalResolution = "year")
+plot_grid(g1,g2,g3,g4, ncol = 2, nrow=2)
+```
+]
+
+---
+
+## Step 6. Modify maximum growth rate for P. halepensis and repeat simulations
+
+We divide the maximum growth rate by two:
+```{r}
+SpParamsMED$RGRcambiummax[SpParamsMED$Name=="Pinus halepensis"] = 0.0012
+```
+
+.code80[
+```{r}
+x_alepo <- forest2growthInput(x = alepo$forest_snfi3,
+                              soil = alepo$soil,
+                              SpParams = SpParamsMED,
+                              control = defaultControl())
+```
+]
+
+
+.code80[
+```{r, eval = FALSE}
+G_34m <- growth(x = x_alepo, 
+               meteo = alepo$historic_weather,
+               latitude = 41, 
+               elevation = alepo$spt$elevation,
+               slope = alepo$spt$slope,
+               aspect = alepo$spt$aspect)
+```
+]
+
+
+```{r, include = FALSE}
+G_34m <- readRDS("Rdata/growth_mod_snfi34.rds")
+```
+
+---
+
+## Step 6. Modify maximum growth rate for P. halepensis and repeat simulations
+
+.code80[
+```{r, fig=TRUE, fig.width=10, fig.height=5, echo = FALSE}
+g1<-evaluation_plot(G_34m, alepo$observed_growth, type="BAI",
+                    cohort = "T20_148", temporalResolution = "year")
+g2<-evaluation_plot(G_34m, alepo$observed_growth, type="BAI",
+                 cohort = "T14_148", temporalResolution = "year")
+g3<-evaluation_plot(G_34m, alepo$observed_growth, type="BAI",
+                 cohort = "T25_148", temporalResolution = "year")
+g4<-evaluation_plot(G_34m, alepo$observed_growth, type="BAI",
+                 cohort = "T3_148", temporalResolution = "year")
+plot_grid(g1,g2,g3,g4, ncol = 2, nrow=2)
+```
+]
+
+---
+
+## Step 7. Run forest dynamics simulation
+
+
+.code80[
+```{r, eval = FALSE}
+FD_34 <- fordyn(forest = alepo$forest_snfi3,
+                soil = alepo$soil,
+                SpParams = SpParamsMED,
+                control = defaultControl(),
+                meteo = alepo$historic_weather,
+                latitude = 41, 
+                elevation = alepo$spt$elevation,
+                slope = alepo$spt$slope,
+                aspect = alepo$spt$aspect)
+```
+]
+
+
+```{r, include = FALSE}
+FD_34 <- readRDS("Rdata/fordyn_snfi34.rds")
+```
+
+
+---
+
+## Step 8. Compare final stand metrics with the observed stand in SNFI4
+
+.code80[
+```{r, highlight.output = c(2,5)}
+summary(FD_34$NextForestObject, SpParamsMED)
+```
+]
+
+.code80[
+```{r, highlight.output = c(2,5)}
+summary(alepo$forest_snfi4, SpParamsMED)
+```
+]
+
+---
+
+## Step 4. Projection of forest dynamics
+
+
+.code80[
+```{r, eval = FALSE}
+FD_proj <- fordyn(forest = FD_34,
+                soil = alepo$soil,
+                SpParams = SpParamsMED,
+                control = defaultControl(),
+                meteo = alepo$projected_weather,
+                latitude = 41, 
+                elevation = alepo$spt$elevation,
+                slope = alepo$spt$slope,
+                aspect = alepo$spt$aspect)
 ```
 ]
 
