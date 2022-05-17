@@ -133,7 +133,7 @@ We are given all the necessary data, bundled in a single list:
 
 .code80[
 ```{r}
-fb <- readRDS("Rdata/fb_data.rds")
+fb <- readRDS("Rdata/fontblanche.rds")
 names(fb)
 ```
 ]

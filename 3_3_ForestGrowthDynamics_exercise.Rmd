@@ -76,6 +76,56 @@ layout: true
 
 # Exercise resolution
 
+
+---
+## Step 1. Load Alepo pine forest data
+
+```{r, include=FALSE}
+library(medfate)
+library(ggplot2)
+library(cowplot)
+```
+
+We are given all the necessary data, bundled in a single list:
+
+.code80[
+```{r}
+alepo <- readRDS("Rdata/alepo.rds")
+names(alepo)
+```
+]
+
+---
+
+## Step 2. Forest stand metrics
+
+.code80[
+```{r, highlight.output = c(2,5)}
+summary(alepo$forest_snfi3, SpParamsMED)
+```
+]
+
+.code80[
+```{r, highlight.output = c(2,5)}
+summary(alepo$forest_snfi4, SpParamsMED)
+```
+]
+
+---
+## Step 2. Forest stand metrics
+
+.code80[
+```{r}
+species_basalArea(alepo$forest_snfi3, SpParamsMED)
+```
+]
+
+.code80[
+```{r}
+species_basalArea(alepo$forest_snfi4, SpParamsMED)
+```
+]
+
 ---
 layout: false
 class: back-slide

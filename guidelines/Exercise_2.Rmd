@@ -3,8 +3,8 @@ title: "Exercise 2 guidelines"
 author: "Miquel De Cáceres"
 date: '2022-06-14'
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -42,7 +42,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Guidelines by steps
 
-1. Load the file `"fb_data.rds"`, which contains all the necessary data, and inspect its elements until you understand them
+1. Load the file `"fontblanche.rds"`, which contains all the necessary data, and inspect the list elements until you understand them
 
 ```{r}
 

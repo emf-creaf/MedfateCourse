@@ -1,0 +1,39 @@
+---
+title: "Exercise 3 guidelines"
+author: "Miquel De Cáceres"
+date: '2022-06-15'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Exercise objectives
+
+  1. Perform a basic water balance run on a real-case data and inspect the results
+
+## Exercise data
+
+## Guidelines
+
+1. Load the file `"alepo.rds"`, which contains all the necessary data, and inspect the list elements until you understand them
+
+```{r}
+
+```
+
+2. Estimate the leaf area index (LAI) and basal area of the forest stand at SNFI3 (year 2000) and at SNFI4 (year 2015).
+
+```{r}
+
+```
+
+3. Build inputs for function `growth()` and perform a simulation for the historic period between SNFI3 and SNFI4
+
+```{r}
+
+```
+
