@@ -2,7 +2,9 @@
 title: "Exercise 3 guidelines"
 author: "Miquel De Cáceres"
 date: '2022-06-15'
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise objectives
 
-  1. Perform simulations of forest growth and forest dynamics with medfate
+  1. Learn to perform simulations of forest growth and forest dynamics with medfate
   2. Evaluate tree growth predictions with tree ring data
   3. Compare simulated forest dynamics between inventories with observed changes
   4. Project forest dynamics with/without forest management
@@ -65,15 +67,46 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
- 7. Run a simulation of forest dynamics using function `fordyn()`.
+7. Merge tree cohorts of the same DBH class to increase the speed of subsequent simulations. How many P. halepensis cohorts do we have after merging?
+
+```{r}
+
+```
+
+
+8. Use the merged forest as the input for simulation of forest dynamics using function `fordyn()` and historical weather data (hint: remember that `fordyn()` accepts vegetation, soil and control inputs directly). Make sure you understand the elements of the output object before continuing.
  
 ```{r}
 
 ```
  
- 8. Compare the final `forest` state with the one derived from SNFI4. Is the final stand density and basal area predicted acceptably? What about shrub cover?
+9. Compare the final `forest` state with the one derived from SNFI4. Is the final stand density and basal area predicted acceptably? What about shrub cover?
  
 ```{r}
 
 ```
  
+10. Predict future forest dynamics using weather projection data frame included in the data. Use the previous run of `fordyn()` as starting point for simulations.
+
+```{r}
+
+```
+
+11. Read the function documentation of `defaultManagementFunction()`. Then, create a list of management arguments using `defaultManagementArguments()` and increase the minimum basal area for thinning intervention from 20 to 30 m2/ha.
+
+```{r}
+
+```
+
+12. Repeat the projection of forest dynamics including forest management, by telling `fordyn()` to use function `defaultManagementFunction()` and providing the modified management arguments.
+
+```{r}
+
+```
+
+13. Compare the projections without/with forest management, by plotting the predicted temporal variation in stand basal area. Compare the final tree structures at the end of the simulation. Why does simulation with management have a lower number of tree cohorts? Which simulation produces larger natural mortality?
+
+```{r}
+
+```
+

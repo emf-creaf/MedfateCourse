@@ -39,7 +39,7 @@ class: title-slide
 
 ### Ecosystem Modelling Facility
 
-### `r as.Date("2022-06-14")`
+### `r as.Date("2022-06-15")`
 
 
 <img class= "escher-title" src="resources/img/Escher_concaveconvex.jpg" width=450>
@@ -90,7 +90,7 @@ We are given all the necessary data, bundled in a single list:
 
 .code80[
 ```{r}
-alepo <- readRDS("Rdata/alepo.rds")
+alepo <- readRDS("StudentRdata/alepo.rds")
 names(alepo)
 ```
 ]
@@ -166,6 +166,7 @@ G_34 <- growth(x = x_alepo,
 ## Step 5. Evaluate tree basal area increment
 
 ```{r, include = FALSE}
+# saveRDS(G_34, "Rdata/growth_snfi34.rds")
 G_34 <- readRDS("Rdata/growth_snfi34.rds")
 ```
 
@@ -215,6 +216,7 @@ G_34m <- growth(x = x_alepo,
 
 
 ```{r, include = FALSE}
+# saveRDS(G_34m, "Rdata/growth_mod_snfi34.rds")
 G_34m <- readRDS("Rdata/growth_mod_snfi34.rds")
 ```
 
@@ -238,12 +240,41 @@ plot_grid(g1,g2,g3,g4, ncol = 2, nrow=2)
 
 ---
 
-## Step 7. Run forest dynamics simulation
+## Step 7. Reduce the number of tree cohorts
 
+In order to speed-up calculations, we can reduce the number of tree cohorts, which is now:
+.code80[
+```{r}
+nrow(alepo$forest_snfi3$treeData)
+```
+]
+
+Remembering the `forest_mergeTrees()` function from exercise #1:
+
+.code80[
+```{r}
+forest_red = forest_mergeTrees(alepo$forest_snfi3)
+```
+]
+
+The new forest object only has `r nrow(forest_red$treeData)` tree cohorts:
+
+.code80[
+```{r}
+forest_red$treeData
+```
+]
+
+---
+## Step 8. Run forest dynamics simulation
+
+We use `forest_red` to call function `fordyn()`. Remember that, unlike `spwb()` and `growth()`, we do not need to build an intermediate input object.
+
+We supply the historic weather (yrs. 2001-2014), as we did for `growth()`, because we want to compare the results with observed forest inventory data.
 
 .code80[
 ```{r, eval = FALSE}
-FD_34 <- fordyn(forest = alepo$forest_snfi3,
+FD_34 <- fordyn(forest = forest_red,
                 soil = alepo$soil,
                 SpParams = SpParamsMED,
                 control = defaultControl(),
@@ -257,19 +288,31 @@ FD_34 <- fordyn(forest = alepo$forest_snfi3,
 
 
 ```{r, include = FALSE}
+# saveRDS(FD_34, "Rdata/fordyn_snfi34.rds")
 FD_34 <- readRDS("Rdata/fordyn_snfi34.rds")
 ```
 
 
+The elements of the output have the following names, which we should be able to understand before moving on.
+.code80[
+```{r}
+names(FD_34)
+```
+]
+
+
 ---
 
-## Step 8. Compare final stand metrics with the observed stand in SNFI4
+## Step 9. Compare final stand metrics with the observed stand in SNFI4
 
+In particular, we can examine the stand metrics of the `forest` object at the end of the simulation
 .code80[
 ```{r, highlight.output = c(2,5)}
 summary(FD_34$NextForestObject, SpParamsMED)
 ```
 ]
+
+and compare them to those obtained in SNFI4 (yr. 2015) for the forest plot:
 
 .code80[
 ```{r, highlight.output = c(2,5)}
@@ -277,9 +320,10 @@ summary(alepo$forest_snfi4, SpParamsMED)
 ```
 ]
 
+The model seems to perform fairly well in terms of final tree density and basal area. However, as expected, it yields too much shrub mortality, resulting in a forest with a low understory biomass.
 ---
 
-## Step 4. Projection of forest dynamics
+## Step 10. Projection of forest dynamics
 
 
 .code80[
@@ -295,6 +339,118 @@ FD_proj <- fordyn(forest = FD_34,
                 aspect = alepo$spt$aspect)
 ```
 ]
+
+
+```{r, include = FALSE}
+# saveRDS(FD_proj, "Rdata/fordyn_proj.rds")
+FD_proj <- readRDS("Rdata/fordyn_proj.rds")
+```
+
+---
+
+## Step 12. Management function and management arguments
+
+.code80[
+```{r}
+man_args <- defaultManagementArguments()
+names(man_args)
+```
+]
+
+.code80[
+```{r}
+man_args$thinningThreshold <- 30
+```
+]
+
+---
+
+## Step 13. Projection of forest dynamics with management
+
+.code80[
+```{r, eval = FALSE}
+FD_proj_man <- fordyn(forest = FD_34,
+                soil = alepo$soil,
+                SpParams = SpParamsMED,
+                control = defaultControl(),
+                meteo = alepo$projected_weather,
+                latitude = 41, 
+                elevation = alepo$spt$elevation,
+                slope = alepo$spt$slope,
+                aspect = alepo$spt$aspect,
+                management_function = defaultManagementFunction,
+                management_args = man_args
+                )
+```
+]
+
+```{r, include = FALSE}
+# saveRDS(FD_proj_man, "Rdata/fordyn_proj_man.rds")
+FD_proj_man <- readRDS("Rdata/fordyn_proj_man.rds")
+```
+
+---
+
+## Step 14. Compare forest dynamics with/without management
+
+.pull-left[
+.code80[
+### No management
+
+```{r, fig = TRUE, fig.height = 4}
+plot(FD_proj, "StandBasalArea")
+```
+]
+]
+
+.pull-left[
+.code80[
+### Management (thinning from below)
+
+```{r, fig = TRUE, fig.height = 4}
+plot(FD_proj_man, "StandBasalArea")
+```
+]
+]
+
+---
+
+## Step 14. Compare forest dynamics with/without management
+
+.pull-left[
+.code80[
+### No management
+
+```{r, fig = TRUE, fig.height = 4}
+FD_proj$NextForestObject$treeData[,1:4]
+```
+
+```{r}
+sum(FD_proj$StandSummary$BasalAreaDead)
+```
+
+]
+]
+
+.pull-right[
+.code80[
+### Management (thinning from below)
+
+```{r, fig = TRUE, fig.height = 4}
+FD_proj_man$NextForestObject$treeData[,1:4]
+```
+
+```{r}
+sum(FD_proj_man$StandSummary$BasalAreaDead)
+```
+
+```{r}
+sum(FD_proj_man$StandSummary$BasalAreaCut)
+```
+
+]
+]
+
 
 ---
 layout: false

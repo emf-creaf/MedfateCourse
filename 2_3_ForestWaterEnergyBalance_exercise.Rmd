@@ -133,7 +133,7 @@ We are given all the necessary data, bundled in a single list:
 
 .code80[
 ```{r}
-fb <- readRDS("Rdata/fontblanche.rds")
+fb <- readRDS("StudentRdata/fontblanche.rds")
 names(fb)
 ```
 ]
@@ -427,6 +427,7 @@ fb_adv <- spwb(fb_x, fb_meteo,  elevation = 420, latitude = 43.24083)
 ]
 
 ```{r include = FALSE}
+# saveRDS(fb_adv, "Rdata/spwb_adv.rds")
 fb_adv <- readRDS("Rdata/spwb_adv.rds")
 ```
 
