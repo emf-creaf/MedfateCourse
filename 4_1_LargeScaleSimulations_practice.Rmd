@@ -1,0 +1,190 @@
+---
+title: "4.1 - Landscape- and regional-scale simulations (practice)"
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["resources/css/custom.css", "default-fonts", "default"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    seal: false
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE, warning=FALSE}
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
+)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, include = FALSE}
+library(medfate)
+library(cowplot)
+```
+
+
+class: title-slide
+
+# 4.1 - Landscape- and regional-scale simulations (practice)
+
+## Miquel De Cáceres
+
+### Ecosystem Modelling Facility
+
+### `r as.Date("2022-06-16")`
+
+<img class= "escher-title" src="resources/img/Escher_belvedere.jpg" width=250>
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
+
+---
+
+class: center, middle
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Outline
+
+##  1. Large-scale parameterization, calibration and evaluation
+##  2. Spatial variation of weather inputs: package meteoland
+##  3. Parallelization and the medfateland package
+
+  
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Parallelization and the medfateland package
+
+---
+
+## Purpose
+
+The R package **medfateland** (under development) has been designed to run simulations of forest functioning and dynamics at the landscape and regional scales. 
+
+--
+
+The package allows executing the stand-level models available in package **medfate** on points and cells within landscape, in either sequential or parallel computation.
+
+--
+
+In addition, medfateland allows considering spatial hydrological processes in forested watersheds.
+
+--
+## Installation
+
+.code80[
+```{r, eval = FALSE}
+remotes::install_github("emf-creaf/medfateland")
+```
+]
+
+```{r, include = FALSE}
+library(medfateland)
+```
+
+---
+
+## Data structures
+
+Package **medfateland** offers three *spatial classes* that inherit fields from three corresponding classes in package **meteoland**:
+
+* `SpatialPointsLandscape`: represents a set of forest stands (including soil description) as points within a landscape. Extends class `SpatialPointsTopography`.
+* `SpatialPixelsLandscape`: represents a set of forests (including soil description) or other land cover units (i.e. agricultural, rock outcrops or urban areas) as pixels within a gridded landscape. Extends class `SpatialPixelsTopography`.
+* `SpatialGridLandscape`: represents a set of forests (including soil description) or other land cover units (i.e. agricultural, rock outcrops or urban areas) as pixels within a complete grid. Extends class `SpatialGridTopography`.
+
+
+--
+
+An additional spatial class is defined for watershed ecohydrological modelling:
+
+* `DistributedWatershed`: Represents a (forested) watershed, including land cover units (i.e. agricultural, rock outcrops or urban areas), forest and soil information as well as bedrock properties. Extends class `SpatialPixelsLandscape`.
+
+---
+
+## Data structures
+
+.code80[
+```{r, fig.align='center', fig.width=7}
+data("examplepointslandscape")
+```
+]
+
+--
+
+Using `plot()` functions for spatial landscape objects, we can draw maps of some variables using:
+
+.center[
+.code80[
+```{r, fig = TRUE, fig.width=9, fig.height=3}
+plot(examplepointslandscape, "basalArea")
+```
+]
+]
+
+---
+
+## Data structures
+
+
+.code80[
+```{r, warning=FALSE, fig = TRUE, fig.width=9, fig.height=3}
+data("examplewatershed")
+plot(examplewatershed, "elevation")
+```
+]
+
+The set of maps available can be known by inspecting the help of function `getLandscapeLayer()`. Alternatively, the package provides function `shinyplotland()` to display maps interactively.
+
+
+---
+
+## Dynamic simulation functions
+
+
+The package allows simulating water balance for multiple stands distributed spatially over a given time period using functions , `spwbpixels()` or `spwbgrid()`.
+
+These functions make internal calls to `spwb()` on elements the spatial classes introduced above. 
+
+
+.font80[
+|  Spatial structure | Water balance (1 day) | Water balance (n days) | Forest growth | Forest dynamics |
+| ------------------ | --------------------- | ---------------------- | --------------- |
+|  `SpatialPointsLandscape` | `spwbpoints_day()` | `spwbpoints()` | `growthpoints()` | `fordynpoints()` |
+|  `SpatialPixelsLandscape` | `spwbpixels_day()` | `spwbpixels()` | `growthpixels()` | `fordynpixels()` |
+|  `SpatialGridLandscape` | `spwbgrid_day()` | `spwbgrid()` | `growthgrid()` | `fordyngrid()` |
+|  `DistributedWatershed` |  | `spwbland()` | `growthland()` |  |
+
+]
+
+
+---
+layout: false
+class: back-slide
+
+
+# M.C. Escher - Belvedere
+
+.center[
+<img src="resources/img/Escher_belvedere.jpg" width=300>
+]
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
