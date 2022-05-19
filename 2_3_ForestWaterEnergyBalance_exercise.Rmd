@@ -246,6 +246,7 @@ fb_basic <- spwb(fb_x, fb_meteo,  elevation = 420, latitude = 43.24083)
 ]
 
 ```{r include = FALSE}
+# saveRDS(fb_basic, "Rdata/spwb_basic.rds")
 fb_basic <- readRDS("Rdata/spwb_basic.rds")
 ```
 
@@ -419,7 +420,8 @@ fb_x <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
 ```
 ]
 
-And we launch the simulation (takes 1-2 minures):
+And we launch the simulation (takes 8 seconds in ver. 2.7.4):
+
 .code80[
 ```{r, eval=FALSE}
 fb_adv <- spwb(fb_x, fb_meteo,  elevation = 420, latitude = 43.24083)

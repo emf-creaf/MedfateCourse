@@ -168,14 +168,14 @@ layout: false
 
 # 3. Package installation
 
-From **CRAN** (stable versions):
+From **CRAN** (stable versions; now ver. **2.7.3**):
 
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 install.packages("medfate")
 ```
 --
 
-From **GitHub** (frequent updates):
+From **GitHub** (frequent updates; now ver. **`r packageVersion("medfate")`**):
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 remotes::install_github("emf-creaf/medfate")
 ```

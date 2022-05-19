@@ -109,7 +109,7 @@ library(meteoland)
 
 --
 
-## Step 2. Load and inspect Font-Blanche data
+## Step 2. Load and inspect Poblet data
 
 Normally, tree data would be in a **.csv** or **.xlsx** file. Here, we simply load the tree data from Poblet included in the package:
 
@@ -119,7 +119,7 @@ data("poblet_trees")
 
 ---
 
-## Step 2. Load and inspect Font-Blanche data
+## Step 2. Load and inspect Poblet data
 
 We can inspect its content, for example using:
 

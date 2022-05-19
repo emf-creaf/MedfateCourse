@@ -343,10 +343,11 @@ vprofile_rootDistribution(forest, SpParamsMED)
 
 Function `shinyplot()` is a more convenient way to display properties and profiles of `forest` objects:
 
+.code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 shinyplot(forest, SpParamsMED)
 ```
-
+]
 
 
 ---
@@ -402,29 +403,34 @@ Package **medfateutils** allows retrieving Soilgrids data by connecting with the
 
 To start with, we need an object of class `SpatialPoints` (from package **sp**) containing the geographic coordinates of our target forest stand:
 
+.code80[
 ```{r}
 cc <- matrix(c(1.32, 42.20), nrow=1)
 sp <- SpatialPoints(cc, proj4string = CRS(SRS_string = "EPSG:4326"))
 ```
+]
 
 --
 
 We then call `soilgridsParams()` along with a desired vertical width of soil layers:
 
+.code80[
 ```{r, eval = FALSE}
 soilgridsParams(sp, widths = c(300, 700, 1000))
 ```
-
+]
 
 ---
 ## Soil input object
 
 Soil input for simulations is an object of class `soil` (a list) that is created from physical description using a function with the same name:
 
+.code80[
 ```{r, echo = TRUE}
 examplesoil <- soil(spar)
 class(examplesoil)
 ```
+]
 
 ---
 ## Water retention curves
@@ -475,22 +481,28 @@ The weather variables that are required depend on the complexity of model we are
 
 
 ---
+
 # 6. Simulation control
 
 The behaviour of simulation models can be controlled using a set of global parameters.
 
 The default parameterization is obtained using function `defaultControl()`:
 
+.code80[
 ```{r, echo = TRUE}
 control <- defaultControl()
 ```
+]
+
+--
 
 A large number of control parameters exist:
 
-```{r, echo = TRUE, eval = FALSE, include=TRUE}
+.code80[
+```{r, echo = TRUE, eval = FALSE}
 names(control)
 ```
-
+]
 
 Control parameters should normally be left to their **default values** until their effect on simulations is fully understood.
 
