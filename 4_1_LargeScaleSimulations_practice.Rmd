@@ -58,9 +58,10 @@ class: center, middle
 
 # Outline
 
-##  1. Large-scale parameterization, calibration and evaluation
-##  2. Spatial variation of weather inputs: package meteoland
-##  3. Parallelization and the medfateland package
+##  1. Forest and soil initialisation for large areas
+##  2. Parameter estimation for multiple species
+##  3. Spatial variation of climate forcing: meteoland
+##  4. Simulation over landscapes: medfateland
 
 ---
 layout: true
@@ -71,7 +72,46 @@ layout: true
 
 <div class=my-footer></div>
 
-# 2. Spatial variation of weather inputs: package meteoland
+# 1. Forest and soil initialisation for large areas
+
+---
+## Forest initialisation
+
+---
+## Soil initialisation
+
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 2. Parameter estimation for multiple species
+
+---
+
+## Parameter estimation from trait databases
+
+---
+
+## Calibration of unmeasurable parameters
+
+
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Spatial variation of climate forcing: meteoland
 
 ---
 
@@ -123,11 +163,11 @@ Three classes are defined to represent the variation of topographic features (i.
 .pull-left[
 Data frames in topography classes have only three attributes:
 
-  + `elevation` (in meters)
-  + `slope` (in degrees from the horizontal plane)
-  + `aspect` (in degrees from North).
-
+  + `elevation` in meters a.s.l.
+  + `slope` in degrees from the horizontal plane.
+  + `aspect` in degrees from North.
 ]
+
 .pull-right[
 ```{r, fig =TRUE, fig.width=4, fig.height=4, echo = FALSE}
 spplot(examplegridtopography, main = "Elevation (m)")
@@ -169,8 +209,105 @@ plot(ml, main = "Mean temperature")
 
 ## Weather interpolation
 
+### Interpolation methods
+
+The general procedure for interpolation is very similar to the one that underpins the U.S. DAYMET dataset (https://daymet.ornl.gov/). 
+
+--
+
++ *Minimum temperature*, *maximum temperature* and *precipitation* are interpolated from a set of point weather records using truncated Gaussian filters, while accounting for the relationship between these variables and elevation (Thornton et al. 1997). 
+
+--
+
++ *Relative humidity* can be either interpolated (in fact, dew-point temperature is the variable being interpolated) or predicted from temperature estimates, depending on whether it was measured in in the set of reference points (surface stations). 
+
+--
+
++ *Potential solar irradiance* is estimated taking into account latitude, seasonality, aspect and slope. Actual solar irradiance is then estimated from potential irradiance by including the effect of atmosphere transmittance using the predictions of temperature range, relative humidity and precipitation (Thornton & Running 1999).
+
+--
+
++ The *wind vector* (wind direction and wind speed) is interpolated by using weather station records and static wind fields. 
+
+---
+
+## Weather interpolation
+
+### MeteorologyInterpolationData
+
+Package meteoland stores weather series for reference locations (surface weather stations) and interpolation parameters in a single object of class `MeteorologyInterpolationData`. 
+
+Collecting and assembling surface weather records into an object of `MeteorologyInterpolationData` is the tedious part of using package **meteoland**.
+
+--
+
+### Interpolation functions
+
+Interpolation is conducted using different R functions depending on the spatial input:
+
+.font90[
+
+|  Spatial input  |  Interpolation function  | Spatial output |
+| --------------- | ------------------------ | -------------- |
+| `SpatialPointsTopography` | `interpolationpoints()` | `SpatialPointsMeteorology` |
+| `SpatialGridTopography` | `interpolationgrid()` | `SpatialGridMeteorology` |
+| `SpatialPixelsTopography` | `interpolationpixels()` | `SpatialPixelsMeteorology` |
+]
+
+
 ---
 ## Downscaling and bias correction
+
+### Concept
+
+The general idea of correction is that a fine-scale weather series is compared to a coarse-scale series for a *reference* (historical) period. The result of this comparison can be used to correct coarse-scale weather series for a *target* (e.g. future) period.
+
+--
+
+### Correction methods
+
+Let $x_i$ be the value of the variable of the more accurate (e.g. local) series for a given day $i$ and $u_i$ the corresponding value for the less accurate series (e.g., climate model output). 
+
+Users can choose between three different types of corrections: 
+
+  1. *Unbiasing*: consists in subtracting, from the series to be corrected, the average difference between the two series for the reference period: $\theta = \sum_{i}^{n}(u_i - x_i)/n$.
+  
+--
+  
+  2. *Scaling*: A slope is calculated by regressing $u$ on $x$ through the origin using data of the reference period. The slope can then be used as scaling factor to multiply the values of $u$ for any day of the period of interest.
+  
+--
+  
+  3. *Empirical quantile mapping*: Consists in comparing the empirical cumulative distribution function (CDF) of the two series for the reference period, and this mapping is used to correct values of $u$ for the target period.
+
+---
+
+## Downscaling and bias correction
+
+### MeteorologyUncorrectedData
+
+Statistical correction needs an object of class `MeteorologyUncorrectedData`, containing the coarse-scale data to be corrected (for both the reference and target periods) and the correction method to be used for each variable. e.g. 
+
+.code80[
+```{r, eval = FALSE}
+u <- MeteorologyUncorrectedData(sp, u_reference, u_target, ...)
+```
+]
+
+--
+
+### Correction function
+
+Correction is performed using function `correctionpoints()`, which takes as input the object of class `MeteorologyUncorrectedData` and an object of class `SpatialPointsMeteorology` with the fine-scale data for the reference period.
+
+.code80[
+```{r, eval = FALSE}
+y <- correctionpoints(u, x)
+```
+]
+
+The function will take all points in `x` as spatial target locations to perform the correction (and implicitly downscaling) of the coarse-scale data in `u`.
+
 
 ---
 layout: true
@@ -181,7 +318,7 @@ layout: true
 
 <div class=my-footer></div>
 
-# 3. Parallelization and the medfateland package
+# 4. Simulation over landscapes: medfateland
 
 ---
 
@@ -284,6 +421,19 @@ These functions make internal calls to `spwb()` on elements the spatial classes 
 
 ]
 
+---
+
+## Climate forcing in large-scale simulations
+
+Simulation functions of **medfateland** accept objects of class `MeteorologyInterpolationData` as input, which allows performing interpolation at the time of performing simulations.
+
+--
+
+The following workflow can be envisaged for large-scale simulations with **medfateland**:
+
+.center[
+<img src="resources/img/medfateland_workflow.png" width=500>
+]
 
 ---
 layout: false
