@@ -62,7 +62,116 @@ class: center, middle
 ##  2. Spatial variation of weather inputs: package meteoland
 ##  3. Parallelization and the medfateland package
 
-  
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 2. Spatial variation of weather inputs: package meteoland
+
+---
+
+## Purpose
+
+With the aim to assist research of climatic impacts on forests, **meteoland** provides utilities to estimate daily weather variables at any position over complex terrains:
+
+1. Spatial interpolation of daily weather records from meteorological stations. 
+2. Statistical correction of meteorological data series (e.g. from climate models).
+3. Multisite and multivariate stochastic weather generation (underdeveloped).
+
+--
+
+## Installation
+
+From **CRAN** (stable versions; now ver. **1.0.2**):
+
+.code80[
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+install.packages("meteoland")
+```
+]
+
+--
+
+From **GitHub** (now ver. **`r packageVersion("meteoland")`**):
+.code80[
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+remotes::install_github("emf-creaf/meteoland")
+```
+]
+
+```{r, include = FALSE}
+library(meteoland)
+```
+
+---
+
+## Spatial topography classes
+
+Three classes are defined to represent the variation of topographic features (i.e., elevation, slope and aspect) over space, extending S4 classes of package **sp**:
+
++ Class **`SpatialPointsTopography`** extends `SpatialPointsDataFrame` and represents the topographic features of a set of points in a landscape.
++ Class **`SpatialGridTopography`** extends `SpatialGridDataFrame` and represents the continuous variation of topographic features over a full spatial grid.
++ Class **`SpatialPixelsTopography`** extends `SpatialPixelsDataFrame` and represents the continuous variation of topographic features over a set if cells in a grid.
+
+--
+
+.pull-left[
+Data frames in topography classes have only three attributes:
+
+  + `elevation` (in meters)
+  + `slope` (in degrees from the horizontal plane)
+  + `aspect` (in degrees from North).
+
+]
+.pull-right[
+```{r, fig =TRUE, fig.width=4, fig.height=4, echo = FALSE}
+spplot(examplegridtopography, main = "Elevation (m)")
+```
+
+]
+
+---
+
+## Spatial meteorology classes
+
+Analogously to topography classes, three spatial classes are used to represent the variation of daily meteorology over space, also extending classes in **sp**:
+
++ Class **`SpatialPointsMeteorology`** extends `SpatialPoints` and represents daily meteorology series for a set of points in a landscape.
++ Class **`SpatialGridMeteorology`** extends `SpatialGrid` and represents the continuous variation of daily meteorology across a grid of cells.
++ Class **`SpatialPixelsMeteorology`** extends `SpatialPixels` and represents the variation of daily meteorology for a set of pixels (cells) of a spatial grid.
+
+--
+
+.pull-left[
+Spatial meteorology classes have two important slots: 
+
++ **`dates`** - a vector of days specifying a time period.
++ **`data`** - a vector of data frames with the meteorological data. 
+  + One data frame for each point in `SpatialPointsMeteorology`. 
+  + One data frame for each day in `SpatialGridMeteorology` and `SpatialPixelsMeteorology`. 
+]
+
+.pull-right[
+```{r, fig =TRUE, fig.width=4, fig.height=4, echo = FALSE, warning = FALSE}
+ml = interpolationgrid(exampleinterpolationdata, examplegridtopography,
+                       as.Date(c("2001-06-03")))
+#Plot PET corresponding to 2001-06-03
+plot(ml, main = "Mean temperature")
+```
+]
+
+---
+
+## Weather interpolation
+
+---
+## Downscaling and bias correction
+
 ---
 layout: true
 

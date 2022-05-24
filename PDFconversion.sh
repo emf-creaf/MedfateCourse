@@ -6,3 +6,4 @@
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '3_2_ForestGrowthDynamics_practice.html' 'pdf/3_2_ForestGrowthDynamics_practice.pdf'
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '3_3_ForestGrowthDynamics_exercise.html' 'pdf/3_3_ForestGrowthDynamics_exercise.pdf'
 `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '4_1_LargeScaleSimulations_practice.html' 'pdf/4_1_LargeScaleSimulations_practice.pdf'
+`npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '4_2_ClosureFeedback.html' 'pdf/4_2_ClosureFeedback.pdf'

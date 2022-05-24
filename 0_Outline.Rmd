@@ -41,10 +41,10 @@ output:
 + Day 3 (June 15th):
   - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (1h; TODO)
   - 3.2 Forest growth and dynamics - practice (1h)
-  - 3.3 Forest growth and dynamics - exercise (2h; TO DO)
+  - 3.3 Forest growth and dynamics - exercise (2h; in progress)
 + Day 4 (June 16th):
-  - 4.1 Large-scale simulations: parameterization, initialization and climate forcing (TODO)
-  - 4.2 Closure and feedback (TODO)
+  - 4.1 Large-scale simulations: parameterization, initialization and climate forcing (in progress)
+  - 4.2 Closure and feedback (in progress)
 
 ## Detailed content
 
@@ -128,8 +128,8 @@ Theory (1h 30min)
 + Sensitivity analysis
 + Parameterization using functional trait databases
 + Tips on model calibration
-+ Brief introduction to meteoland package
-+ Parallelization and medfateland package
++ Brief introduction to **meteoland** package
++ Parallelization and **medfateland** package
 
 ### 4.2 Open debate (1h)
 

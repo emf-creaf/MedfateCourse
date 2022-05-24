@@ -1,0 +1,120 @@
+---
+title: "4.2 - Closure and feedback"
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["resources/css/custom.css", "default-fonts", "default"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    seal: false
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE, warning=FALSE}
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
+)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, include = FALSE}
+library(medfate)
+library(cowplot)
+```
+
+
+class: title-slide
+
+# 4.2 - Closure and feedback
+
+## Miquel De Cáceres
+
+### Ecosystem Modelling Facility
+
+### `r as.Date("2022-06-16")`
+
+<img class= "escher-title" src="resources/img/Escher_eye.jpg" width=400>
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
+
+---
+
+class: center, middle
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Outline
+
+##  1. Planned developments/improvements in medfate and companion packages
+##  2. Your feedback on medfate and companion packages
+##  3. Your feedback on the course
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 1. Planned developments/improvements
+
+---
+
+## XX
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 2. Your feedback on medfate and companion packages
+
+---
+## YY<<
+
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Your feedback on the course
+
+---
+## ZZ
+
+---
+layout: false
+class: back-slide
+
+
+# M.C. Escher - Eye
+
+.center[
+<img src="resources/img/Escher_eye.jpg" width=600>
+]
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
