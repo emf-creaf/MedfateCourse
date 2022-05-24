@@ -147,11 +147,11 @@ Many of them were later moved into more specialized packages, which now evolve i
 
 --
 
-1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating daily weather input for simulation models.]
+1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating daily weather input for simulation models.
 
 --
 
-2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends **medfate** by allowing simulations to be performed in a spatially explicit context.]
+2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends **medfate** by allowing simulations to be performed in a spatially explicit context.
 
 --
 3. Package [**medfateutils**](https://github.com/emf-creaf/medfateutils)  (ver. `r utils::packageDescription("medfateutils",fields="Version")`) provides functions to help initializing vegetation, soil and species inputs.
@@ -170,32 +170,43 @@ layout: false
 
 From **CRAN** (stable versions; now ver. **2.7.3**):
 
+.code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 install.packages("medfate")
 ```
+]
+
 --
 
 From **GitHub** (frequent updates; now ver. **`r packageVersion("medfate")`**):
+
+.code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 remotes::install_github("emf-creaf/medfate")
 ```
+]
 
 --
 
 This session we will also use packages **meteoland** and **medfateutils**:
 
+.code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 install.packages("meteoland")
 remotes::install_github("emf-creaf/medfateutils") # Not on CRAN
 ```
+]
 
 --
 .font90[We should load the packages needed for the session:]
+
+.code80[
 ```{r, echo = TRUE, eval = TRUE, message=FALSE, warning=FALSE}
 library(meteoland)
 library(medfate)
 library(medfateutils)
 ```
+]
 
 ---
 
