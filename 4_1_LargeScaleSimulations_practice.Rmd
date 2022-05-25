@@ -75,11 +75,39 @@ layout: true
 # 1. Forest and soil initialisation for large areas
 
 ---
-## Forest initialisation
+## Data sources
+
+The following is a list of data sources that I use for large-scale initialisation of `forest` and `soil` objects:
+
+|  Data source    | Information | Spatial structure |
+| --------------- | ----------- | ----------------- |
+|  DEM            | Topography  | Polygons/raster   |
+|  Forest maps    | Forest composition (dominant species) | Polygons |
+|  LiDAR data     | Vegetation height |  Raster |
+|  National forest inventories | Composition and structure on point locations |  Points |
+| SoilGrids | Soil texture, bulk density, organic matter,... | Raster |
+| Shagguan et al. (2017) | Soil depth | Raster |
 
 ---
-## Soil initialisation
+## Initialisation tips
 
+The starting point of **medfate** models are `forest` objects, which require information about *structure* and *composition*. 
+
+--
+
+Initialisation of forests across a landscape/region requires imputation procedures are needed combining at least: (a) forest inventory data, (b) forest maps and (c) lidar data.
+
+--
+
+Most countries lack detailed soil maps and soil properties change substantially at small scales. 
+
+--
+
+Relying on SoilGrids implies accepting a high degree of uncertainly. Initialisation of soils requires at least combining SoilGrids with additional information on soil depth and rock content. 
+
+--
+
+Surface rock content can serve as a proxy of belowground rock content, but with a high degree of uncertainty!
 
 ---
 layout: true
@@ -95,6 +123,8 @@ layout: true
 ---
 
 ## Parameter estimation from trait databases
+
+
 
 ---
 

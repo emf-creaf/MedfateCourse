@@ -72,8 +72,10 @@ layout: true
 <div class=my-footer></div>
 
 # 1. Planned developments/improvements
-
 ---
+
++ Developing workflows/functions to facilitate the creation of `forest` objects from freely-available national forest inventories (e.g. France, US)
++ Developing species parameter tables for other countries.
 
 ## XX
 
@@ -89,9 +91,16 @@ layout: true
 # 2. Your feedback on medfate and companion packages
 
 ---
-## YY<<
 
 
+  1. Do you know of other data sources suitable for large-scale initialisation?
+  
+  2. Do you know of other climate data sources suitable for medfate simulations?
+  
+  3. Would you appreciate being given pre-defined initialisation data (e.g. for watersheds, IFN plots, etc.)
+  
+
+  
 ---
 layout: true
 
@@ -104,7 +113,11 @@ layout: true
 # 3. Your feedback on the course
 
 ---
-## ZZ
+
+1. Were the exercises illustrative and useful?
+
+2. What content do you think was missing and is key to understand/use *medfate*?
+
 
 ---
 layout: false
