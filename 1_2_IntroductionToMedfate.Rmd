@@ -312,10 +312,10 @@ Notes here
 class: back-slide
 
 
-# M.C. Escher - Reptiles
+## M.C. Escher - Reptiles, 1943
 
 .center[
-<img src="resources/img/Escher_reptiles.png" width=500>
+<img src="resources/img/Escher_reptiles.png" width=550>
 ]
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=200>

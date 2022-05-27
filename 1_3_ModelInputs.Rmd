@@ -535,7 +535,7 @@ layout: false
 class: back-slide
 
 
-# M.C. Escher - Dragon
+## M.C. Escher - Dragon, 1952
 
 .center[
 <img src="resources/img/Escher_dragon.jpg" width=400>

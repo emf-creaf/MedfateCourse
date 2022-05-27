@@ -122,15 +122,116 @@ layout: true
 
 ---
 
-## Parameter estimation from trait databases
+## Taxonomic treatment
+
+Decide taxonomic treatment according to:
+
+   1. Taxonomic resolution of forest data sources (e.g. forest inventory data)
+   
+   2. Availability of trait data
+
+--
+
+Store original source codes to be lumped into the same taxon/group (e.g. genus level)
+
+--
 
 
+Initialize medfate's *species* parameter table:
+
+.code80[
+.center[
+```{r, eval = FALSE}
+SpParams <-  medfateutils::initSpParams()
+```
+]
+]
 
 ---
 
-## Calibration of unmeasurable parameters
+## Estimation from forest inventory data
+
+Growth form (tree or shrub) depending on how the species is sampled in the forest source data:
+
+  + Trees - Diameter, height,...
+  + Shrub - Cover, mean height
+
+--
+
+The following information can be extracted from forest inventory data:
+
+   + Maximum height
+   + Diameter to height ratio
+   + Growth rates
+   + Mortality rates
+   + Allometric relationships
+
+---
+
+## Estimation from plant trait databases
 
 
+.font80[
+|  Source | Database name | Parameters           |
+| --------- | ----------- | -------------------- |
+| Asse et al. (2020) | | Leaf phenology | 
+| Bartlett et al. (2012) | | Leaf pressure-volume curve, turgor loss point |
+| Burriel et al. (2004) | | Tree allometries |
+| Choat et al. (2012) | | Xylem vulnerability |
+| De Cáceres et al. (2019) | | Shrub allometries |
+| Delpierre et al. (2019) | | Leaf phenology |
+| Duursma et al. (2018) | | Minimum stomatal conductance |
+| Hoshika et al. (2018) | | Maximum stomatal conductance |
+| Kattge et al. (2020) | TRY | **Multiple traits** |
+| Martin-StPaul et al. (2017) | | Turgor loss point |
+| Morris et al. (2016) | | Conduit sapwood fraction |
+| Sanchez‐Martinez et al. (2020) | HIDRATRY | SLA, wood density, Huber value, xylem efficiency, xylem vulnerability |
+| Tavşanoǧlu & Pausas (2006) | BROT2 | Life form, leaf duration, SLA, wood density |
+| Vitasse et al. (2011) | | Leaf phenology  |
+| Yebra et al. (2019) | Globe-LFMC | Fuel moisture content |
+| Zanne et al. (2009) | Global Wood Density Database | Wood density |
+]
+
+---
+
+## Sensitivity analyses and calibration
+
+Sensitivity analyses and calibration procedures involve running many simulations with different parameter sets. If we build a matrix of parameter combinations, we can use function `multiple_runs()`, e.g.:
+.code80[
+```{r, eval = FALSE}
+multiple_runs(parMatrix, x1, examplemeteo, latitude = 42, elevation = 100,
+              summary_function = sf)
+```
+]
+
+--
+
+Sensitivity analyses and calibration procedures require having functions that accept values of the parameters to be calibrated and return model outputs or evaluation metrics.
+
+--
+
+Package medfate includes *function factories*, i.e. functions that return functions to be used in model calibration or sensitivity analyses.
+
+.font90[
+| Function factory | Multiple cohorts | Function returns                    |
+| ------------- | -------------------- |------------------------ |
+| `optimization_function()` | No | The scalar of a simulation summary |
+| `optimization_evaluation_function()` | No | The scalar of a simulation evaluation |
+| `optimization_multicohort_function()` | Yes | The scalar of a simulation summary |
+| `optimization_evaluation_multicohort_function()` | Yes | The scalar of a simulation summary |
+]
+
+---
+
+## Sensitivity analyses and calibration
+
+There is a package [vignette](https://emf-creaf.github.io/medfate/articles/modelanalysis/SensitivityCalibration.html) illustrating the use of the former functions.
+
+|  Analysis  | R package(s) |
+| ---------- | ------------ |
+| Global sensitivity analysis |  **sensitivity** |
+| Point calibration | **ga** (genetic algorithms), **stats** (gradient search) |
+| Bayesian calibration | **BayesianTools** |
 
 ---
 layout: true
