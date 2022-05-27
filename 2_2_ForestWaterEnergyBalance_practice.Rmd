@@ -661,10 +661,10 @@ which will display messages describing the parameters that are modified.
 class: back-slide
 
 
-# M.C. Escher - Night and day
+## M.C. Escher - Night and day, 1938
 
 .center[
-<img src="resources/img/Escher_nightday.jpg" width=600>
+<img src="resources/img/Escher_nightday.jpg" width=800>
 ]
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=200>

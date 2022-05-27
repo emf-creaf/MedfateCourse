@@ -457,10 +457,10 @@ layout: false
 class: back-slide
 
 
-# M.C. Escher - Concave and convex
+## M.C. Escher - Concave and convex, 1955
 
 .center[
-<img src="resources/img/Escher_concaveconvex.jpg" width=550>
+<img src="resources/img/Escher_concaveconvex.jpg" width=600>
 ]
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=200>

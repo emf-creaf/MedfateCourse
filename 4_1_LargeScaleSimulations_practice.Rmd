@@ -571,10 +571,10 @@ layout: false
 class: back-slide
 
 
-# M.C. Escher - Belvedere
+## M.C. Escher - Belvedere, 1958
 
 .center[
-<img src="resources/img/Escher_belvedere.jpg" width=300>
+<img src="resources/img/Escher_belvedere.jpg" width=350>
 ]
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=200>

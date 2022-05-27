@@ -559,7 +559,7 @@ layout: false
 class: back-slide
 
 
-# M.C. Escher - Up and down
+## M.C. Escher - Up and down, 1947
 
 .center[
 <img src="resources/img/Escher_updown.jpg" width=220>

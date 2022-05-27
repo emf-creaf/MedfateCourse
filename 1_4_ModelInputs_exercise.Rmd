@@ -540,7 +540,7 @@ layout: false
 class: back-slide
 
 
-# M.C. Escher - Babel tower
+## M.C. Escher - Babel tower, 1928
 
 .center[
 <img src="resources/img/Escher_tower.jpg" width=300>

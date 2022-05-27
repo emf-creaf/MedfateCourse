@@ -124,10 +124,10 @@ layout: false
 class: back-slide
 
 
-# M.C. Escher - Eye
+## M.C. Escher - Eye, 1946
 
 .center[
-<img src="resources/img/Escher_eye.jpg" width=600>
+<img src="resources/img/Escher_eye.jpg" width=650>
 ]
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=200>
