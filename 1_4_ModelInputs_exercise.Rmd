@@ -34,7 +34,7 @@ class: title-slide
 
 # 1.4 - Model inputs (exercise)
 
-## Miquel De Cáceres
+### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
 
 ### Ecosystem Modelling Facility
 

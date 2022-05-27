@@ -33,7 +33,7 @@ class: title-slide
 
 # I.3 - Model inputs
 
-## Miquel De Cáceres
+### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
 
 ### Ecosystem Modelling Facility
 

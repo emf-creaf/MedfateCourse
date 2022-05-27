@@ -36,7 +36,7 @@ class: title-slide
 
 # 4.2 - Closure and feedback
 
-## Miquel De Cáceres
+### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
 
 ### Ecosystem Modelling Facility
 

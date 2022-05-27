@@ -36,7 +36,7 @@ class: title-slide
 
 # 3.2 - Forest growth/dynamics (practice)
 
-## Miquel De Cáceres
+### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
 
 ### Ecosystem Modelling Facility
 

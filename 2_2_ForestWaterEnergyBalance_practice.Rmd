@@ -33,7 +33,7 @@ class: title-slide
 
 # 2.2 - Forest water/energy balance (practice)
 
-## Miquel De Cáceres
+### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
 
 ### Ecosystem Modelling Facility
 
