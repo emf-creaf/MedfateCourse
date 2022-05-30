@@ -35,13 +35,13 @@ output:
   - 1.3 Model inputs (1h)
   - 1.4 Model inputs - exercise (2h)
 + Day 2 (June 14th):
-  - 2.1 Design and formulation of forest water/energy balance in *medfate* (1h; TODO)
+  - 2.1 Design and formulation of forest water/energy balance in *medfate* (1h)
   - 2.2 Forest water/energy balance - practice (1h)
   - 2.3 Forest water/energy balance - exercise (2h)
 + Day 3 (June 15th):
-  - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (1h; TODO)
+  - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (1h)
   - 3.2 Forest growth and dynamics - practice (1h)
-  - 3.3 Forest growth and dynamics - exercise (2h; in progress)
+  - 3.3 Forest growth and dynamics - exercise (2h)
 + Day 4 (June 16th):
   - 4.1 Large-scale simulations: parameterization, initialization and climate forcing (in progress)
   - 4.2 Closure and feedback (in progress)
