@@ -19,11 +19,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise data
 
-Package **medfateutils** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. As a result of the abandonment of coppicing in the area, there is a high density of stems per individual.
+Package **medfateutils** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. 
 
    + *Location*: Poblet (Catalonia, Spain); long/lat: 1.0219º, 41.3443º
    + *Topography*: elevation = 850 m, slope = 15.1º, aspect = 15º
-   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. The management involved a reduction of the number of stems per individual. The data includes the forest inventory before and after thinning.
+   + *Plot*: Circular plot of 15-m radius
+   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. 
+   
+As a result of the abandonment of former coppicing in the area, there is a high density of stems per individual in the control plot. 
+
+The management involved a reduction of the number of stems per individual (*sucker cutback* or *selecció de tanys*). 
 
 
 ## Guidelines by steps
@@ -40,25 +45,25 @@ Package **medfateutils** includes a data frame (`poblet_trees`), corresponding t
 
 ```
 
-3. Create a `forest` object and populate its tree data from the appropriate subset of `"poblet_trees"` (hint: define a named string vector to specify a column mapping and use function `forest_mapTreeTable()` for the actual mapping).
+3. Create an empty `forest` object (*hint*: see function `emptyforest()`) and populate its tree data from the appropriate subset of `"poblet_trees"` (*hint*: define a named string vector to specify a column mapping and use function `forest_mapTreeTable()` for the actual mapping).
 
 ```{r}
 
 ```
 
-4. What is the stand basal area of the forest after mapping data? And the stand leaf area index? Are these values acceptable for a dense oak forest? (hint: use function `summary()` for objects of class `forest`)
+4. What are the tree density and  basal area of the stand? And the stand's leaf area index? Are these values acceptable for a dense oak forest? (*hint*: use function `summary()` for objects of class `forest`)
 
 ```{r}
 
 ```
 
-5. Calculate the area of the plot used for sampling tree data and use it to repeat the tree mapping. Check the new values of stand basal area and leaf area index.
+5. Calculate the area of the plot used for sampling tree data and use it to repeat the tree mapping. Check the new values of tree density, stand basal area and leaf area index.
 
 ```{r}
 
 ```
 
-6. Why is the amount of light reaching the ground missing in the forest summary? What tree measurements are needed to estimate light extinction through the canopy? Try to complete the information in `"poblet_trees"` using an allometric relationship and repeat the tree mapping. Check that the light reaching the ground can now be estimated.
+6. Why is the amount of light reaching the ground missing in the forest summary? What tree measurements are needed to estimate light extinction through the canopy? Try to complete the information in `"poblet_trees"` using an allometric relationship (*hint*: you can draw allometries from 'AllometrApp' in *Laboratory Forestal Català*) and repeat the tree mapping. Check that the light reaching the ground can now be estimated.
 
 ```{r}
 
@@ -118,13 +123,13 @@ Package **medfateutils** includes a data frame (`poblet_trees`), corresponding t
 
 ```
 
-16. Build an object of the S4 class `SpatialPointsTopography` (defined in package **meteoland**), containing the `SpatialPoints` and the topographic variables (elevation, slope, aspect).
+16. Build an object of the S4 class `SpatialPointsTopography` (defined in package **meteoland**), containing the `SpatialPoints` of Step 12 and the topographic variables (elevation, slope, aspect).
 
 ```{r}
 
 ```
 
-17. Load the `"exampleinterpolationdata"` object provided in package **meteoland** and interpolate daily weather on the location of the Poblet stands (hint: use function `interpolationpoints()`). What do the warnings mean?
+17. Load the `"exampleinterpolationdata"` object provided in package **meteoland** and interpolate daily weather on the location of the Poblet stands (hint: use function `interpolationpoints()`). What do the warnings mean? Extract the daily weather data frame corresponding to your point from the output of `interpolationpoints()`.
 
 ```{r}
 

@@ -56,11 +56,6 @@ layout: false
 
 # Exercise setting
 
-## Goal
-
-Learn some of the common issues that arise in the process of preparing model inputs.
-
---
 
 ## Objectives
 
@@ -72,11 +67,21 @@ Learn some of the common issues that arise in the process of preparing model inp
 
 ## Data
 
-Package **medfateutils** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. As a result of the abandonment of coppicing in the area, there is a high density of stems per individual.
+Package **medfateutils** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. 
+
 
    + *Location*: Poblet (Catalonia, Spain); long/lat: 1.0219º, 41.3443º
    + *Topography*: elevation = 850 m, slope = 15.1º, aspect = 15º
-   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. The management involved a reduction of the number of stems per individual. The data includes the forest inventory before and after thinning.
+   + *Plot*: Circular plot of 15-m radius
+   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. 
+
+--
+
+As a result of the abandonment of former coppicing in the area, there is a high density of stems per individual in the control plot. 
+
+--
+
+The management involved a reduction of the number of stems per individual (*sucker cutback* or *selecció de tanys*). 
 
 ---
 layout: true
@@ -94,18 +99,24 @@ layout: true
 ## Step 1. Loading packages
 
 You may need to install **medfateutils** from GitHub:
+
+.code80[
 ```{r, eval=FALSE}
 devtools::install_github("emf-creaf/medfateutils")
 ```
+]
 
 --
 
 We begin by loading packages **medfate**, **medfateutils** and **meteoland**
+
+.code80[
 ```{r, message=FALSE}
 library(medfate)
 library(medfateutils)
 library(meteoland)
 ```
+]
 
 --
 
@@ -113,9 +124,11 @@ library(meteoland)
 
 Normally, tree data would be in a **.csv** or **.xlsx** file. Here, we simply load the tree data from Poblet included in the package:
 
+.code80[
 ```{r}
 data("poblet_trees")
 ```
+]
 
 ---
 
@@ -161,6 +174,8 @@ mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm")
 ```
 ]
 
+*Note*: Using `"Species.name" = "Species"` we indicate that the function should interpret values in column `Species` as species names, not species codes.
+
 --
 
 We can now replace the empty `treeData` in `pobl_ctl` using functions `subset()` and `forest_mapTreeTable()` from **medfateutils**:
@@ -189,16 +204,20 @@ summary(pobl_ctl$treeData)
 One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary()` function defined in **medfate** for this object class:
 
 .code80[
-```{r, highlight.output= c(2,5)}
+```{r, highlight.output= c(1,2,5)}
 summary(pobl_ctl, SpParamsMED)
 ```
 ]
+
+--
+
+Are the values of tree density, stand basal area and stand LAI acceptable for a dense oak forest?
 
 ---
 
 ## Step 5. Specifying plot size
 
-We are told that forest stand sampling was done using a *circular plot* whose radius was 15 m. We can calculate the sampled area using:
+We were told that forest stand sampling was done using a *circular plot* whose radius was 15 m. We can calculate the sampled area using:
 
 .code80[
 ```{r}
@@ -220,10 +239,10 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 
 --
 
-We run again the summary and check whether basal area and leaf area index make sense:
+We run again the summary and check whether stand's basal area and LAI make more sense:
 
 .code80[
-```{r, eval = FALSE}
+```{r, eval = TRUE, highlight.output= c(1,2,5)}
 summary(pobl_ctl, SpParamsMED)
 ```
 ]
@@ -236,7 +255,7 @@ Another issue that we see is the `summary()` concerns percentage of PAR and SWR 
 
 --
 
-We should somehow estimate tree heights, for example using an allometric relationship:
+We should somehow estimate tree heights (in cm), for example using an allometric relationship:
 
 .code80[
 ```{r}
@@ -257,7 +276,7 @@ mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm", "Height" = "Heigh
 
 --
 
-and rerun the tree data mapping function.
+and rerun the tree data mapping.
 
 .code80[
 ```{r, include = FALSE}
@@ -274,7 +293,7 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 Now we can address the *managed* stand, which has two codes corresponding to *before* and *after* the thinning intervention. Let us first deal with the pre-thinning state:
 
 .code80[
-```{r}
+```{r, highlight.output= c(8)}
 pobl_thi_bef <- emptyforest("POBL_THI_BEF")
 pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
                                              mapping = mapping, SpParams = SpParamsMED, 
@@ -282,6 +301,8 @@ pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POB
 summary(pobl_thi_bef$treeData)
 ```
 ]
+
+Beware of the missing values in column `Species`
 
 ---
 
@@ -303,11 +324,11 @@ table(poblet_trees$Species)
 ```
 ]
 
-In this case, the name used for the downy oak (*Quercus humilis*) is a synonym and needs to be replaced by its accepted name (*Quercus pubescens*), which we can do:
+In this case, the name used for the downy oak (*Quercus humilis*) is a synonym and needs to be replaced by its accepted name (*Quercus pubescens*), e.g.:
 
 .code80[
 ```{r}
-poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] = "Quercus pubescens"
+poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] <- "Quercus pubescens"
 ```
 ]
 
@@ -318,7 +339,7 @@ poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] = "Quercus pubesce
 Now we repeat our mapping and check the results:
 
 .code80[
-```{r, eval = TRUE, highlight.output=c(2,5)}
+```{r, eval = TRUE, highlight.output=c(1,2,5)}
 pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
                                              mapping = mapping, SpParams = SpParamsMED, 
                                              plot.size = sampled_area)
@@ -335,7 +356,7 @@ Like the control plot, the `summary()` indicates a dense oak forest.
 We can finally map tree data for the forest plot *after* the thinning intervention:
 
 .code80[
-```{r, eval = TRUE, highlight.output=c(2,5)}
+```{r, eval = TRUE, highlight.output=c(1,2,5)}
 pobl_thi_aft <- emptyforest("POBL_THI_AFT")
 pobl_thi_aft$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_AFT"), 
                                              mapping = mapping, SpParams = SpParamsMED, 
@@ -362,7 +383,7 @@ nrow(pobl_thi_aft$treeData)
 
 --
 
-This large amount of cohorts can slow done simulations considerably.
+This large amount of cohorts can slow done simulations considerably!
 
 
 
@@ -401,20 +422,24 @@ nrow(pobl_thi_aft$treeData)
 We can check whether stand properties were altered using the `summary()` function:
 
 .code80[
-```{r, highlight.output=c(2,5)}
+```{r, highlight.output=c(1,2,5)}
 summary(pobl_thi_aft, SpParamsMED)
 ```
 ]
 
 Function `forest_mergeTrees()` will preserve the stand density and basal area that the stand description had before merging cohorts. Other properties like leaf area index may be slightly modified.
 
-In general, it is advisable to reduce the number of woody cohorts before running simulation models in **medfate**.
+*Tip*: It is advisable to reduce the number of woody cohorts before running simulation models in **medfate**.
 
 ---
 
 ## Steps 12-13. Retrieving SoilGrids data
 
-Retrieval of soil properties from SoilGrids can be done using function `soilgridsParams()` from package **medfateutils**. Assuming we know the plot coordinates, we first create an object `SpatialPoints` (see package **sp**):
+Retrieval of soil properties from SoilGrids can be done using function `soilgridsParams()` from package **medfateutils**. 
+
+--
+
+Assuming we know the plot coordinates, we first create an object `SpatialPoints` (see package **sp**):
 
 .code80[
 ```{r}
@@ -459,7 +484,7 @@ pobl_soil <- soil(pobl_soil_props)
 ```
 ]
 
-We can inspect the soil definition using `print()`
+We can inspect the soil definition using `print()` (or writing `pobl_soil` in the console).
 
 --
 
@@ -473,13 +498,16 @@ pobl_soil_props$rfc[3] = 80
 
 --
 
-If we rebuild the soil object and inspect its properties:
+If we rebuild the soil object and inspect its properties...
 
 .code80[
 ```{r, eval= FALSE}
 pobl_soil <- soil(pobl_soil_props)
+pobl_soil
 ```
 ]
+
+...we will see the decrease in water-holding capacity.
 
 ---
 
@@ -495,6 +523,7 @@ We begin by building an object of S4 class `SpatialPointsTopography`, which exte
 ```{r}
 pobl_spt <- SpatialPointsTopography(coords_sp,
                                     elevation = 850, slope = 15.1, aspect = 15)
+pobl_spt
 ```
 ]
 
@@ -506,9 +535,11 @@ The more difficult part of using package **meteoland** is to assemble weather da
 
 Here we will assume that such an object is already available, by using the example object provided in the **meteoland** package.
 
+.code80[
 ```{r}
 data("exampleinterpolationdata")
 ```
+]
 
 ---
 
@@ -522,7 +553,7 @@ meteo <- interpolationpoints(exampleinterpolationdata, pobl_spt)
 ```
 ]
 
-Note that a **warning** was raised, because the boundary box of the interpolator does not include the location of the Poblet forests. In this case, the result of the interpolation is not reliable and should not be used.
+Note that a **warning** was raised, because the boundary box of the interpolator does not include the location of the Poblet forests. In this case, the result of the interpolation is not reliable and should not be used!
 
 --
 
