@@ -74,29 +74,40 @@ layout: true
 ---
 
 .pull-left[
-### Definitions
+### Models
 
-.font90[
-+ *Model* - A simplification of reality that is constructed to gain insights into select attributes of a physical, biological, economic, or social system.
+.font80[
++ *Model* - A simplification of reality constructed to gain insights into a set of attributes of a physical, biological, economic, or social system.
+
++ *Conceptual model* - A hypothesis regarding the important factors that govern the behavior of an object or a process of interest.
 
 + *Statistical model* - A model built using observations within a probabilistic framework.
 
-+ *Mechanistic (or process-based) model* -  A model whose structure explicitly represents an understanding of physical, chemical, and/or biological processes.
++ *Mechanistic (or process-based) model* -  A model that explicitly represents the understanding of physical, chemical or biological processes.
 
 + *Simulation model* -  A model that represents the development of a solution by incremental steps through the model domain.
 
-+ *State variables* - The dependent variables calculated within a model, which are also often the performance indicators of the models that change over the simulation.
+### Model components
 
-+ *Parameters* - Terms in the model that are fixed during a model run or simulation but can be changed in different runs.
++ *Modules* - An independent or self-contained component of a model.
+
++ *State variables* - The dependent variables calculated within a model, which often change over the simulation.
+
 ]
 ]
 
 --
 
 .pull-right[
+.font80[
++ *Parameters* - Terms in the model that are fixed during a model run or simulation but can be changed in different runs.
+
++ *Constants* - Fixed values (e.g. the speed of light) representing known physical, biological or ecological activities.
+]
+
 ### Model assessment
-.font90[
-+ *Verification* - Examination of the algorithms/implementation to ascertain that they truly represent the conceptual model and that there are no inherent numerical problems.
+.font80[
++ *Verification* - Examination of the implementation to ascertain that they truly represents the conceptual model and there are no inherent numerical problems.
 
 + *Qualitative assessment* - Uncertainty in model predictions that cannot be quantified (i.e. about the theory underlying the model or the model design).
 
@@ -125,27 +136,32 @@ layout: true
 
 ---
 
+### Modelling tasks
 
 .pull-left[
-.font90[
-1. *Problem identification and formulation*
-  + Definition of research/application objectives
-  + Spatio-temporal physical domain
+.font80[
+1. *Problem formulation*
+  + Definition of objectives
+  + Definition of the spatio-temporal physical domain
 
-3. *Model identification/selection*
+2. *Model design and formulation*
   + Data availability
   + Use of existing vs. new model
-  
-4. *Model development/modification*
   + Conceptual model
-  + Model design
-  + Implementation
-  + Parameter estimation/calibration
+  + Use of existing modules
+
+3. *Implementation*
+  + Algorithmic design
+  + Model coding (e.g. C++)
+
+4. *Parameterization and calibration*
+  + Sources for direct parameter estimation
+  + Sources for parameter calibration
   
-5. *Model evaluation*
-  + Peer review
+5. *Model assessment*
+  + Verification and qualitative assessment
   + Sensitivity/uncertainty analysis
-  + Model corroboration
+  + Formal evaluation
   
 6. *Model application*
   + Simulation and documentation
@@ -167,7 +183,7 @@ layout: true
 
 <div class=my-footer></div>
 
-# 2. Overview of process-based forest models
+# 3. Overview of process-based forest models
 
 ---
 

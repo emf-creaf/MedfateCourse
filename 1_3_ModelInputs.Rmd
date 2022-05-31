@@ -31,7 +31,7 @@ library(sp)
 
 class: title-slide
 
-# I.3 - Model inputs
+# 1.3 - Model inputs
 
 ### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
 
@@ -44,6 +44,7 @@ class: title-slide
 <img class="logo-title" src="resources/img/emf_logo.svg" width=200>
 
 ---
+
 class: center, middle
 
 <div class=my-header>
@@ -54,6 +55,7 @@ class: center, middle
 
 
 # Outline
+
 
 ##  1. Species parameters
 ##  2. Forest input
@@ -86,7 +88,7 @@ Simulation models in **medfate** require a `data.frame` with species parameter v
 
 --
 
-The package includes a default data set of parameter values for a set of Mediterranean species.
+The package includes a default data set of parameter values for `r nrow(SpParamsMED)` Mediterranean taxa.
 
 .code80[
 ```{r, echo = TRUE}
@@ -96,7 +98,11 @@ data("SpParamsMED")
 
 --
 
-A large number of parameters (columns) can be found in `SpParamsMED`. Not all parameters are needed for all models. You can find parameter definitions in table `SpParamsDefinition`:
+A large number of parameters (`r ncol(SpParamsMED)` columns) can be found in `SpParamsMED`, which may be intimidating. 
+
+--
+
+You can find parameter definitions in table `SpParamsDefinition`:
 
 .code80[
 ```{r, echo = TRUE}
@@ -105,6 +111,8 @@ data("SpParamsDefinition")
 ]
 
 ---
+
+The following table shows parameter definitions and units:
 
 .font80[
 ```{r, eval= require("DT"), tidy = FALSE, echo = FALSE}
@@ -128,9 +136,9 @@ layout:true
 
 ---
 
-## Forest object
+## Forest class
 
-Each forest plot is represented in an object of class `forest`, a list that contains several elements. 
+Each *forest plot* is represented in an object of class `forest`, a list that contains several elements. 
 
 .code80[
 ```{r, include = TRUE, echo = TRUE}
@@ -160,15 +168,21 @@ forest$shrubData
 
 ---
 
+## Forest class
+
+The two data frames share many variables...
+
+--
+
 .pull-left[
-## Tree data
+### Tree data
 
 .font90[
 | Variable | Definition |
 | -------- | --------------------- |
 |`Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
-| `N` | Percentage of clay (within volume of soil particles) |
-| `DBH` | Tree diameter at breast height (in cm) |
+| **`N`** | Percentage of clay (within volume of soil particles) |
+| **`DBH`** | Tree diameter at breast height (in cm) |
 | `Height` | Tree total height (in cm) |
 | `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
 | `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
@@ -178,13 +192,13 @@ forest$shrubData
 
 .pull-right[
 
-## Shrub data
+### Shrub data
 
 .font90[
 | Variable | Definition |
 | -------- | --------------------- |
 | `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
-| `Cover` | Shrub cover (%)  |
+| **`Cover`** | Shrub cover (%)  |
 | `Height` | Shrub total height (in cm) |
 | `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
 | `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
@@ -195,11 +209,11 @@ forest$shrubData
 
 ## Creating a 'forest' object from forest inventory data
 
-Forest inventories can be conducted in many different ways, which means that the starting form of forest data is very diverse.
+Forest inventories can be conducted in different ways, which means that the starting form of forest data is diverse.
 
 --
 
-Building `forest` objects from inventory data will always require some manual data wrangling, but package **medfateutils** provides functions that may be helpful:
+Building `forest` objects from inventory data will always require some data wrangling, but package **medfateutils** provides functions that may be helpful:
 
 --
 .font90[
@@ -216,7 +230,7 @@ Building `forest` objects from inventory data will always require some manual da
 
 ## Forest attributes
 
-The package includes a number of functions to examine properties of the plants conforming the `forest` object:
+The **medfate** package includes a number of functions to examine properties of the plants conforming a `forest` object:
 
 -   `plant_*`: Cohort-level information (species name, id, leaf area index, height...).
 -   `species_*`: Species-level attributes (e.g. basal area, leaf area index).
@@ -228,6 +242,12 @@ The package includes a number of functions to examine properties of the plants c
 plant_basalArea(forest)
 ```
 ]
+.code80[
+```{r, echo = TRUE}
+stand_basalArea(forest)
+```
+]
+
 ]
 
 --
@@ -238,12 +258,17 @@ plant_basalArea(forest)
 plant_LAI(forest, SpParamsMED)
 ```
 ]
+.code80[
+```{r, echo = TRUE}
+stand_LAI(forest, SpParamsMED)
+```
+]
 ]
 
 ---
 ## Aboveground data
 
-An important information for simulation model is the estimation of initial leaf area index and crown dimensions for each plant cohort, which is normally done using *allometries*.
+An important information for simulation model is the estimation of initial **leaf area index** and **crown dimensions** for each plant cohort, which is normally done using *allometries*.
 
 --
 
@@ -387,7 +412,7 @@ print(spar)
 ---
 ## Drawing soil physical attributes from *SoilGrids*
 
-*SoilGrids* is a global database of soil properties:
+[*SoilGrids*](https://soilgrids.org/) is a global database of soil properties:
 
 .center[
 .font90[
@@ -412,7 +437,7 @@ sp <- SpatialPoints(cc, proj4string = CRS(SRS_string = "EPSG:4326"))
 
 --
 
-We then call `soilgridsParams()` along with a desired vertical width of soil layers:
+We then call `soilgridsParams()` along with a desired vertical width (in mm) of soil layers:
 
 .code80[
 ```{r, eval = FALSE}
@@ -432,7 +457,16 @@ class(examplesoil)
 ```
 ]
 
+A `print()` function has been defined for objects of class `soil`, that displays several soil parameters and properties.
+
+.code80[
+```{r, echo = TRUE}
+examplesoil
+```
+]
+
 ---
+
 ## Water retention curves
 
 The **water retention curve** is used to represent the relationship between soil water content ( $\theta$ ; %) and soil water potential ( $\Psi$ ; MPa).
@@ -466,6 +500,16 @@ All simulations in the package require **daily weather** inputs in form of a `da
 
 --
 
+|   Variables  | Units |
+| ------------ | ----- |
+| Mean/maximum/minimum temperature | $ºC$ |
+| Precipitation and potential evapo-transpiration (PET) | $l \cdot m^{-2} \cdot day^{-1}$ |
+| Mean/maximum/minimum relative humidity | % |
+| Radiation | $MJ \cdot m^{-2} \cdot day^{-1}$ |
+| Wind speed | $m \cdot s^{-1}$ |
+
+--
+
 An example of daily weather data frame: 
 
 .code80[
@@ -477,14 +521,16 @@ head(examplemeteo, 2)
 
 --
 
-The weather variables that are required depend on the complexity of model we are using. Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/). 
+Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/). 
 
 
 ---
 
 # 6. Simulation control
 
-The behaviour of simulation models can be controlled using a set of global parameters.
+The behaviour of simulation models can be controlled using a set of **global parameters**.
+
+--
 
 The default parameterization is obtained using function `defaultControl()`:
 
@@ -504,7 +550,7 @@ names(control)
 ```
 ]
 
-Control parameters should normally be left to their **default values** until their effect on simulations is fully understood.
+Control parameters should be left to their **default values** until their effect on simulations is fully understood!
 
 ---
 
@@ -524,7 +570,7 @@ The combination can be done via functions  `forest2spwbInput()` and `forest2grow
 
 --
 
-Having this additional step is handy because initialized cohort-level parameters and state variables can then be modified before calling the actual simulation functions.
+Having this additional step allows *modifying the value* of specific parameters or state variables before calling the simulation functions.
 
 --
 

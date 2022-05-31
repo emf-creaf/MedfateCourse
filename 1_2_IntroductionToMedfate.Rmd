@@ -81,7 +81,7 @@ Being able to anticipate the impact of global change on forest ecosystems is one
 
 --
 
-The R package **medfate** (ver. `r utils::packageDescription("medfate",fields="Version")`) has been designed to study the characteristics and simulate the functioning and structural dynamics of forest ecosystems.
+The R package **medfate** (ver. `r utils::packageDescription("medfate",fields="Version")`) has been designed to study the characteristics and simulate the functioning and dynamics of forest ecosystems.
 
 --
 
@@ -95,11 +95,11 @@ Representation of vegetation accounts for structural and compositional variation
 
 ## Development context
 
-I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Two other competitive research projects have funded developments.
+I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Two other  research projects (FORESTCAST, DRESS) have funded developments.
 
 --
 
-Developments were also supported by CTFC, the research institution until March 2021, and CREAF, my current institution where I coordinate its *Ecosystem Modelling Facility*.
+Developments were also supported by CTFC (until March 2021) and CREAF, where I currently coordinate its *Ecosystem Modelling Facility*.
 
 --
 
@@ -114,10 +114,11 @@ A large number of people has contributed with *ideas*, *data* or *code* to the p
 + Lluís Brotons (CREAF-CSIC, Spain)
 + Antoine Cabon (WSL, Switzerland)
 + Roberto Molowny (EMF-CREAF, Spain)
++ Victor Granda (EMF-CREAF, Spain)
++ Alicia Forner (MNCN-CSIC, Spain)
 ]
 
 .pull-right[
-+ Victor Granda (EMF-CREAF, Spain)
 + Lluís Coll (UdL, Spain)
 + Pere Casals (CTFC, Spain)
 + Mario Beltrán (CTFC, Spain)
@@ -125,6 +126,9 @@ A large number of people has contributed with *ideas*, *data* or *code* to the p
 + Nicolas Martin-StPaul (INRA, France)
 + Shengli Huang (USDA, USA)
 + Enric Batllori (UB-CREAF, Spain)
++ Santi Sabaté (UB-CREAF, Spain)
++ Daniel Nadal-Sala (UB, Spain)
++ ...
 ]
 
 ---
@@ -139,22 +143,23 @@ layout: false
 
 # 2. Companion packages
 
-During the development of **medfate** ancillary functions were also originally included in the package itself.
+During the development of **medfate** ancillary functions were originally included in the package itself...
 
 --
 
-Many of them were later moved into more specialized packages, which now evolve in parallel to the main package:
+.. but many of them were later moved into more specialized packages, which now evolve in parallel to the main package:
 
 --
 
-1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating daily weather input for simulation models.
+1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating *daily weather input* for simulation models in medfate.
 
 --
 
-2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends **medfate** by allowing simulations to be performed in a spatially explicit context.
+2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends medfate by allowing simulations to be performed in a *spatially explicit context*.
 
 --
-3. Package [**medfateutils**](https://github.com/emf-creaf/medfateutils)  (ver. `r utils::packageDescription("medfateutils",fields="Version")`) provides functions to help initializing vegetation, soil and species inputs.
+
+3. Package [**medfateutils**](https://github.com/emf-creaf/medfateutils)  (ver. `r utils::packageDescription("medfateutils",fields="Version")`) provides functions to help *initializing* vegetation, soil and species inputs.
 
 
 ---
@@ -188,7 +193,7 @@ remotes::install_github("emf-creaf/medfate")
 
 --
 
-This session we will also use packages **meteoland** and **medfateutils**:
+Later today we will also use packages **meteoland** and **medfateutils**:
 
 .code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
@@ -224,15 +229,22 @@ layout: true
 
 ## Simulation functions
 
-Three main simulation models can be executed in medfate, each building on the preceeding ones:
+Three main simulation models can be executed in medfate, each building on the preceding ones:
 
 .font90[
+
 |  Function | Description                 |
 | --------- | --------------------------- |
 | `spwb()` | Water and energy balance    |
 | `growth()` | Carbon balance, growth and mortality |
 | `fordyn()` | Forest dynamics, including recruitment and forest management |
+
 ]
+
+--
+
+Functions `spwb()` and `growth()` have single-day counterparts `spwb_day()` and `growth_day()`.
+
 --
 
 ## Plot/summary functions
@@ -257,6 +269,8 @@ Some package functions are meant to be used on simulation results (some of them 
 | `fireHazard()` | Potential fire behaviour   |
 ]
 
+Other functions could be envisaged (e.g. light use efficiency) but have not been implemented.
+
 ---
 layout: false
 
@@ -269,7 +283,7 @@ layout: false
 # 3. Overview of package functions
 ## Sub-model functions
 
-A large number of functions implement sub-models on which the simulation functions are built. They are included in the package for the sake of transparency, but most users are not expected to use them directly.
+A large number of functions implement sub-models (i.e. modules) on which the simulation functions are built. They are included in the package for the sake of transparency, but most users are not expected to use them directly.
 
 Sub-model functions are grouped by *subject*:
 
