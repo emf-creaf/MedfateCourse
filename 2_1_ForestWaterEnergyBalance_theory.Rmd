@@ -27,6 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include = FALSE}
 library(medfate)
 library(sp)
+library(ggplot2)
 ```
 
 class: title-slide
@@ -60,7 +61,7 @@ class: center, middle
 ##  3. Transpiration and photosynthesis under the basic model
 ##  4. Transpiration and photosynthesis under the advanced model
 ##  5. Plant drought stress and cavitation
-##  6. Basic vs. advanced models: a summary
+##  6. Basic vs. advanced models: a summary of differences
 
 
 ---
@@ -80,31 +81,81 @@ layout: true
 
 The water potential, $\Psi$, is the potential energy of water, i.e. the tendency of water to move from one area to another.
 
-It can be divided into different components:
+--
+
+It has pressure units (e.g. MPa) and can be divided into different components:
 
 .center[
   <img src="resources/img/water_potential.svg", width = 500>
 ]
 
+--
+
+But not all components are equally relevant in all contexts
+
+---
+
+## Soil water retention curves
+
+The *water retention curve* of a soil (or *soil moisture characteristic curve*) is the relationship between volumetric soil moisture content ( $\theta$ in $m^3 \cdot m^{-3}$ of soil excluding rock fragments) and the corresponding soil water potential ( $\Psi$, in MPa)
+
+--
+
+Two water retention curve models are available in **medfate**:
+
+.pull-left[
+
+.font90[
+1. *Saxton model*:  
+$$\theta(\Psi) = (\Psi/A)^{(1/B)}$$
+where $A$ and $B$ depend on the texture and, if available, organic matter in the soil.
+
+2. *Van Genuchten model*:
+$$\theta(\Psi) = \theta_{res}+\frac{\theta_{sat}-\theta_{res}}{\left[1+ (\alpha \cdot \Psi)^n \right]^{1-1/n}}$$
+where $\theta(\psi)$ is the water retention, $\theta_{sat}$ is the saturated water content, $\theta_{res}$ is the residual water content, $\alpha$ is related to the inverse of the air entry pressure, and $n$ is a measure of the pore-size distribution.
+]
+]
+
+.pull-right[
+```{r retention-curves, fig.align='center', fig.width=4.5, fig.height=4, echo = FALSE}
+soil_retentionCurvePlot(soil(defaultSoilParams()), model="both")+
+  theme(legend.position =c(0.7,0.8))
+```
+]
+--
+
+
 ---
 
 ## Water potential drop in plants
 
-A larger transpiration flow implies a larger drop in water potential along the transpiration pathway:
+When stomata are closed (e.g. pre-down), plant leaf water potential is assumed to be in equilibrium with the water potential in the rhizosphere (neglecting gravity effects).
+
+--
+
+When stomata are open, a larger transpiration flow (*E*) implies (in steady state) a larger drop in water potential along the transpiration pathway:
 
 .center[
   <img src="resources/img/waterpotential_drop.png", width = 400>
 ]
 
+<div class=citation-right> Venturas et al. (2017). J. Int. Pl. Biol., 59, 356-389.</div>
 
 ---
 
 ## Drought impacts on plants
 
-.center[
-  <img src="resources/img/drought_effects.png", width = 400>
+The decrease in soil water potential caused by drought has multiple effects on plants, with some processes ceasing to occur and others becoming important or being promoted, depending on the plant response strategy.
+
+.pull-left[
+  <img src="resources/img/drought_effects.png", width = 350>
+]
+.pull-right[
+  <img src="resources/img/drought_effects_processes.png", width = 350>
 ]
 
+<div class=citation-left> Choat et al. (2018). Nature, 558, 531-539. </div>
+<div class=citation-right> Fatichi et al. (2016). WIRE: Water, 3, 327-368. </div>
 
 ---
 layout: true
@@ -121,13 +172,23 @@ layout: true
 
 ## Water balance components
 
+The water balance models in available in medfate simulate the following vertical water flows in a given forest stand.
+
 .center[
-  <img src="resources/img/wb_flows.svg", width = 500>
+  <img src="resources/img/wb_flows.svg", width = 450>
 ]
+
+--
+
+Variations in soil water content can be summarized as:
+
+$$\Delta{V_{soil}} = Pr + Sm - In - Ru - Dd - Es - Ex$$
 
 ---
 
 ## Soil water inputs
+
+If rainfall occurs during a given day, three processes are simulated to update the water content in soil layers:
 
 .center[
   <img src="resources/img/wb_inputs.svg", width = 700>
@@ -137,9 +198,19 @@ layout: true
 
 ## Soil water outputs
 
+Regardless of precipitation, soil moisture can be modified due to the following processes:
+
 .center[
   <img src="resources/img/wb_outputs.svg", width = 500>
 ]
+
+--
+
+Soil water uptake by plants and transpiration are modelled differently depending on the water balance model: **basic** vs **advanced**.
+
+--
+
+Hydraulic redistribution is only simulated in the advanced water balance model.
 
 ---
 layout: true
@@ -154,11 +225,102 @@ layout: true
 
 ---
 
-Actual plant transpiration depends on soil moisture and is calculated for each soil layer separately:
+## Maximum transpiration
+### Maximum canopy transpiration
 
-$$K(\Psi_s) = \exp \left \{\ln{(0.5)}\cdot \left[ \frac{\Psi_s}{\Psi_{extract}}\right] ^r \right \}$$
+Maximum canopy transpiration $Tr_{\max}$ depends on potential evapotranspiration, $PET$, and the amount of transpirating surface, i.e. the stand leaf area index, thanks to:
 
-$\Psi_{extract}$ is a parameter of the water potential at which transpiration is 50% of maximum, and $\Psi_s$, the water potential in layer $s$.
+.pull-left[
+$$\frac{Tr_{\max}}{PET}= -0.006\cdot (LAI^{\phi}_{stand})^2+0.134\cdot LAI^{\phi}_{stand}$$
+
+and therefore:
+
+$$Tr_{\max} = PET \cdot \left( -0.006\cdot (LAI^{\phi}_{stand})^2+0.134\cdot LAI^{\phi}_{stand} \right)$$
+
+]
+.pull-right[
+.right[
+<img src="resources/img/granier_model.png", width = 250>
+]]
+
+<div class=citation-right> Granier et al. (1999). Ecol. Model., 116, 269-283. </div>
+
+--
+
+### Maximum plant transpiration
+
+Maximum canopy transpiration is divided among plant cohorts according to the amount of light absorbed by each one:
+
+$$Tr_{\max, i} = Tr_{\max} \cdot \frac{f_i^{0.75}}{\sum_{j}{f_j^{0.75}}}$$
+where $f_i$ is the fraction of total absorbed short-wave radiation that is due to cohort $i$.
+
+---
+
+## Actual plant transpiration
+
+Actual plant transpiration depends on soil moisture and is calculated for each soil layer  $s$ separately.
+
+--
+
+.pull-left[
+A *relative whole-plant water conductance*, $K$ is defined for any given soil layer $s$ using: 
+
+$$K(\Psi_s) = \exp \left \{\ln{(0.5)}\cdot \left[ \frac{\Psi_{s}}{\Psi_{extract}}\right] ^r \right \}$$
+
+where $\Psi_{extract}$ is the water potential at which transpiration is 50% of maximum, and $\Psi_s$, the water potential in layer $s$.
+]
+
+.pull-right[
+
+```{r, fig.width=4, fig.height=3.5, fig.align="center", echo=FALSE}
+par(mar=c(4,4,1,1))
+x = seq(-10, 0, by=0.01)
+plot(-x ,unlist(lapply(x,hydraulics_psi2K,-2.0,3.0)), type="l", ylab="K (relative conductance)", xlim=c(0,10), ylim=c(0,1),xlab="Soil water potential (-MPa)", frame=FALSE)
+lines(-x, unlist(lapply(x,hydraulics_psi2K,-3.0,3.0)), lty=2)
+lines(-x, unlist(lapply(x,hydraulics_psi2K,-4.0,3.0)), lty=3)
+lines(-x, unlist(lapply(x,hydraulics_psi2K,-5.0,3.0)), lty=4)
+legend("topright", lty=1:4, col=c(rep("black",4)), 
+       legend = paste("Psi_extract = ", c(-2.0,-3.0,-4.0, -5.0), "MPa"), bty="n", cex=0.8)
+abline(h=50, col="gray", lwd=2)
+```
+]
+
+--
+
+The water extracted by a plant cohort from soil layer $s$ and transpired, $Tr_{s}$, is the product:
+
+$$Tr_{s} =  Tr_{\max} \cdot K(\Psi_{s}) \cdot FRP_{s}$$
+where $FRP_{s}$ is the proportion of plant fine roots in layer $s$. 
+
+--
+
+The transpiration summed across soil layers is: 
+$$Tr = \sum{Tr_s}$$
+
+---
+
+
+## Plant photosynthesis
+
+Gross photosynthesis for a plant cohort, $A_g$, is estimated as a function of transpiration, $Tr$, using:
+
+$$A_{g} = Tr \cdot WUE_{\max} \cdot (L^{PAR})^{WUE_{decay}}$$
+
+where $WUE_{\max}$ is the maximum water use efficiency of the cohort under maximum light availability, $L^{PAR}$ is the proportion of PAR available and $WUE_{decay}$ is an exponent. 
+
+--
+
+## Plant water potential
+
+The basic water balance model does not allow estimating a water potential drop from soil to the leaf. 
+
+--
+Despite its simplicity, a gross surrogate of 'plant' water potential, $\Psi_{plant}$, may be obtained using:
+
+$$\Psi_{plant}= K^{-1}\left(\sum_{s}{K(\Psi_s)\cdot FRP_{s}}\right)$$
+
+which can be intuitively understood as an average of soil water potential taking into account fine root distribution.
+
 
 ---
 layout: true
@@ -185,7 +347,7 @@ The analogy of a set of resistances in an electric circuit is often used to repr
 
 ## Vulnerability curves
 
-The concept of vulnerability curve can be used to specify the relationship between water potential ( $\Psi$ ) and conductance ( $k$ ) in any portion along the flow path. 
+The concept of vulnerability curve can be used to specify the relationship between water potential, $\Psi$, and hydraulic conductance, $k$, in any portion along the flow path. 
 
 --
 
@@ -218,21 +380,32 @@ The supply function describes the **steady-state** rate of water flow, $E$, as a
 
 --
 
-The steady-state flow rate $E_i$ through any $i$ element is related to the flow-induced drop in pressure across that element, $\Delta \Psi_i  = \Psi_{down} - \Psi_{up}$, by the integral transform of the element's vulnerability curve $k_i(\Psi)$:
+.pull-left[
+
+The steady-state flow rate $E_i$ through any element $i$ is related to the flow-induced drop in water potential across that element, $\Delta \Psi_i  = \Psi_{down} - \Psi_{up}$, by the integral of the vulnerability curve $k_i(\Psi)$:
 
 $$E_i = \int_{\Psi_{up}}^{\Psi_{down}}{k_i(\Psi) d\Psi}$$
 
 where $\Psi_{up}$ and $\Psi_{down}$ are the upstream and downstream water potential values. 
 
-.center[
+]
+
+.pull-right[
   <img src="resources/img/supply_network.png", width = 300>
 ]
+
+--
+
+The supply function can be integrated across the **whole hydraulic network**.
+
+
+<div class=citation-right> Sperry et al. (1998). Plant, Cell & Env., 21, 347-359.</div>
 
 ---
 
 ## Photosynthesis and stomatal regulation
 
-## Photosynthesis function
+### Photosynthesis function
 
 If we know air temperature, water vapor pressure and the light conditions in which leaves are, we can translate the supply function into a leaf photosynthesis function.
 
@@ -259,7 +432,7 @@ Daily drought stress, $DDS$, is defined using  $\phi$, the phenological status, 
 .pull-left[
 ### Basic model
 
-Since $K$ is defined as the relative whole-plant conductance:
+Since $K$ is the relative whole-plant conductance:
 
 $$DDS=\phi \cdot (1-K(\Psi_{plant}))$$
 
@@ -268,7 +441,7 @@ $$DDS=\phi \cdot (1-K(\Psi_{plant}))$$
 .pull-right[
 ### Advanced model
 
-Since $dE / d\Psi_{leaf}$ is whole-plant conductance:
+Since $dE / d\Psi_{leaf}$ is the *absolute* whole-plant conductance:
 
 $$DDS=\phi \cdot \left[ 1 - \frac{dE / d\Psi_{leaf}}{k_{max,plant}} \right]$$
 ]
@@ -314,7 +487,7 @@ layout: true
 
 <div class=my-footer></div>
 
-# 6. Basic vs. advanced models: a summary
+# 6. Basic vs. advanced models: a summary of differences
 
 ---
 
@@ -354,7 +527,7 @@ layout: true
 |           | Canopy moisture gradients |  | * |
 |           | Canopy $CO_2$ gradients |  | * |
 | Plant     | Leaf phenology status | * | * |
-|           | Plant water status | * |   |
+|           | Plant water status | * | * |
 |           | Water potential gradients  |   | * |
 |           | Stem cavitation level  | * | * |
 
