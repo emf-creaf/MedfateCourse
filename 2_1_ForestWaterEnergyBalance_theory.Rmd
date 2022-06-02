@@ -390,28 +390,111 @@ where $\Psi_{up}$ and $\Psi_{down}$ are the upstream and downstream water potent
 
 ]
 
-.pull-right[
-  <img src="resources/img/supply_network.png", width = 300>
+.center[
+  <img src="resources/img/supply_network.png", width = 350>
 ]
+
+<div class=citation-right> Sperry et al. (1998). Plant, Cell & Env., 21, 347-359.</div>
 
 --
 
 The supply function can be integrated across the **whole hydraulic network**.
 
+$$E(\Psi_{leaf}) = \int_{\Psi_{soil}}^{\Psi_{leaf}}{k(\Psi) d\Psi}$$
 
-<div class=citation-right> Sperry et al. (1998). Plant, Cell & Env., 21, 347-359.</div>
+
 
 ---
 
-## Photosynthesis and stomatal regulation
+## Leaf energy balance, gas exchange and photosynthesis
 
-### Photosynthesis function
+If we know air temperature, wind conditions, radiative balance and water vapor pressure in which leaves are, we can translate the supply function into several functions:
 
-If we know air temperature, water vapor pressure and the light conditions in which leaves are, we can translate the supply function into a leaf photosynthesis function.
+   + Leaf temperature: $T_{leaf}(\Psi_{leaf})$
+   + Leaf vapor pressure deficit (inside-outside difference): $VPD_{leaf}(\Psi_{leaf})$
+   + Leaf diffusive conductance: $g_{w}(\Psi_{leaf})$
+
+--
+
+.pull-left[
+If we know the absorbed PAR and $[CO_2]$ in the air, gross and net photosynthesis can be estimated using Farquhar's (1980) model as a function of $\Psi_{leaf}$, i.e. $A_g(\Psi_{leaf})$ and $A_n(\Psi_{leaf})$.
+]
+
+.center[
+  <img src="resources/img/leafphotosynthesisfunction.png", width = 300>
+]
 
 
-Following De Pury & Farquhar (1997), we further assume that maximum carboxylation and electron transport rates are highest for leaves at the top of the canopy and there is a exponential decrease from there towards the bottom, where maximum rates are 50% of those at the top
+<div class=citation-right> Farquhar et al. (1980) Planta, 149, 78-90 </div>
 
+--
+
+Important parameters of Farquhar's model are the *maximum rate of Rubisco carboxylation*, $V_{max}$, and the *maximum rate of electron transfer*, $J_{max}$.
+
+---
+
+## Stomatal regulation
+
+Stomatal regulation follows the model proposed by Sperry et al (2017).
+
+<div class=citation-right> Sperry et al. (2017) Plant Cell Env., 40, 816-830 </div>
+
+--
+
+.pull-left[
+The hydraulic supply function is used to derive a **cost function** $\theta(\Psi_{leaf})$ reflecting the increasing damage from cavitation.
+
+
+  <img src="resources/img/costfunction.png", width = 300>
+
+]
+
+--
+
+.pull-right[
+The normalized photosynthetic **gain function** $\beta(\Psi_{leaf})$ reflects the increase in assimilation rate, with respect to the maximum.
+
+  <img src="resources/img/gainfunction.png", width = 300>
+]
+
+---
+
+## Stomatal regulation
+
+Sperry et al (2017) suggested that stomatal regulation can be effectively estimated by determining the maximum of the *profit function*:
+$$Profit(\Psi_{leaf}) = \beta(\Psi_{leaf})-\theta(\Psi_{leaf})$$
+
+The maximization is achieved when the slopes of the gain and cost functions are equal:
+$$\frac{\delta \beta(\Psi_{leaf})}{\delta \Psi_{leaf}} = \frac{\delta \theta(\Psi_{leaf})}{\delta \Psi_{leaf}}$$
+
+.center[
+<img src="resources/img/profitfunction.png", width = 300>
+]
+
+<div class=citation-right> Sperry et al. (2017) Plant Cell Env., 40, 816-830 </div>
+
+
+---
+
+## From leaf to the canopy
+
+Calculating transpiration and photosynthesis following the Sperry model requires:
+  
+  1. Building the supply function for each plant cohort
+  2. Dividing the canopy into vertical layers and determine the direct and diffuse radiation at subdaily time steps
+  3. Differentiating between sunlit and shade leaves (De Pury & Farquhar, 1997)
+  4. Determining absorbed SWR and PAR in sunlit/shade leaves at subdaily time steps
+  5. Determining photosynthesis functions and stomatal regulation for sunlit and shade leaves at subdaily time steps.
+
+<div class=citation-right> De Pury & Farquhar (1997) Plant, Cell & Env., 20, 537–557 </div>
+
+--
+
+Once stomatal conductance is decided for sunlit and shade leaves, one obtains an average flow and the water potentials along the transpiration pathway are determined.
+
+--
+
+Hydraulic redistribution is an emergent output of the model when soil layers have different degree of moisture and stomata are closed (mainly at night).
 
 ---
 layout: true
