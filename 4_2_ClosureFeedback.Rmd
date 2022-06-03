@@ -114,9 +114,11 @@ layout: true
 
 ---
 
-1. Were the exercises illustrative and useful?
+1. Were the theoretical parts useful with respect to understanding the model? 
 
-2. What content do you think was missing and is key to understand/use *medfate*?
+2. Were the exercises illustrative and useful?
+
+3. What content do you think was missing and is key to understand/use *medfate*?
 
 
 ---

@@ -221,6 +221,8 @@ data(examplemeteo)
 ```
 ]
 
+--
+
 The call to function `spwb()` needs the water balance input object, the weather data frame, latitude and elevation:
 
 .code80[
@@ -241,6 +243,8 @@ Function `spwb()` returns an object of class with the same name, actually a list
 class(S)
 ```
 ]
+
+--
 
 It is interesting to inspect the list element names:
 
@@ -402,16 +406,21 @@ evaluation_stats(S, exampleobs, type = "SWC")
 
 Evaluation functions also allow visualizing the comparison as time series or scatter plots:
 
+.code80[
 ```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=9, fig.height = 3}
 evaluation_plot(S, exampleobs, type = "SWC", plotType = "dynamics")
 ```
+]
+
+--
 
 Alternatively, the observed data can be supplied as an additional parameter to `shinyplot()` for interactive graphics including model evaluation:
 
+.code80[
 ```{r, echo = TRUE, eval = FALSE}
 shinyplot(S, exampleobs)
 ```
-
+]
 
 ---
 layout: true
@@ -435,6 +444,8 @@ control <- defaultControl("Sperry")
 ```
 ]
 
+--
+
 We can build our input object for function `spwb()` using the same function as before:
 
 .code80[
@@ -442,6 +453,8 @@ We can build our input object for function `spwb()` using the same function as b
 x_adv <- forest2spwbInput(exampleforestMED, examplesoil, SpParamsMED, control)
 ```
 ]
+
+--
 
 The water balance input object contains the same elements...
 .code80[
@@ -472,6 +485,8 @@ hydraulics_vulnerabilityCurvePlot(x_adv, type="stem", speciesNames = TRUE)
 ```
 ]
 
+--
+
 The maximum values and shape of vulnerability curves for leaves and stems are regulated by parameters in `paramsTranspiration`.
 
 ---
@@ -498,15 +513,6 @@ transp_stomatalRegulationPlot(x_adv, examplemeteo, day = 100, timestep=12,
 ]
 
 ---
-## Pressure-volume curves
-
-.code80[
-```{r, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3.5}
-moisture_pressureVolumeCurvePlot(x_adv, segment="leaf", fraction="symplastic")
-```
-]
-
----
 ## Water/energy balance run for a single day
 
 Since the model operates at a daily and sub-daily temporal scales, it is possible to perform soil water balance for one day only, by using function `spwb_day()`:
@@ -522,6 +528,8 @@ sd1<-spwb_day(x_adv, rownames(examplemeteo)[d],
              slope= 0, aspect = 0, prec = examplemeteo$Precipitation[d])
 ```
 ]
+
+--
 
 The output of `spwb_day()` is a list with several elements:
 
@@ -539,6 +547,8 @@ names(sd1)
 plot(sd1, type = "LeafTranspiration", bySpecies = TRUE)
 ```
 ]
+
+--
 
 More conveniently, you can examine multiple plots interactively:
 
@@ -558,6 +568,8 @@ However, running `spwb_day()` modified the input object. In particular, the soil
 x_adv$soil$W
 ```
 ]
+
+--
 
 We simply use function `resetInputs()` to reset state variables to their default values, so that the new simulation is not affected by the end state of the previous simulation:
 
@@ -595,7 +607,9 @@ names(S_adv)
 ]
 
 ---
+
 ## Summaries, plots and interactive plots
+
 Summaries and plots can be obtained from simulation results, using functions `summary()`:
 
 .code80[

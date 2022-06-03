@@ -60,7 +60,7 @@ layout: true
 ---
 ## Overall goal
 
-Obtain some practice using *medfate* for forest water balance simulations.
+Learn how to use *medfate* for forest water balance simulations.
 
 --
 
@@ -71,6 +71,12 @@ Obtain some practice using *medfate* for forest water balance simulations.
   3. Perform an advanced water balance run on the same data and inspect the results
   4. Compare the results and performance between the two models
   
+--
+
+## Exercise material
+
++ Exercise_2.Rmd
++ fontblanche.rds
 
 ---
 
@@ -82,15 +88,17 @@ Obtain some practice using *medfate* for forest water balance simulations.
 
 ## Font-Blanche research forest
 
- + The Font-Blanche research forest, located in southeastern France (43º14'27'' N 5°40'45'' E) at 420 m elevation)
+ + The Font-Blanche research forest is located in southeastern France (43º14'27'' N 5°40'45'' E) at 420 m elevation)
 
 --
 
- + It is composed of a top strata of *Pinus halepensis* (Aleppo pine) reaching about 12 m, a lower strata of *Quercus ilex* (holm oak), reaching about 6 m, and an understorey strata dominated by *Quercus coccifera* and *Phillyrea latifolia*. 
+ + The stand is composed of a top strata of *Pinus halepensis* (Aleppo pine) reaching about 12 m, a lower strata of *Quercus ilex* (holm oak), reaching about 6 m, and an understorey strata dominated by *Quercus coccifera* and *Phillyrea latifolia*. 
 
 --
 
- + It grows on rocky and shallow soils that have a low retention capacity and are of Jurassic limestone origin. 
+ + Soils are shallow and rocky, have a low retention capacity and are of Jurassic limestone origin. 
+ 
+--
  
  + The climate is Mediterranean, with a water stress period in summer, cold or mild winters and most precipitation occurring between September and May. 
 
@@ -98,7 +106,7 @@ Obtain some practice using *medfate* for forest water balance simulations.
 
 ## Target stand
 
-+ The experimental site, which is dedicated to study forest carbon and water cycles, has an enclosed area of 80×80 m but our target stand is a quadrat of dimensions 25x25 m. 
++ The experimental site, which is dedicated to study forest carbon and water cycles, has an enclosed area of 80×80 m but our target stand is a quadrat of dimensions 25×25 m. 
 
 --
 
@@ -106,7 +114,7 @@ Obtain some practice using *medfate* for forest water balance simulations.
 
    + Stand total evapotranspiration estimated using an Eddy-covariance flux tower.
    + Soil moisture content of the topmost (0-30 cm) layer.
-   + Cohort transpiration estimates derived from sapflow measurements for *Q. ilex* and *P. halepensis*.
+   + Transpiration estimates per leaf area, derived from sapflow measurements for *Q. ilex* and *P. halepensis*.
    + Pre-dawn and midday leaf water potentials for *Q. ilex* and *P. halepensis*.
 
 ---
@@ -151,8 +159,11 @@ fb_forest$treeData <- fb$treeData
 fb_forest$shrubData <- fb$shrubData
 ```
 ]
+
+and examine its characteristics:
+
 .code80[
-```{r, highlight.output = c(2,5)}
+```{r, highlight.output = c(1,2,5)}
 summary(fb_forest, SpParamsMED)
 ```
 ]
@@ -169,6 +180,8 @@ fb$soilData
 ```
 ]
 
+--
+
 We need, however, to build a `soil` object:
 .code80[
 ```{r}
@@ -176,12 +189,18 @@ fb_soil <- soil(fb$soilData)
 ```
 ]
 
+--
+
 From which we can estimate the extractable water capacity for each layer (in mm):
 .code80[
 ```{r}
 soil_waterExtractable(fb_soil)
 ```
 ]
+
+--
+
+The same information can be found in the output of `print()`.
 
 ---
 
@@ -201,6 +220,8 @@ However, sometimes one may wish to override species defaults with custom values.
 fb$customParams
 ```
 ]
+
+--
 
 We can use function `modifySpParams()` to replace the values of parameters for the desired traits, leaving the rest unaltered:
 
@@ -226,9 +247,11 @@ and we assemble our inputs into a `spwbInput` object, using:
 
 .code80[
 ```{r}
-fb_x <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
+fb_x1 <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
 ```
 ]
+
+--
 
 The daily weather data comprises one year:
 .code80[
@@ -238,10 +261,12 @@ nrow(fb_meteo)
 ```
 ]
 
+--
+
 Now, we are ready to launch the simulation:
 .code80[
 ```{r, eval=FALSE}
-fb_basic <- spwb(fb_x, fb_meteo,  elevation = 420, latitude = 43.24083)
+fb_basic <- spwb(fb_x1, fb_meteo,  elevation = 420, latitude = 43.24083)
 ```
 ]
 
@@ -269,7 +294,7 @@ plot_grid(g1,g2, ncol=1, rel_heights = c(0.5,1))
 
 ## Step 8. Examine evapotranspiration flows
 
-Precipitation events also generate flows of intercepted water the same day of the event. Evaporation from the bare soil can proceed some days after the event. In any case, the transpiration flow is the dominant one:
+Precipitation events also generate flows of intercepted water the same day of the event. Evaporation from the bare soil can proceed some days after the event. Transpiration flow is the dominant one in most days, decreasing in summer due to drought.
 
 .code80[
 ```{r fig=TRUE, fig.width=10, fig.height = 4.5}
@@ -295,12 +320,15 @@ plot(fb_basic, "SoilPsi")
 ]
 ]
 
-Normally, we should expect lower layers to have a less dynamic behaviour, but strange results can occur if, for instance, a large proportion of roots is in deeper layers.
+--
 
+**Tip**: Normally, we should expect lower layers to have a less dynamic behaviour, but strange results can occur if, for instance, a large proportion of roots is in deeper layers.
 
 ---
 
 ## Steps 10-12. Evaluation of stand evapotranspiration
+
+Observations are in element `measuredData` of the list:
 
 .code80[
 ```{r}
@@ -308,21 +336,28 @@ fb_observed <- fb$measuredData
 ```
 ]
 
-Package `medfate` contains several functions to assist the evaluation of model results. We can first compare the observed vs modelled total evapotranspiration. We can plot the two time series:
+
+--
+
+We can compare the observed vs modelled total evapotranspiration by plotting the two time series:
 
 .center[
 .code80[
-```{r fig=TRUE, fig.width=10, fig.height = 4, warning=FALSE}
+```{r fig=TRUE, fig.width=10, fig.height = 3.5, warning=FALSE}
 evaluation_plot(fb_basic, fb_observed, type = "ETR", plotType="dynamics")
 ```
 ]
 ]
 
+--
+
+It is easy to see that in rainy days the predicted evapotranspiration is much higher than that of the observed data. 
+
 ---
 
 ## Steps 10-12. Evaluation of stand evapotranspiration
 
-It is easy to see that in rainy days the predicted evapotranspiration is much higher than that of the observed data. We repeat the comparison but excluding the intercepted water from modeled results:
+We repeat the comparison but excluding the intercepted water from modeled results:
 
 .pull-left[
 ### Time series plot
@@ -346,11 +381,15 @@ evaluation_plot(fb_basic, fb_observed,
 ]
 ]
 
+--
+
+Where we see a reasonably good relationship, but the model tends to underestimate total evapotranspiration during seasons with low evaporative demand. 
+
 ---
 
 ## Steps 10-12. Evaluation of stand evapotranspiration
 
-Where we see a reasonably good relationship, but the model tends to underestimate total evapotranspiration during seasons with low evaporative demand. Function `evaluation_stats()` allows us to generate evaluation statistics:
+Function `evaluation_stats()` allows us to generate evaluation statistics:
 
 .code80[
 ```{r, warning=FALSE, message=FALSE}
@@ -362,6 +401,8 @@ evaluation_stats(fb_basic, fb_observed, type = "SE+TR")
 
 ## Step 13. Evaluation of soil moisture content
 
+We can now compare the soil moisture content dynamics using:
+
 .center[
 .code80[
 ```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=3}
@@ -370,13 +411,20 @@ evaluation_plot(fb_basic, fb_observed, type = "SWC", plotType="dynamics")
 ]
 ]
 
+--
+
+The two series have similar shape but not absolute values. This may be an indication that the parameters of the soil water retention curve do not match the data produced by the moisture sensor.
+
+
 ---
 ## Step 13. Evaluation of soil moisture content
+
+We repeat the same comparison but after relativizing both series, using `type = "REW"`:
 
 .pull-left[
 ### Time series plot
 .code80[
-```{r fig=TRUE, fig.align="center", fig.width=6, fig.height = 4, warning=FALSE}
+```{r fig=TRUE, fig.align="center", fig.width=6, fig.height = 3.0, warning=FALSE}
 evaluation_plot(fb_basic, fb_observed, 
     type = "REW", plotType="dynamics")+
   theme(legend.position = c(0.8,0.85))
@@ -387,13 +435,14 @@ evaluation_plot(fb_basic, fb_observed,
 .pull-right[
 ### Scatter plot
 .code80[
-```{r, fig=TRUE, fig.align="center", fig.width=4, fig.height = 3.5, warning=FALSE, message=FALSE}
+```{r, fig=TRUE, fig.align="center", fig.width=4, fig.height = 3.0, warning=FALSE, message=FALSE}
 evaluation_plot(fb_basic, fb_observed, 
     type = "REW", plotType="scatter")
 ```
 ]
 ]
 
+--
 
 .code80[
 ```{r, warning=FALSE, message=FALSE}
@@ -412,19 +461,23 @@ fb_control <- defaultControl("Sperry")
 ```
 ]
 
-and we assemble our inputs into a `spwbInput` object, using:
+--
+
+and assemble our inputs into a `spwbInput` object, using:
 
 .code80[
 ```{r}
-fb_x <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
+fb_x2 <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
 ```
 ]
 
-And we launch the simulation (takes 8 seconds in ver. 2.7.4):
+--
+
+Finally, we launch the simulation (takes 8 seconds in ver. 2.7.4):
 
 .code80[
 ```{r, eval=FALSE}
-fb_adv <- spwb(fb_x, fb_meteo,  elevation = 420, latitude = 43.24083)
+fb_adv <- spwb(fb_x2, fb_meteo,  elevation = 420, latitude = 43.24083)
 ```
 ]
 
@@ -483,6 +536,9 @@ g2<-plot(fb_adv, "SoilPsi", ylim= c(-7,0))+
 plot_grid(g1,g2, ncol=1)
 ```
 ]
+
+--
+
 The basic model dries the soil more than the advanced model, which produces a stronger coupling between soil layers because of hydraulic redistribution.
 
 ---
@@ -505,9 +561,9 @@ plot_grid(g1, g2, rel_heights = c(0.8,0.8), ncol=1)
 
 ## Step 18. Comparing leaf-level transpiration dynamics
 
-We can display the transpiration per leaf area unit basis using `"TranspirationPerLeaf"`. In this respect, the basic model seems to overestimate transpiration.
+We can display the transpiration per leaf area unit basis using `"TranspirationPerLeaf"`. 
 .code80[
-```{r fig=TRUE, fig.width=10, fig.height = 4.5}
+```{r fig=TRUE, fig.width=10, fig.height = 4.25}
 g1<-plot(fb_basic, "TranspirationPerLeaf", bySpecies = TRUE, ylim = c(0,1.7))+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = "none")
 g2<-plot(fb_adv, "TranspirationPerLeaf", bySpecies = TRUE, ylim = c(0,1.7))+
@@ -515,6 +571,9 @@ g2<-plot(fb_adv, "TranspirationPerLeaf", bySpecies = TRUE, ylim = c(0,1.7))+
 plot_grid(g1,g2, ncol=1)
 ```
 ]
+--
+The basic model produces higher transpiration than the advanced model.
+
 
 ---
 
@@ -581,7 +640,7 @@ plot_grid(g1, g2, ncol=1)
 
 ---
 
-## Step 22. Drought stress and PLC
+## Steps 22-23. Drought stress and PLC
 
 .pull-left[
 ### Basic model
@@ -612,7 +671,38 @@ plot_grid(g3, g4, ncol=1)
 
 ---
 
-## Step 23. Key species parameters
+## Steps 22-23. Drought stress and PLC
+
+The basic model seems to overestimate PLC for *Pinus halepensis*, compared to the advanced model. 
+
+--
+
+This could arise from a difference in the parameters determining PLC or differences in the water potential simulated by both models. We examine the first option using:
+
+.pull-left[
+### Basic model
+.code80[
+```{r fig=TRUE, fig.width=6, fig.height = 3.5}
+plot(fb_basic, "PlantPsi", bySpecies = TRUE)+
+  theme(legend.position = c(0.15,0.45))
+```
+]
+]
+
+.pull-right[
+### Advanced model
+.code80[
+```{r fig=TRUE, fig.width=6, fig.height = 3.5}
+plot(fb_adv, "StemPsi", bySpecies = TRUE)+
+  theme(legend.position = c(0.15,0.45))
+```
+]
+]
+
+--
+
+The basic model predicts much lower *plant* water potentials than the advanced model, probably as a result of lacking the process of hydraulic redistribution.
+
 
 ---
 layout: false
