@@ -5,6 +5,18 @@
   font-size: 90%;
 }
 
+.latex10 {
+  font-size: 10px;
+}
+
+.latex11 {
+  font-size: 11px;
+}
+
+.latex12 {
+  font-size: 12px;
+}
+
 .code80 .remark-code {
   font-size: 80%;
 }

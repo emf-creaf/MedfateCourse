@@ -58,12 +58,153 @@ class: center, middle
 
 # Outline
 
-##  1. Forest growth inputs
-##  2. Running forest growth
-##  3. Evaluation of growth predictions
-##  4. Forest dynamics
+##  1. Simulation models and processes
+##  2. Carbon pools and carbon balance
+##  3. Tissue growth and senescence
+##  4. Mortality and recruitment
+##  5. Forest management
 
-  
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 1. Simulation models and processes
+
+---
+
+## Models in medfate and their processes
+
+.pull-right[
+    <img src="resources/img/model_nesting.svg", width = 300>
+]
+
+
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 2. Carbon pools and carbon balance
+
+---
+
+## Carbon pools
+
+<img src="resources/img/carbon_pools.png", width = 500>
+
+---
+
+## Labile carbon balance components
+
+
+$$\Delta{SS_{leaf}} \cdot V_{storage,leaf} = A - M_{leaf} - F_{phloem} - SC_{leaf} - TS_{leaf}$$
+
+$$\Delta{ST_{leaf}} \cdot V_{storage,leaf} = SC_{leaf} - TT_{leaf}$$
+
+$$\Delta{SS_{sapwood}} \cdot V_{storage,sapwood} = F_{phloem} - M_{sapwood} - M_{fineroot} - SC_{sapwood}  - TS_{sapwood}$$
+
+.latex11[
+$$\Delta{ST_{sapwood}} \cdot V_{storage,sapwood} = SC_{sapwood} + TS_{leaf} + TT_{leaf} + TS_{sapwood} - G_{sapwood} - G_{leaf} - G_{fineroot} - RE_{sapwood}$$
+]
+
+$$\Delta{S_{labile}} = A - M - G - RE$$
+
+---
+
+## Biomass balance
+
+### Balance in structural carbon pools
+
+$$\Delta{B_{leaves}} = B_{leaves, growth} - B_{leaves, senescence}$$
+$$\Delta{B_{sapwood}} = B_{sapwood, growth} - B_{sapwood, senescence}$$
+$$\Delta{B_{fineroot}} = B_{fineroot, growth} -  B_{fineroot, senescence}$$
+
+The following equation defines the structural biomass balance at the plant level:
+
+$$\Delta{B_{structure}} = \Delta{B_{leaves}} + \Delta{B_{sapwood}} +  \Delta{B_{fineroot}}$$
+
+### Balance at the individual level
+
+The biomass balance at the **individual level** is completed if we add the labile biomass balance to the structural biomass balance:
+
+$$\Delta{B_{plant}} = \Delta{B_{structure}} + \Delta{S_{labile}}$$
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 3. Tissue growth and senescence
+
+---
+
+## Source and sink limitations to tissue formation
+
+---
+
+## Drivers of tissue senescence
+
+---
+
+## Updating structural variables
+
+---
+
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 4. Mortality and recruitment
+
+---
+
+## Plant mortality
+
+---
+
+## Recruitment
+
+---
+
+
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 5. Forest management
+
+---
+
+## Forest management design
+
+---
+
+## Default forest management function
+
+
 ---
 layout: false
 class: back-slide
