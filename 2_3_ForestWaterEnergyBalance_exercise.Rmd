@@ -126,7 +126,7 @@ layout: true
 
 <div class=my-footer></div>
 
-# Exercise resolution
+# Exercise solution
 
 ---
 ## Step 1. Load Font-Blanche data

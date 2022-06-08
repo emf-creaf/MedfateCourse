@@ -171,7 +171,9 @@ layout: false
 
 <div class=my-footer></div>
 
-# 3. Package installation
+# 3. Package installation and documentation
+
+## Installation
 
 From **CRAN** (stable versions; now ver. **2.7.3**):
 
@@ -202,16 +204,25 @@ remotes::install_github("emf-creaf/medfateutils") # Not on CRAN
 ```
 ]
 
---
-.font90[We should load the packages needed for the session:]
 
 .code80[
-```{r, echo = TRUE, eval = TRUE, message=FALSE, warning=FALSE}
+```{r, echo = TRUE, eval = TRUE, message=FALSE, warning=FALSE, include = FALSE}
 library(meteoland)
 library(medfate)
 library(medfateutils)
 ```
 ]
+
+--
+
+## Documentation
+
+Several vignettes are available at the package [web page](https://emf-creaf.github.io/medfate/).
+
+--
+
+A complete documentation of the models included in the package can be found in medfate’s [reference book](https://emf-creaf.github.io/medfatebook/index.html).
+
 
 ---
 

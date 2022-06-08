@@ -3,8 +3,8 @@ title: "Exercise 3 guidelines"
 author: "Miquel De Cáceres"
 date: '2022-06-15'
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -17,76 +17,81 @@ knitr::opts_chunk$set(echo = TRUE)
 
   1. Learn to perform simulations of forest growth and forest dynamics with medfate
   2. Evaluate tree growth predictions with tree ring data
-  3. Compare simulated forest dynamics between inventories with observed changes
+  3. Compare simulated vs observed forest changes between inventories 
   4. Project forest dynamics with/without forest management
 
 ## Exercise data
 
-### Forest inventory plot
+We will use data corresponding to a forest plot of sampled during the third and fourth Spanish National Forest Inventory (SNFI3) in the province of Tarragona (latitude 41º N aprox.).
 
++ The forest plot is dominated by Aleppo pine (*Pinus halepensis*) with an understory of composed of several shrub species.
 
-### Tree ring data
++ Tree ring data are available for some trees of the forest plot, because it was included in a research project focused on intraspecific variability of functional traits (FUN2FUN, granted to J. Martínez-Vilalta).
+
++ Soil has been already drawn from *SoilGrids*
+
++ Daily weather data corresponding to the plot location has been obtained with **meteoland**, corresponding to an historical period (SNFI3-SNFI4) and a  future period (2015-2100) under scenario RCP 8.5 (from Earth system model MPI-ESM regionalized to Europe using model RCA4).
 
 
 ## Guidelines
 
-1. Load the file `"alepo.rds"`, which contains all the necessary data, and inspect the list elements until you understand them
+1. Load the file `"alepo.rds"`, which contains all the necessary data, and inspect each of the list elements until you understand their content and data structure
 
 ```{r}
 
 ```
 
-2. Estimate the leaf area index (LAI) and basal area of the forest stand at SNFI3 (year 2000), as well as the contribution of the different species present.
+2. Estimate the leaf area index (LAI) and basal area of the forest stand at SNFI3 (year 2000), as well as the contribution of the different species present. Repeat the same calculations at SNFI4 (year 2014), comparing the results.
 
 ```{r}
 
 ```
 
-3. Build inputs for function `growth()` and perform a simulation for the historic period between SNFI3 and SNFI4
+3. Build inputs for function `growth()` (what is the soil water holding capacity?) and perform a simulation for the historic period between SNFI3 and SNFI4. 
 
 ```{r}
 
 ```
 
-4. Examine the simulation results using `shinyplot()`. Which decreased in leaf area index? 
-
-```{r}
-
-```
-
-
-5. Evaluate visually the performance of the model with respect to the annual basal area increment of those trees for which ring measurements are available. Is the model performing appropriately? If not, which model parameter can we change so that fit to data increases?
-
-```{r}
-
-```
-
-6. Repeat the growth simulation after modifying the appropriate model parameter. Did the visual fit to tree ring data improved?
-
-```{r}
-
-```
-
-7. Merge tree cohorts of the same DBH class to increase the speed of subsequent simulations. How many P. halepensis cohorts do we have after merging?
+4. Examine the simulation results using `shinyplot()`. Which species decreased in leaf area index? 
 
 ```{r}
 
 ```
 
 
-8. Use the merged forest as the input for simulation of forest dynamics using function `fordyn()` and historical weather data (hint: remember that `fordyn()` accepts vegetation, soil and control inputs directly). Make sure you understand the elements of the output object before continuing.
+5. Evaluate visually the performance of the model with respect to the observed annual basal area increment of those trees for which ring measurements are available. Is the model performing appropriately? If not, what model parameter(s) could we change so that fit to data increases?
+
+```{r}
+
+```
+
+6. Repeat the growth simulation after dividing `RGRcambiummax` for *P. halepensis* by two (btw, manually modifying model parameters to increase fit to observations is called *model tuning*). Did the visual fit to tree ring data improve?
+
+```{r}
+
+```
+
+7. Merge tree cohorts of the same DBH class to increase the speed of subsequent simulations. How many *P. halepensis* cohorts do we have after merging?
+
+```{r}
+
+```
+
+
+8. Use the merged forest as the input for simulation of forest dynamics using function `fordyn()` and historical weather data (*hint*: remember that `fordyn()` accepts vegetation, soil and control inputs directly). Make sure you understand the elements of the output object before continuing.
  
 ```{r}
 
 ```
  
-9. Compare the final `forest` state with the one derived from SNFI4. Is the final stand density and basal area predicted acceptably? What about shrub cover?
+9. Compare the stand-level metrics of the final `forest` state with the those derived from SNFI4. Is the final stand density and basal area predicted acceptably? What about shrub cover?
  
 ```{r}
 
 ```
  
-10. Predict future forest dynamics using weather projection data frame included in the data. Use the previous run of `fordyn()` as starting point for simulations.
+10. Predict future forest dynamics using weather projection data. Use the previous run of `fordyn()` as starting point for simulations. What is the predicted basal area at the end of the century?
 
 ```{r}
 

@@ -203,7 +203,7 @@ G <- growth(x, examplemeteo, latitude = 41.82592, elevation = 100)
 ]
 
 ---
-## Growth output object (1)
+## Growth output object
 
 Function `growth()` returns an object of class with the same name, actually a list:
 
@@ -214,16 +214,6 @@ class(G)
 ]
 
 ... whose elements are:
-
-.code80[
-```{r, echo = TRUE}
-names(G)
-```
-]
-
-
----
-## Growth output object (2)
 
 
 .font80[
@@ -277,28 +267,33 @@ layout: true
 
 ## Observed data frame
 
-Evaluation of growth simulations will normally imply the comparison of predicted vs observed basal area increment (BAI) or diameter increment at a given temporal resolution. 
+Evaluation of growth simulations will normally imply the comparison of predicted vs observed **basal area increment** (BAI) or **diameter increment** (DI) at a given temporal resolution. 
 
-Here, we illustrate the evaluation functions included in the package using a fake data set, consisting on the predicted values and some added error.
+
+--
+
+Here, we illustrate the evaluation functions included in the package using a fake data set at *daily* resolution, consisting on the predicted values and some added error.
 
 .code80[
 ```{r}
 data(exampleobs)
-names(exampleobs)
+head(exampleobs)
 ```
 ]
 
-Normally growth evaluations will be at annual scale, but here we only have one year of simulated growth. 
+--
+
+To specify observed growth data at *monthly* or *annual scale*, you should specify the first day of each month/year (e.g. `2001-01-01`, `2002-01-01`, etc for years) as row names in your observed data frame. 
 
 ---
 
 ## Evaluation plot
 
-Assuming we want to evaluate the predictive capacity of the model in terms of monthly basal area increment for the *pine cohort*, we can plot the relationship between observed and predicted values using `evaluation_plot()`:
+Assuming we want to evaluate the predictive capacity of the model in terms of monthly basal area increment for the *pine cohort* (i.e. `T1_148`), we can plot the relationship between observed and predicted values using `evaluation_plot()`:
 
 .pull-left[
 .code70[
-```{r, fig=TRUE, echo=TRUE,  message=FALSE, fig.width=4, fig.height=4}
+```{r, fig=TRUE, echo=TRUE,  message=FALSE, fig.width=4, fig.height=3.5}
 evaluation_plot(G, exampleobs, "BAI", 
                 cohort = "T1_148", 
                 temporalResolution = "month", 
@@ -320,11 +315,16 @@ evaluation_plot(G, exampleobs, "BAI",
 ]
 ]
 
+--
+
+Using `temporalResolution = "month"` we indicate that simulated and observed data should be temporally aggregated to conduct the comparison.
+
+
 ---
 
 ## Evaluation metrics
 
-... and the following code would help us quantifying the strength of the relationship:
+The following code would help us quantifying the *strength* of the relationship:
 
 .code80[
 ```{r}
@@ -333,9 +333,6 @@ evaluation_stats(G, exampleobs, "BAI", cohort = "T1_148",
 ```
 ]
 
---
-
-To specify observed growth data at monthly or annual scale, you should specify values for the first day of the month/year (e.g. `XXXX-01-01`) in your observed data frame. 
 
 ---
 layout: true
@@ -359,6 +356,8 @@ In this vignette we will fake a three-year weather input by repeating the exampl
 meteo = rbind(examplemeteo, examplemeteo, examplemeteo)
 ```
 ]
+
+--
 
 we need to update the dates in row names so that they span three consecutive years:
 
@@ -385,18 +384,22 @@ fd<-fordyn(exampleforestMED, examplesoil, SpParamsMED, meteo, control,
 
 --
 
-It is important to know that `fordyn()` calls function `growth()` internally for each simulated year (the `verbose` option of the control parameters only affects function `fordyn()`, i.e. all console output from `growth()` is hidden). 
+**Important**: `fordyn()` calls function `growth()` internally for each simulated year.
+
+--
+
+The `verbose` option of the control parameters only affects function `fordyn()`, i.e. all console output from `growth()` is hidden.
 
 ---
 
-## Forest dynamics output (1)
+## Forest dynamics output
 
 As with other models, the output of `fordyn()` is a list, which has the following elements:
 
 .font80[
 | Elements | Information   |
 | ----- | -------------- |
-| `StandSummary`, `SpeciesSummary`, `CohortSummary` | Annual summary statistics at different levels |
+| `StandSummary`, `SpeciesSummary`, `CohortSummary` | *Annual* summary statistics at different levels |
 | `TreeTable`, `ShrubTable` | Structural variables of **living** cohorts at each annual time step. |
 | `DeadTreeTable`,  `DeadShrubTable` | Structural variables of **dead** cohorts at each annual time step  |
 | `CutTreeTable`,  `CutShrubTable` | Structural variables of **cut** cohorts at each annual time step  |
@@ -406,12 +409,42 @@ As with other models, the output of `fordyn()` is a list, which has the followin
 | `NextInputObject`, `NextForestObject` | Objects `growthInput` and `forest` to be used in a subsequent call to `fordyn()`. |
 ]
 
+---
+
+## Forest dynamics output
+
+For example, we can compare the initial `forest` object with the final one:
+
+.pull-left[
+.code80[
+```{r, highlight.output=c(7:10, 12:14)}
+exampleforestMED
+```
+
+]
+
+]
+
+.pull-right[
+.code80[
+```{r, highlight.output=c(7:10, 12:14)}
+fd$NextForestObject
+```
+
+]
+]
+
+
 
 ---
 
-## Forest dynamics output (2)
+## Forest dynamics output
 
-Function `fordyn()` calculates summary statistics that describe the structural and compositional state of the forest at each annual time step. For example, we can access stand-level statistics using:
+The output includes **summary statistics** that describe the structural and compositional state of the forest corresponding to *each annual time step*. 
+
+--
+
+For example, we can access *stand-level* statistics using:
 
 .code80[
 ```{r, eval = TRUE}
@@ -421,29 +454,33 @@ fd$StandSummary
 
 ---
 
-## Forest dynamics output (3)
+## Forest dynamics output
 
-Species-level analogous statistics are shown using:
+... and *species-level* statistics are shown using:
 
 .code80[
 ```{r, eval = TRUE}
-fd$SpeciesSummary
+head(fd$SpeciesSummary)
 ```
 ]
 
 
 ---
-## Forest dynamics output (4)
+## Forest dynamics output
 
 Another useful output of `fordyn()` are tables in long format with cohort structural information (i.e. DBH, height, density, etc) for each time step:
 
 .code80[
-```{r}
+```{r, highlight.output=c(2,3)}
 fd$TreeTable
 ```
 ]
 
-The same can be shown for dead trees:
+**Note**: The `NA` values in `Year` correspond to the initial state.
+
+--
+
+The same information can be shown for trees that are predicted to die during each simulated year:
 
 .code80[
 ```{r, eval = TRUE}
@@ -454,7 +491,7 @@ fd$DeadTreeTable
 
 ---
 
-## Summaries and plots (1)
+## Summaries and plots
 
 The provides a `plot` function for objects of class `fordyn`. For example, we can show the year-to-year variation in stand-level basal area using:
 
@@ -466,11 +503,11 @@ plot(fd, type = "StandBasalArea")
 
 --
 
-These plots are based on the annual summaries included in the output.
+These plots are based on the *annual summaries* included in the output.
 
 ---
 
-## Summaries and plots (2)
+## Summaries and plots
 
 **Remember**: Function `fordyn()` makes internal calls to function `growth()` and stores the result in a vector called `GrowthResults`. 
 
@@ -488,7 +525,7 @@ plot(fd$GrowthResults[[2]], "LeafArea", bySpecies = T)
 
 ---
 
-## Summaries and plots (2)
+## Summaries and plots
 
 It is also possible to plot the whole series of results by passing a `fordyn` object to the `plot()` function:
 
@@ -506,13 +543,13 @@ In this case, the `plot()` function assembles all the information from `GrowthRe
 
 --
 
-Finally, we can create interactive plots using function `shinyplot()`.
+Finally, we can create interactive plots using function `shinyplot()`, in the same way as with other simulations.
 
 ---
 
 ## Forest dynamics including management
 
- `fordyn()` allows the user to supply an arbitrary function implementing a desired management strategy for the stand whose dynamics are to be simulated. 
+ `fordyn()` allows the user to supply an *arbitrary* function implementing a desired management strategy for the stand whose dynamics are to be simulated. 
  
 --
  
@@ -539,8 +576,8 @@ args <- defaultManagementArguments()
 ```{r, eval = FALSE}
 fd<-fordyn(exampleforestMED, examplesoil, SpParamsMED, meteo, control, 
            latitude = 41.82592, elevation = 100,
-           management_function = defaultManagementFunction,
-           management_args = args)
+*           management_function = defaultManagementFunction,
+*           management_args = args)
 ```
 ]
 
@@ -551,8 +588,47 @@ When management is included, two additional tables are produced, e.g.:
 .code80[
 ```{r, eval = FALSE}
 fd$CutTreeTable
+fd$CutShrubTable
 ```
 ]
+
+---
+
+## Forest dynamics including management
+
+Function `defaultManagementArguments()` returns a list with default values for *management parameters*:
+
+.font80[
+| Element |  Description                          |
+| ------- | ------------------------------------- |
+| `type` | Management model, either 'regular' or 'irregular' |
+| `thinning`  | Kind of thinning to be applied in irregular models or in regular models before the final cuts. Options are `"below"`, `"above"`, `"systematic"`, `"below-systematic"`, `"above-systematic"` or a string with the proportion of cuts to be applied to different diameter sizes |
+| `thinningMetric` | The stand-level metric used to decide whether thinning is applied, either `"BA"` (basal area), `"N"` (density) or `"HB"` (Hart-Becking index) |
+| `thinningThreshold` | The threshold value of the stand-level metric causing the thinning decision |
+| `thinningPerc` | Percentage of stand's basal area to be removed in thinning operations |
+| `minThinningInterval` | Minimum number of years between thinning operations |
+| `finalMeanDBH` | Mean DBH threshold to start final cuts |
+| `finalPerc` | String with percentages of basal area to be removed in final cuts, separated by '-' (e.g. "40-60-100") |
+| `finalYearsBetweenCuts` | Number of years separating final cuts |
+]
+
+---
+
+## Forest dynamics including management
+
+The same list includes *state variables* for management (these are modified during the simulation):
+
+.font80[
+| Element |  Description                          |
+| ------- | ------------------------------------- |
+| `yearsSinceThinning`  | State variable to count the years since the last thinning ocurred |
+| `finalPreviousStage` | Integer state variable to store the stage of final cuts ('0' before starting final cuts) |
+| `finalYearsToCut` | State variable to count the years to be passed before new final cut is applied. |
+]
+
+--
+
+**Remenber**: Besides using the in-built management function, you could program your own management function and specify its own set of parameters.
 
 ---
 layout: false

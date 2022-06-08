@@ -161,7 +161,7 @@ layout: true
 5. *Model assessment*
   + Verification and qualitative assessment
   + Sensitivity/uncertainty analysis
-  + Formal evaluation
+  + Formal evaluation (validation)
   
 6. *Model application*
   + Simulation and documentation
