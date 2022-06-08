@@ -1,0 +1,46 @@
+---
+title: "Course information"
+author: "Miquel De Cáceres"
+date: "24/2/2022"
+output:
+  pdf_document: default
+---
+
+
+## Presentation
+
++ **Title** - Process-based forest modelling using the medfate R package
++ **Who** - Miquel De Cáceres (EMF-CREAF), Victor Granda (EMF-CREAF) and Aitor Ameztegui (UdL)
++ **When** - 13-16 June 2022 (9-14h)
++ **Recommended for** - Researchers at any point of their career interested in learning how to conduct process-based forest modelling using the models included in the medfate R package
++ **Where** -  UAB multipurpose room (C5/1066)
++ **Description** - The main aims of the course are: (a) to provide participants with the basis to understand the formulation and parameterization of biophysical, physiological and ecological processes in the models of forest water balance, carbon balance and forest dynamics included in the R package medfate; (b) to show how to use  'medfate' and companion R packages to prepare model inputs, perform simulations and inspect the results.
+
+## Requirements
+
+ + Students should be able to program scripts in R (including loops and conditionals) and should understand common R data structures (data frames, lists, vectors, etc.).
+
+## Questions for inscription
+
+ + Do you have experience programming in R (i.e. writing your own R scripts)?
+ + Have you used process-based forest models in the past? If yes, indicate which models did you use.
+ + Have you used the *medfate* R package so far? If yes, briefly explain the context.
+   
+## Content and temporal organization
+
++ Day 1 (June 13th): 
+  - 1.1 Introduction to process-based forest modelling (theory; 30 min)
+  - 1.2 Introduction to the *medfate* R package (theory; 30 min)
+  - 1.3 Model inputs (practice; 1h)
+  - 1.4 Model inputs (exercises; 2h)
++ Day 2 (June 14th):
+  - 2.1 Design and formulation of forest water/energy balance in *medfate* (theory; 1h)
+  - 2.2 Forest water/energy balance (practice; 1h)
+  - 2.3 Forest water/energy balance (exercises; 2h)
++ Day 3 (June 15th):
+  - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (theory; 1h)
+  - 3.2 Forest growth and dynamics (practice; 1h)
+  - 3.3 Forest growth and dynamics (exercises; 2h)
++ Day 4 (June 16th):
+  - 4.1 Large-scale simulations: parameterization, initialization and climate forcing (practice; 2h)
+  - 4.2 Closure and feedback (1h)

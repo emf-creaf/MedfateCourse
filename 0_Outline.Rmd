@@ -1,138 +1,70 @@
 ---
-title: "Outline"
+title: "Course outline"
 author: "Miquel De Cáceres"
-date: "24/2/2022"
+institute: "Ecosystem Modelling Facility, CREAF"
+date: "`r Sys.Date()`"
 output:
-  pdf_document: default
-  html_document: default
+  xaringan::moon_reader:
+    css: ["resources/css/custom.css", "default-fonts", "default"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    seal: false
+editor_options: 
+  chunk_output_type: console
 ---
 
+class: title-slide
 
-## Logistics
+# Process-based forest modelling using the medfate R package
 
-+ Title - Process-based forest modelling using the medfate R package
-+ Who - Miquel De Cáceres (EMF) and Aitor Ameztegui (UdL)
-+ When - 13-16 June 2022 (9-14h)
-+ Recommended for - Researchers at any point of their career interested in learning how to conduct process-based forest modelling using the models included in the medfate R package
-+ Where -  UAB multipurpose room (C5/1066)
-+ Description - The main aims of the course are: (a) to provide participants with the basis to understand the formulation and parameterization of biophysical, physiological and ecological processes in the models of forest water balance, carbon balance and forest dynamics included in the R package medfate; (b) to show how to use  'medfate' and companion R packages to prepare model inputs, perform simulations and inspect the results.
+### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
 
-## Requirements
+### Ecosystem Modelling Facility
 
- + Students should be able to program scripts in R (including loops and conditionals) and should understand common R data structures (data frames, lists, vectors, etc.).
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
 
-## Questions for inscription
+---
 
- + Do you have experience programming in R (i.e. writing your own R scripts)?
- + Have you used process-based forest models in the past? If yes, indicate which models did you use.
- + Have you used the *medfate* R package so far? If yes, briefly explain the context.
-   
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+
 ## Content and temporal organization
 
-+ Day 1 (June 13th): 
-  - 1.1 Introduction to process-based forest modelling (30 min)
-  - 1.2 Introduction to the *medfate* R package (30 min)
-  - 1.3 Model inputs (1h)
-  - 1.4 Model inputs - exercise (2h)
-+ Day 2 (June 14th):
-  - 2.1 Design and formulation of forest water/energy balance in *medfate* (1h)
-  - 2.2 Forest water/energy balance - practice (1h)
-  - 2.3 Forest water/energy balance - exercise (2h)
-+ Day 3 (June 15th):
-  - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (1h)
-  - 3.2 Forest growth and dynamics - practice (1h)
-  - 3.3 Forest growth and dynamics - exercise (2h)
-+ Day 4 (June 16th):
-  - 4.1 Large-scale simulations: parameterization, initialization and climate forcing (in progress)
-  - 4.2 Closure and feedback (in progress)
+### Day 1 (June 13th): 
 
-## Detailed content
+  - 1.1 Introduction to process-based forest modelling (theory; 30 min)
+  - 1.2 Introduction to the *medfate* R package (theory; 30 min)
+  - 1.3 Model inputs (practice; 1h)
+  - 1.4 Model inputs (exercises; 2h)
+  
+--
 
-### 1.1 - Introduction to process-based forest modelling
+### Day 2 (June 14th):
 
-Theory (30 min)
+  - 2.1 Design and formulation of forest water/energy balance in *medfate* (theory; 1h)
+  - 2.2 Forest water/energy balance (practice; 1h)
+  - 2.3 Forest water/energy balance (exercises; 2h)
+  
+--
+  
+### Day 3 (June 15th):
 
-+ General modelling concepts: conceptual models, computational models, spatial and temporal scales, state variables, boundary conditions, etc.
-+ Model development process: design, implementation, verification, calibration, evaluation, sensitivity analysis, uncertainty analysis, etc.
-+ Overview of existing process-based forest modelling approaches and model examples
+  - 3.1 Design and formulation of forest carbon balance and forest dynamics in *medfate* (theory; 1h)
+  - 3.2 Forest growth and dynamics (practice; 1h)
+  - 3.3 Forest growth and dynamics (exercises; 2h)
+  
+--
 
-### 1.2 - Introduction to medfate
+### Day 4 (June 16th):
 
-Guided practice (30 min):
+  - 4.1 Large-scale simulations: parameterization, initialization and climate forcing (practice; 2h)
+  - 4.2 Closure and feedback (1h)
 
-+ Scope and history
-+ Package installation
-+ Overview of package functions
-+ Companion packages
 
-### Break
-
-### 1.3 - Model inputs
-
-Guided practice (1 h):
-
-+ Vegetation input
-+ Soil input
-+ Weather input
-+ Simulation control
-+ Simulation input object
-
-### 1.4 - Model inputs (exercise)
-
-Unguided practice (45 min) - Resolution (45 min)
-
-+ Suggested exercises: Obtain vegetation, soil and weather inputs from coordinates and forest inventory data (meteoland's interpolator object supplied). 
-
-### 2.1 - Forest water and energy balance (theory)
-
-Theory (1h 30min)
-
-+ Forest hydrology (fluxes, compartments at different scales)
-+ Forest energy balance
-+ Plant hydraulics and regulation of transpiration
-+ Effect of water limitation on forests
-
-### 2.2 - Forest water and energy balance (practice)
-
-+ Water balance input object
-+ Running the basic water balance model
-+ Running the advanced water balance model
-+ Plots and summaries
-+ Evaluating model performance
-+ Modifying model inputs
-
-### 2.3 - Exercises (1h)
-
-+ Suggested exercises: Run the water balance model on a particular stand (e.g. FontBlanche experimental site) and answer a set of questions by examining simulation results and fit to observed data.
-
-### 3.1 - Plant growth and forest dynamics - Theory (1h 30min)
-
-+ Carbon balance and carbon allocation in process-based models
-+ Secondary growth and sink limitations in process-based models
-+ Mortality and recruitment in process-based models
-
-### 3.2 Guided practice (1h 30min)
-
-+ Growth input object
-+ Running growth simulations and examining output
-+ Evaluation of growth predictions
-+ Running forest dynamics simulations and examining output
-+ Forest management and forest dynamics
-
-### 3.3 Exercises (1h 30min)
-
-+ Suggested exercises: Run the growth model on a particular stand (e.g. FUN2FUN plot) and answer a set of questions by examining simulation results and fit to observed growth data. Project forest dynamics to the future for the same plot and summarize the results focusing on a particular question.
-
-### 4.1 Guided practice (2h 30min)
-
-+ Sensitivity analysis
-+ Parameterization using functional trait databases
-+ Tips on model calibration
-+ Brief introduction to **meteoland** package
-+ Parallelization and **medfateland** package
-
-### 4.2 Open debate (1h)
-
-+ Open debate on medfate's design and usability
-+ Future prospects of developments in medfate and companion packages
-+ Feedback about the course itself
