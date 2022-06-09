@@ -1,4 +1,4 @@
-`npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '0_Outline.html' 'pdf/0_Outline.pdf'
+# `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '0_Outline.html' 'pdf/0_Outline.pdf'
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '1_1_IntroductionToProcessBasedModelling.html' 'pdf/1_1_IntroductionToProcessBasedModelling.pdf'
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '1_2_IntroductionToMedfate.html' 'pdf/1_2_IntroductionToMedfate.pdf'
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '1_3_ModelInputs.html' 'pdf/1_3_ModelInputs.pdf'
@@ -9,5 +9,5 @@
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '3_1_ForestGrowthDynamics_theory.html' 'pdf/3_1_ForestGrowthDynamics_theory.pdf'
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '3_2_ForestGrowthDynamics_practice.html' 'pdf/3_2_ForestGrowthDynamics_practice.pdf'
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '3_3_ForestGrowthDynamics_exercise.html' 'pdf/3_3_ForestGrowthDynamics_exercise.pdf'
-# `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '4_1_LargeScaleSimulations_practice.html' 'pdf/4_1_LargeScaleSimulations_practice.pdf'
+`npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '4_1_LargeScaleSimulations_practice.html' 'pdf/4_1_LargeScaleSimulations_practice.pdf'
 # `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '4_2_ClosureFeedback.html' 'pdf/4_2_ClosureFeedback.pdf'

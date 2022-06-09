@@ -58,10 +58,11 @@ class: center, middle
 
 # Outline
 
-##  1. Forest and soil initialisation for large areas
+##  1. Forest and soil initialisation over large areas
 ##  2. Parameter estimation for multiple species
-##  3. Spatial variation of climate forcing: meteoland
-##  4. Simulation over landscapes: medfateland
+##  3. Tools for model analysis
+##  4. Spatial variation of climate forcing: meteoland
+##  5. Simulation over landscapes: medfateland
 
 ---
 layout: true
@@ -72,12 +73,12 @@ layout: true
 
 <div class=my-footer></div>
 
-# 1. Forest and soil initialisation for large areas
+# 1. Forest and soil initialisation over large areas
 
 ---
 ## Data sources
 
-The following is a list of data sources that I use for large-scale initialisation of `forest` and `soil` objects:
+The following is a list of data sources that I commonly use for large-scale initialisation of `forest` and `soil` objects:
 
 |  Data source    | Information | Spatial structure |
 | --------------- | ----------- | ----------------- |
@@ -88,22 +89,35 @@ The following is a list of data sources that I use for large-scale initialisatio
 | SoilGrids | Soil texture, bulk density, organic matter,... | Raster |
 | Shagguan et al. (2017) | Soil depth | Raster |
 
+--
+
+You can check on other data sources at [EMF website](https://emf.creaf.cat/external_data/).
+
 ---
+
 ## Initialisation tips
 
-The starting point of **medfate** models are `forest` objects, which require information about *structure* and *composition*. 
+### Forest structure and composition
+
+Initialisation of `forest` objects over a **grid** requires defining *imputation procedures* and using multiple data sources: 
+
++ Forest inventory data
++ Forest maps 
++ Lidar data.
 
 --
 
-Initialisation of forests across a landscape/region requires imputation procedures are needed combining at least: (a) forest inventory data, (b) forest maps and (c) lidar data.
+**Problem**: Most countries lack detailed soil maps but soil properties change substantially at small scales. 
 
 --
 
-Most countries lack detailed soil maps and soil properties change substantially at small scales. 
+### Soils
+
+Relying on *SoilGrids* implies accepting a high degree of uncertainty for some variables.
 
 --
 
-Relying on SoilGrids implies accepting a high degree of uncertainly. Initialisation of soils requires at least combining SoilGrids with additional information on soil depth and rock content. 
+Initialisation of soils requires at least combining *SoilGrids* with additional information on soil depth and rock content. 
 
 --
 
@@ -122,23 +136,27 @@ layout: true
 
 ---
 
-## Taxonomic treatment
+## Creating species parameter tables
 
-Decide taxonomic treatment according to:
+Estimating species parameters is the hardest task and most important limitation to the use of process-based models, so *you are not expected to do this by yourself*!
 
-   1. Taxonomic resolution of forest data sources (e.g. forest inventory data)
+--
+
+### General procedure
+
+1. Decide taxonomic treatment according to:
+
+   + Taxonomic resolution of forest data sources (e.g. forest inventory data)
    
-   2. Availability of trait data
+   + Availability of trait data
 
 --
 
-Store original source codes to be lumped into the same taxon/group (e.g. genus level)
+2. Store original source codes to be lumped into the same taxon/group (e.g. genus level)
 
 --
 
-
-Initialize medfate's *species* parameter table:
-
+3. Initialize medfate's *species* parameter table:
 .code80[
 .center[
 ```{r, eval = FALSE}
@@ -146,6 +164,10 @@ SpParams <-  medfateutils::initSpParams()
 ```
 ]
 ]
+
+--
+
+4. Fill species parameter table from multiple sources (different functions in **medfateutils**)
 
 ---
 
@@ -193,10 +215,25 @@ The following information can be extracted from forest inventory data:
 ]
 
 ---
+layout: true
 
-## Sensitivity analyses and calibration
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
 
-Sensitivity analyses and calibration procedures involve running many simulations with different parameter sets. If we build a matrix of parameter combinations, we can use function `multiple_runs()`, e.g.:
+<div class=my-footer></div>
+
+# 3. Tools for model analysis
+
+---
+
+## Multiple runs
+
+Model analysis (i.e. calibration, sensitivity analysis, uncertainty analysis, ...) involve running a **large number simulations** with different parameter sets. 
+
+--
+
+If we build a matrix `parMatrix` of parameter combinations in rows, we can use function `multiple_runs()` to evaluate them, e.g.:
 .code80[
 ```{r, eval = FALSE}
 multiple_runs(parMatrix, x1, examplemeteo, latitude = 42, elevation = 100,
@@ -204,13 +241,30 @@ multiple_runs(parMatrix, x1, examplemeteo, latitude = 42, elevation = 100,
 ```
 ]
 
+
+where `x1` is the initial model input object and `sf` is a summary function. 
+
 --
 
-Sensitivity analyses and calibration procedures require having functions that accept values of the parameters to be calibrated and return model outputs or evaluation metrics.
+For each parameter combination, `multiple_runs()` will:
+
+1. Modify the values of the target parameter in `x1`
+2. Call the simulation function: `spwb()` or `growth()`
+3. Call the summary function to extract the desired output.
+
+---
+
+## Function factories
+
+*Sensitivity analyses* and *calibration procedures* often require defining a *function* that accepts values of the parameters to be calibrated and return model outputs or evaluation metrics, e.g.
+
+$$y = g(x_1, x_2,..., x_r)$$
+where $x_1, x_2,..., x_r$ is the set of parameter values and $y$ is a scalar corresponding model prediction (e.g. annual transpiration) or an evaluation metric (e.g. mean absolute error of basal area increment).
 
 --
 
-Package medfate includes *function factories*, i.e. functions that return functions to be used in model calibration or sensitivity analyses.
+
+Package medfate includes *function factories*, i.e. functions that return functions to be used in those calculations.
 
 .font90[
 | Function factory | Multiple cohorts | Function returns                    |
@@ -223,9 +277,29 @@ Package medfate includes *function factories*, i.e. functions that return functi
 
 ---
 
-## Sensitivity analyses and calibration
+## Function factories
 
-There is a package [vignette](https://emf-creaf.github.io/medfate/articles/modelanalysis/SensitivityCalibration.html) illustrating the use of the former functions.
+An example of using the function factory is:
+
+.code80[
+```{r, eval = FALSE}
+of_transp<-optimization_function(parNames = parNames,
+                                 x = x1,
+                                 meteo = examplemeteo, 
+                                 latitude = 42, elevation = 100,
+                                 summary_function = sf)
+```
+]
+
+where `parNames` specifies the target parameters.
+
+--
+
+The object `of_transp` is now our function $y = g(x_1, x_2,..., x_r)$, and we can call it with any parameter combination.
+
+--
+
+There is a package [vignette](https://emf-creaf.github.io/medfate/articles/modelanalysis/SensitivityCalibration.html) illustrating the use of the function factories in different contexts.
 
 |  Analysis  | R package(s) |
 | ---------- | ------------ |
@@ -242,16 +316,22 @@ layout: true
 
 <div class=my-footer></div>
 
-# 3. Spatial variation of climate forcing: meteoland
+# 4. Spatial variation of climate forcing: meteoland
 
 ---
 
 ## Purpose
 
-With the aim to assist research of climatic impacts on forests, **meteoland** provides utilities to estimate daily weather variables at any position over complex terrains:
+With the aim to assist research of climatic impacts on forests, package **meteoland** provides utilities to estimate daily weather variables at any position over complex terrains:
 
-1. Spatial interpolation of daily weather records from meteorological stations. 
+1. Spatial interpolation of daily weather records from meteorological stations.
+
+--
+
 2. Statistical correction of meteorological data series (e.g. from climate models).
+
+--
+
 3. Multisite and multivariate stochastic weather generation (underdeveloped).
 
 --
@@ -354,7 +434,7 @@ The general procedure for interpolation is very similar to the one that underpin
 
 --
 
-+ *Potential solar irradiance* is estimated taking into account latitude, seasonality, aspect and slope. Actual solar irradiance is then estimated from potential irradiance by including the effect of atmosphere transmittance using the predictions of temperature range, relative humidity and precipitation (Thornton & Running 1999).
++ *Potential solar radiation* is estimated taking into account latitude, seasonality, aspect and slope. Actual solar irradiance is then estimated from potential radiation by including the effect of atmosphere transmittance using the predictions of temperature range, relative humidity and precipitation (Thornton & Running 1999).
 
 --
 
@@ -368,7 +448,9 @@ The general procedure for interpolation is very similar to the one that underpin
 
 Package meteoland stores weather series for reference locations (surface weather stations) and interpolation parameters in a single object of class `MeteorologyInterpolationData`. 
 
-Collecting and assembling surface weather records into an object of `MeteorologyInterpolationData` is the tedious part of using package **meteoland**.
+--
+
+*Warning*: Collecting and assembling surface weather records into an object of `MeteorologyInterpolationData` is the tedious part of using package **meteoland**.
 
 --
 
@@ -387,6 +469,7 @@ Interpolation is conducted using different R functions depending on the spatial 
 
 
 ---
+
 ## Downscaling and bias correction
 
 ### Concept
@@ -449,7 +532,7 @@ layout: true
 
 <div class=my-footer></div>
 
-# 4. Simulation over landscapes: medfateland
+# 5. Simulation over landscapes: medfateland
 
 ---
 
@@ -459,14 +542,17 @@ The R package **medfateland** (under development) has been designed to run simul
 
 --
 
-The package allows executing the stand-level models available in package **medfate** on points and cells within landscape, in either sequential or parallel computation.
+The package allows executing the models available in package **medfate** on points and cells within landscape, in either *sequentially* or using *parallel computation*.
 
 --
 
-In addition, medfateland allows considering spatial hydrological processes in forested watersheds.
+In addition, **medfateland** implements spatial hydrological processes for simulations in forested watersheds.
 
 --
-## Installation
+
+## Installation and documentation
+
+The package is available at GitHub only:
 
 .code80[
 ```{r, eval = FALSE}
@@ -477,6 +563,10 @@ remotes::install_github("emf-creaf/medfateland")
 ```{r, include = FALSE}
 library(medfateland)
 ```
+
+--
+
+Information about the design of medfateland can be found in its [website](https://emf-creaf.github.io/medfateland/) and in medfate’s [reference book](https://emf-creaf.github.io/medfatebook/index.html).
 
 ---
 
@@ -498,6 +588,8 @@ An additional spatial class is defined for watershed ecohydrological modelling:
 ---
 
 ## Data structures
+
+There are example spatial landscape objects in the package, e.g. a `SpatialPointsLandscape`:
 
 .code80[
 ```{r, fig.align='center', fig.width=7}
@@ -521,15 +613,21 @@ plot(examplepointslandscape, "basalArea")
 
 ## Data structures
 
-
+Another example concerns a `DistributedWatershed`:
 .code80[
 ```{r, warning=FALSE, fig = TRUE, fig.width=9, fig.height=3}
 data("examplewatershed")
-plot(examplewatershed, "elevation")
+plot(examplewatershed, "basalArea")
 ```
 ]
 
-The set of maps available can be known by inspecting the help of function `getLandscapeLayer()`. Alternatively, the package provides function `shinyplotland()` to display maps interactively.
+--
+
+The set of maps available can be known by inspecting the help of function `getLandscapeLayer()`. 
+
+--
+
+Alternatively, the package provides function `shinyplotland()` to display maps interactively.
 
 
 ---
@@ -537,9 +635,7 @@ The set of maps available can be known by inspecting the help of function `getLa
 ## Dynamic simulation functions
 
 
-The package allows simulating water balance for multiple stands distributed spatially over a given time period using functions , `spwbpixels()` or `spwbgrid()`.
-
-These functions make internal calls to `spwb()` on elements the spatial classes introduced above. 
+A large number of simulation functions are included in package **medfateland**:
 
 
 .font80[
@@ -551,6 +647,15 @@ These functions make internal calls to `spwb()` on elements the spatial classes 
 |  `DistributedWatershed` |  | `spwbland()` | `growthland()` |  |
 
 ]
+
+--
+
+Most of these functions make internal calls to `spwb()`, `growth()` or `fordyn()` on points or grid cells of the spatial classes. 
+
+--
+
+**Important**: Since most functions do not account for spatial processes, there are  parameters to allow the user to specify *parallel computation*.
+
 
 ---
 
