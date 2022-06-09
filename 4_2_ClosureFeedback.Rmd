@@ -46,21 +46,6 @@ class: title-slide
 
 <img class="logo-title" src="resources/img/emf_logo.svg" width=200>
 
----
-
-class: center, middle
-
-<div class=my-header>
-    <img class="emf-logo" src="resources/img/emf_logo.svg">
-</div>
-
-<div class=my-footer></div>
-
-# Outline
-
-##  1. Planned developments/improvements in medfate and companion packages
-##  2. Your feedback on medfate and companion packages
-##  3. Your feedback on the course
 
 ---
 layout: true
@@ -72,12 +57,27 @@ layout: true
 <div class=my-footer></div>
 
 # 1. Planned developments/improvements
+
 ---
 
-+ Developing workflows/functions to facilitate the creation of `forest` objects from freely-available national forest inventories (e.g. France, US)
-+ Developing species parameter tables for other countries.
+## Model developments/research
 
-## XX
++ Incorporate decomposition of litter and soil organic matter
+
++ Study the effect of root horizontal overlap on simulations
+
++ Implement fire effects on `fordyn()` simulations
+
++ Implement forest planning decisions (e.g. demand-based wood extraction) in *medfateland* simulation functions of forest dynamics
+
+--
+
+## Model application
+
++ Developing workflows/functions to facilitate the creation of `forest` objects from freely-available national forest inventories (e.g. France, US)
+
++ Developing species parameter tables for other countries/regions.
+
 
 ---
 layout: true
@@ -92,15 +92,19 @@ layout: true
 
 ---
 
+1. Is *medfate* a suitable tool for your research/applied projects?
 
-  1. Do you know of other data sources suitable for large-scale initialisation?
+2. What, in your opinion, is the largest impediment to using the package?
+
+3. What additional processes do you think could be easily implemented into *medfate* models?
+
+4. Do you know of other data sources suitable for large-scale initialisation?
   
-  2. Do you know of other climate data sources suitable for medfate simulations?
+5. Do you know of other climate data sources suitable for *medfate* simulations?
   
-  3. Would you appreciate being given pre-defined initialisation data (e.g. for watersheds, IFN plots, etc.)
+6. Would you appreciate being given pre-defined initialisation data (e.g. for watersheds, IFN plots, etc.)?
   
 
-  
 ---
 layout: true
 
@@ -114,11 +118,13 @@ layout: true
 
 ---
 
-1. Were the theoretical parts useful with respect to understanding the model? 
+1. Was the course difficult to follow? Why?
 
-2. Were the exercises illustrative and useful?
+2. Were the theoretical parts useful with respect to understanding the model? 
 
-3. What content do you think was missing and is key to understand/use *medfate*?
+3. Were the exercises illustrative and useful?
+
+4. What content do you think was missing and is key to understand/use *medfate*?
 
 
 ---
