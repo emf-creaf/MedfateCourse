@@ -181,13 +181,14 @@ The two data frames share many variables...
 | Variable | Definition |
 | -------- | --------------------- |
 |`Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
-| **`N`** | Percentage of clay (within volume of soil particles) |
+| **`N`** | Density of trees (in individuals per hectare) |
 | **`DBH`** | Tree diameter at breast height (in cm) |
 | `Height` | Tree total height (in cm) |
 | `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
 | `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
 ]
 ]
+
 --
 
 .pull-right[
@@ -204,6 +205,11 @@ The two data frames share many variables...
 | `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
 ]
 ]
+
+
+--
+
+**Important**: medfate's *naming conventions* for tree cohorts and shrub cohorts uses `T` or `S`, the row number and species numerical code (e.g. `"T1_148"` for the first tree cohort, corresponding to *Pinus halepensis*).
 
 ---
 
@@ -400,6 +406,8 @@ Soil physical characteristics are specified using a **data.frame** with soil lay
    + `bd` - Bulk density (g/cm3)
    + `rfc` - Rock fragment content (in whole-soil volume).
 
+--
+
 They can be initialized to default values using function `defaultSoilParams()`:
 
 .code80[
@@ -408,6 +416,8 @@ spar <- defaultSoilParams(2)
 print(spar)
 ```
 ]
+
+... and then you should modify default values according to available soil information.
 
 ---
 ## Drawing soil physical attributes from *SoilGrids*
@@ -456,6 +466,8 @@ examplesoil <- soil(spar)
 class(examplesoil)
 ```
 ]
+
+--
 
 A `print()` function has been defined for objects of class `soil`, that displays several soil parameters and properties.
 

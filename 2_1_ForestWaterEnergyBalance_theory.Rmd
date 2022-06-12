@@ -122,7 +122,7 @@ soil_retentionCurvePlot(soil(defaultSoilParams()), model="both")+
   theme(legend.position =c(0.7,0.8))
 ```
 ]
---
+
 
 
 ---
@@ -411,7 +411,7 @@ $$E(\Psi_{leaf}) = \int_{\Psi_{soil}}^{\Psi_{leaf}}{k(\Psi) d\Psi}$$
 If we know air temperature, wind conditions, radiative balance and water vapor pressure in which leaves are, we can translate the supply function into several functions:
 
    + Leaf temperature: $T_{leaf}(\Psi_{leaf})$
-   + Leaf vapor pressure deficit (inside-outside difference): $VPD_{leaf}(\Psi_{leaf})$
+   + Leaf vapor pressure deficit: $VPD_{leaf}(\Psi_{leaf})$
    + Leaf diffusive conductance: $g_{w}(\Psi_{leaf})$
 
 --
@@ -464,8 +464,6 @@ The normalized photosynthetic **gain function** $\beta(\Psi_{leaf})$ reflects th
 Sperry et al (2017) suggested that stomatal regulation can be effectively estimated by determining the maximum of the *profit function*:
 $$Profit(\Psi_{leaf}) = \beta(\Psi_{leaf})-\theta(\Psi_{leaf})$$
 
-The maximization is achieved when the slopes of the gain and cost functions are equal:
-$$\frac{\delta \beta(\Psi_{leaf})}{\delta \Psi_{leaf}} = \frac{\delta \theta(\Psi_{leaf})}{\delta \Psi_{leaf}}$$
 
 .center[
 <img src="resources/img/profitfunction.png", width = 300>
@@ -473,28 +471,46 @@ $$\frac{\delta \beta(\Psi_{leaf})}{\delta \Psi_{leaf}} = \frac{\delta \theta(\Ps
 
 <div class=citation-right> Sperry et al. (2017) Plant Cell Env., 40, 816-830 </div>
 
+--
+
+The maximization is achieved when the slopes of the gain and cost functions are equal:
+$$\frac{\delta \beta(\Psi_{leaf})}{\delta \Psi_{leaf}} = \frac{\delta \theta(\Psi_{leaf})}{\delta \Psi_{leaf}}$$
 
 ---
 
 ## From leaf to the canopy
 
 Calculating transpiration and photosynthesis following the Sperry model requires:
-  
-  1. Building the supply function for each plant cohort
-  2. Dividing the canopy into vertical layers and determine the direct and diffuse radiation at subdaily time steps
-  3. Differentiating between sunlit and shade leaves (De Pury & Farquhar, 1997)
-  4. Determining absorbed SWR and PAR in sunlit/shade leaves at subdaily time steps
-  5. Determining photosynthesis functions and stomatal regulation for sunlit and shade leaves at subdaily time steps.
 
 <div class=citation-right> De Pury & Farquhar (1997) Plant, Cell & Env., 20, 537–557 </div>
+  
+1. Building the supply function *for each plant cohort*
 
 --
 
-Once stomatal conductance is decided for sunlit and shade leaves, one obtains an average flow and the water potentials along the transpiration pathway are determined.
+2. Dividing the canopy into **vertical layers** and determine the direct and diffuse radiation at subdaily time steps
 
 --
 
-Hydraulic redistribution is an emergent output of the model when soil layers have different degree of moisture and stomata are closed (mainly at night).
+3. Differentiating between **sunlit** and **shade** leaves (De Pury & Farquhar, 1997)
+
+--
+
+4. Determining absorbed SWR and PAR in sunlit/shade leaves at subdaily time steps
+
+--
+
+5. Calculating energy balance, photosynthesis functions and stomatal regulation for sunlit and shade leaves at subdaily time steps.
+
+--
+
+## Corollaries
+
+Once stomatal conductance is decided for sunlit and shade leaves, one obtains an average flow and **all water potentials along the transpiration pathway** are determined.
+
+--
+
+**Hydraulic redistribution** is an emergent output of the model when soil layers have *different degree of moisture* and *stomata are closed* (at night).
 
 ---
 layout: true
@@ -512,19 +528,23 @@ layout: true
 ## Daily drought stress
 Daily drought stress, $DDS$, is defined using  $\phi$, the phenological status, and the *one-complement* of *relative whole-plant conductance*:
 
+--
+
 .pull-left[
 ### Basic model
 
-Since $K$ is the relative whole-plant conductance:
+Since $K$ is defined as a relative whole-plant conductance:
 
 $$DDS=\phi \cdot (1-K(\Psi_{plant}))$$
 
 ]
 
+--
+
 .pull-right[
 ### Advanced model
 
-Since $dE / d\Psi_{leaf}$ is the *absolute* whole-plant conductance:
+Since the derivative of the supply function, i.e. $dE / d\Psi_{leaf}$, is the *absolute* whole-plant conductance:
 
 $$DDS=\phi \cdot \left[ 1 - \frac{dE / d\Psi_{leaf}}{k_{max,plant}} \right]$$
 ]
@@ -546,6 +566,8 @@ Effect on plant transpiration:
 
 $$K^{PLC}_{s} = \min \{K_{s}, 1.0 - PLC_{stem} \}$$
 ]
+
+--
 
 .pull-right[
 ### Advanced model
