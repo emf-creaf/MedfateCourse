@@ -56,7 +56,7 @@ class: center, middle
 # Outline
 
 ##  1. Fundamental concepts
-##  2. Modelling life-cycle
+##  2. Modelling cycle
 ##  3. Overview of process-based forest models
 
 
@@ -114,7 +114,6 @@ layout: true
 + *Uncertainty analysis* - Investigation of the effects of lack of knowledge or potential errors on the model output.
 
 + *Robustness* - The capacity of a model to perform well across the full range of environmental conditions for which it was designed.
-Screening
 
 + *Sensitivity* - The degree to which the model outputs are affected by changes in selected input parameters.
 
@@ -132,7 +131,7 @@ layout: true
 
 <div class=my-footer></div>
 
-# 2. Modelling life-cycle
+# 2. Modelling cycle
 
 ---
 

@@ -57,7 +57,7 @@ class: center, middle
 
 ##  1. Purpose and development context
 ##  2. Companion packages
-##  3. Package installation
+##  3. Package installation and documentation
 ##  4. Overview of package functions
 
 
