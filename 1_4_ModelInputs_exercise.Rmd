@@ -183,7 +183,7 @@ We can now replace the empty `treeData` in `pobl_ctl` using functions `subset()`
 .code80[
 ```{r}
 pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
-                                         mapping = mapping, SpParams = SpParamsMED)
+                                         mapping_x = mapping, SpParams = SpParamsMED)
 ```
 ]
 
@@ -227,13 +227,13 @@ sampled_area = pi*15^2
 
 --
 
-and use this information to map the tree data again, where we specify the parameter `plot.size`:
+and use this information to map the tree data again, where we specify the parameter `plot_size_x`:
 
 .code80[
 ```{r}
 pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
                                          mapping = mapping, SpParams = SpParamsMED, 
-                                         plot.size = sampled_area)
+                                         plot_size_x = sampled_area)
 ```
 ]
 
@@ -281,8 +281,8 @@ and rerun the tree data mapping.
 .code80[
 ```{r, include = FALSE}
 pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
-                                         mapping = mapping, SpParams = SpParamsMED, 
-                                         plot.size = sampled_area)
+                                         mapping_x = mapping, SpParams = SpParamsMED, 
+                                         plot_size_x = sampled_area)
 ```
 ]
 
@@ -296,8 +296,8 @@ Now we can address the *managed* stand, which has two codes corresponding to *be
 ```{r, highlight.output= c(8)}
 pobl_thi_bef <- emptyforest("POBL_THI_BEF")
 pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
-                                             mapping = mapping, SpParams = SpParamsMED, 
-                                             plot.size = sampled_area)
+                                             mapping_x = mapping, SpParams = SpParamsMED, 
+                                             plot_size_x = sampled_area)
 summary(pobl_thi_bef$treeData)
 ```
 ]
@@ -341,8 +341,8 @@ Now we repeat our mapping and check the results:
 .code80[
 ```{r, eval = TRUE, highlight.output=c(1,2,5)}
 pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
-                                             mapping = mapping, SpParams = SpParamsMED, 
-                                             plot.size = sampled_area)
+                                             mapping_x = mapping, SpParams = SpParamsMED, 
+                                             plot_size_x = sampled_area)
 summary(pobl_thi_bef, SpParamsMED)
 ```
 ]
@@ -359,8 +359,8 @@ We can finally map tree data for the forest plot *after* the thinning interventi
 ```{r, eval = TRUE, highlight.output=c(1,2,5)}
 pobl_thi_aft <- emptyforest("POBL_THI_AFT")
 pobl_thi_aft$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_AFT"), 
-                                             mapping = mapping, SpParams = SpParamsMED, 
-                                             plot.size = sampled_area)
+                                             mapping_x = mapping, SpParams = SpParamsMED, 
+                                             plot_size_x = sampled_area)
 summary(pobl_thi_aft, SpParamsMED)
 ```
 ]
