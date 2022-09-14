@@ -26,6 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, include = FALSE}
 library(medfate)
+library(meteoland)
 library(cowplot)
 ```
 
@@ -496,7 +497,7 @@ The vulnerability curves conforming the hydraulic network are used in the model 
 
 .code80[
 ```{r, fig=TRUE, fig.align="center", fig.width=6, fig.height = 3.5, echo = TRUE}
-hydraulics_supplyFunctionPlot(x_adv, examplesoil, type="E", speciesNames = TRUE)
+hydraulics_supplyFunctionPlot(x_adv, type="E", speciesNames = TRUE)
 ```
 ]
 
@@ -619,6 +620,7 @@ summary(S_adv, freq="months", output="PlantStress", bySpecies = TRUE)
 ]
 
 --
+
 and `plot()`:
 
 .code80[
@@ -626,6 +628,7 @@ and `plot()`:
 plot(S_adv, type="LeafPsiMin", bySpecies = TRUE)
 ```
 ]
+
 --
 
 Alternatively, one can interactively create plots using function `shinyplot()`, e.g.:

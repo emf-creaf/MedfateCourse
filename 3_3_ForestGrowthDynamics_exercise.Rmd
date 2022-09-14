@@ -141,7 +141,7 @@ Whose elements are...
 We can use the `summary()` function for objects of class `forest` to know the leaf area index and basal area estimated at yr. 2001 (SNFI3):
 
 .code80[
-```{r, highlight.output = c(2,5)}
+```{r, highlight.output = c(3,6)}
 summary(alepo$forest_snfi3, SpParamsMED)
 ```
 ]
@@ -169,7 +169,7 @@ species_LAI(alepo$forest_snfi3, SpParamsMED)
 We repeat the same calculations for yr. 2014 (SNFI4):
 
 .code80[
-```{r, highlight.output = c(2,5)}
+```{r, highlight.output = c(3,6)}
 summary(alepo$forest_snfi4, SpParamsMED)
 ```
 ]
@@ -441,7 +441,7 @@ names(FD_34)
 In particular, we can examine the stand metrics of the `forest` object at the end of the simulation...
 
 .code80[
-```{r, highlight.output = c(2,5)}
+```{r, highlight.output = c(3,6)}
 summary(FD_34$NextForestObject, SpParamsMED)
 ```
 ]
@@ -451,7 +451,7 @@ summary(FD_34$NextForestObject, SpParamsMED)
 ... and compare them to those obtained in SNFI4 (yr. 2015) for the forest plot:
 
 .code80[
-```{r, highlight.output = c(2,5)}
+```{r, highlight.output = c(3,6)}
 summary(alepo$forest_snfi4, SpParamsMED)
 ```
 ]

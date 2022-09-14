@@ -163,7 +163,7 @@ fb_forest$shrubData <- fb$shrubData
 and examine its characteristics:
 
 .code80[
-```{r, highlight.output = c(1,2,5)}
+```{r, highlight.output = c(2,3,6)}
 summary(fb_forest, SpParamsMED)
 ```
 ]

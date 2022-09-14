@@ -175,7 +175,7 @@ layout: false
 
 ## Installation
 
-From **CRAN** (stable versions; now ver. **2.7.3**):
+From **CRAN** (stable versions; now ver. **2.8.0**):
 
 .code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}

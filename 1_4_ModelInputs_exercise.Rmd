@@ -204,7 +204,7 @@ summary(pobl_ctl$treeData)
 One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary()` function defined in **medfate** for this object class:
 
 .code80[
-```{r, highlight.output= c(1,2,5)}
+```{r, highlight.output= c(2,3,6)}
 summary(pobl_ctl, SpParamsMED)
 ```
 ]
@@ -242,7 +242,7 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 We run again the summary and check whether stand's basal area and LAI make more sense:
 
 .code80[
-```{r, eval = TRUE, highlight.output= c(1,2,5)}
+```{r, eval = TRUE, highlight.output= c(2,3,6)}
 summary(pobl_ctl, SpParamsMED)
 ```
 ]
@@ -339,7 +339,7 @@ poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] <- "Quercus pubesc
 Now we repeat our mapping and check the results:
 
 .code80[
-```{r, eval = TRUE, highlight.output=c(1,2,5)}
+```{r, eval = TRUE, highlight.output=c(2,3,6)}
 pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
                                              mapping_x = mapping, SpParams = SpParamsMED, 
                                              plot_size_x = sampled_area)
@@ -356,7 +356,7 @@ Like the control plot, the `summary()` indicates a dense oak forest.
 We can finally map tree data for the forest plot *after* the thinning intervention:
 
 .code80[
-```{r, eval = TRUE, highlight.output=c(1,2,5)}
+```{r, eval = TRUE, highlight.output=c(2,3,6)}
 pobl_thi_aft <- emptyforest("POBL_THI_AFT")
 pobl_thi_aft$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_AFT"), 
                                              mapping_x = mapping, SpParams = SpParamsMED, 
@@ -422,7 +422,7 @@ nrow(pobl_thi_aft$treeData)
 We can check whether stand properties were altered using the `summary()` function:
 
 .code80[
-```{r, highlight.output=c(1,2,5)}
+```{r, highlight.output=c(2,3,6)}
 summary(pobl_thi_aft, SpParamsMED)
 ```
 ]
