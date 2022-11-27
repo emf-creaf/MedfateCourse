@@ -607,7 +607,7 @@ layout: true
 |           | Bare soil evaporation    | * | * |
 |           | Snow dynamics            | * | * |
 |           | Transpiration            | * | * |
-|           | Hydraulic redistribution |   | * |
+|           | Hydraulic redistribution | [*] | * |
 | Radiation balance | Radiation extinction    | *  | * |
 |            | Diffuse/direct separation |   | * |
 |            | Longwave/shortwave separation |  | * |

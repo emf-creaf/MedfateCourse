@@ -417,7 +417,7 @@ For example, we can compare the initial `forest` object with the final one:
 
 .pull-left[
 .code80[
-```{r, highlight.output=c(7:10, 12:14)}
+```{r, highlight.output=c(1:4, 6:8)}
 exampleforestMED
 ```
 
@@ -427,7 +427,7 @@ exampleforestMED
 
 .pull-right[
 .code80[
-```{r, highlight.output=c(7:10, 12:14)}
+```{r, highlight.output=c(1:4, 6:8)}
 fd$NextForestObject
 ```
 

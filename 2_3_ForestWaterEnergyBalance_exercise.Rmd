@@ -154,7 +154,7 @@ We can easily assemble the tree and shrub data into a forest object:
 
 .code80[
 ```{r}
-fb_forest <- emptyforest("FB") 
+fb_forest <- emptyforest() 
 fb_forest$treeData <- fb$treeData
 fb_forest$shrubData <- fb$shrubData
 ```
@@ -163,7 +163,7 @@ fb_forest$shrubData <- fb$shrubData
 and examine its characteristics:
 
 .code80[
-```{r, highlight.output = c(2,3,6)}
+```{r, highlight.output = c(1,2,5)}
 summary(fb_forest, SpParamsMED)
 ```
 ]

@@ -27,6 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include = FALSE}
 library(medfate)
 library(sp)
+library(sf)
 ```
 
 class: title-slide
@@ -436,12 +437,12 @@ Package **medfateutils** allows retrieving Soilgrids data by connecting with the
 
 --
 
-To start with, we need an object of class `SpatialPoints` (from package **sp**) containing the geographic coordinates of our target forest stand:
+To start with, we need a spatial object of class `sf` or `sfc` (from package **sf**) containing the geographic coordinates of our target forest stand:
 
 .code80[
 ```{r}
-cc <- matrix(c(1.32, 42.20), nrow=1)
-sp <- SpatialPoints(cc, proj4string = CRS(SRS_string = "EPSG:4326"))
+cc <- c(1.32, 42.20)
+coords_sf <- sf::st_sfc(sf::st_point(cc), crs=4326)
 ```
 ]
 
@@ -451,7 +452,7 @@ We then call `soilgridsParams()` along with a desired vertical width (in mm) of 
 
 .code80[
 ```{r, eval = FALSE}
-soilgridsParams(sp, widths = c(300, 700, 1000))
+soilgridsParams(coords_sf, widths = c(300, 700, 1000))
 ```
 ]
 
