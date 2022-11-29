@@ -1,0 +1,169 @@
+---
+title: "Soil-plant water balance at Font-Blanche (France)"
+author: "Miquel De Cáceres"
+date: "2022-11-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Preliminaries: Installing and loading medfate package
+Install package `remotes` from CRAN:
+```{r, include = TRUE, eval = FALSE}
+install.packages("remotes")
+```
+
+Install the latest version of the `medfate` R package from GitHub:
+```{r, include = TRUE, eval = FALSE}
+remotes::install_github("emf-creaf/medfate")
+```
+
+Once installed, we can load the package onto our Rstudio session using:
+```{r, include = TRUE}
+library(medfate)
+```
+
+
+## Font-Blanche data
+
+### Font-Blanche research forest
+
+The Font-Blanche research forest is located in southeastern France (43º14'27'' N 5°40'45'' E) at 420 m elevation):
+
+   + The stand is composed of a (upper) canopy stratum of *Pinus halepensis* (Aleppo pine) reaching about 12 m, a lower strata of *Quercus ilex* (holm oak), reaching about 6 m, and an understorey strata dominated by *Quercus coccifera* and *Phillyrea latifolia*. 
+   + Soils are shallow and rocky, have a low retention capacity and bedrock is limestone of Jurassic origin. 
+   + The climate is Mediterranean, with a water stress period in summer, cold or mild winters and most precipitation occurring between September and May. 
+
+### Target stand
+
+The experimental site, which is dedicated to study forest carbon and water cycles, has an enclosed area of 80×80 m but our target stand is a quadrat of dimensions 25×25 m. 
+
+The following observations are available for year 2014:
+
+   + Stand total evapotranspiration estimated using an Eddy-covariance flux tower.
+   + Soil moisture content of the topmost (0-30 cm) layer.
+   + Transpiration estimates per leaf area, derived from sapflow measurements for *Q. ilex* and *P. halepensis*.
+   + Pre-dawn and midday leaf water potentials for *Q. ilex* and *P. halepensis*.
+
+
+### Model inputs
+
+#### Data loading
+
+We can load the data using:
+```{r, eval = FALSE}
+fb <- readRDS("fontblanche.rds")
+```
+
+which returns a list where different data tables are included:
+
+```{r, eval = FALSE}
+names(fb)
+```
+
+
+#### Forest data
+
+We describe the stand using three woody cohorts, one for each species:
+```{r, eval = FALSE}
+fb$treeData
+```
+
+The input for the medfate model is an object of class 'forest', which we can build using:
+```{r, eval = FALSE}
+fb_forest <- emptyforest() 
+fb_forest$treeData <- fb$treeData
+```
+
+The main stand characteristics can be seen by running:
+```{r, eval = FALSE}
+summary(fb_forest, SpParamsMED)
+```
+
+#### Soil data
+
+Soil parameters are given in a different data table:
+```{r, eval = FALSE}
+fb$soilData
+```
+and we need to build an object of class 'soil' to run the model:
+```{r, eval = FALSE}
+fb_soil <- soil(fb$soilData)
+print(fb_soil)
+```
+
+
+#### Species parameters
+
+Table `SpParamsMED` in the package contains default parameters for most woody species in the Western Mediterranean area. We can use function `modifySpParams()` to replace the values of parameters for the desired traits (if measured in our site), leaving the rest unaltered:
+
+```{r, eval = FALSE}
+fb_SpParams <- modifySpParams(SpParamsMED, fb$customParams)
+fb_SpParams
+```
+
+
+#### Weather data
+The daily weather data included comprises one year (2014):
+```{r, eval = FALSE}
+fb_meteo <- fb$meteoData
+head(fb_meteo)
+```
+
+
+
+### Soil-plant water balance simulation
+
+The model requires a list of global control parameters, which can be defined using:
+```{r, eval = FALSE}
+fb_control <- defaultControl("Sperry")
+fb_control$subdailyResults <- TRUE
+```
+Here we specified that transpiration and plant hydraulics should be estimated using the "Sperry" model, and that we want to keep sub-daily simulation results.
+
+
+We now assemble the forest and soil inputs into a `spwbInput` object containing all state variables and parameters, using:
+
+```{r, eval = FALSE}
+fb_input <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
+```
+
+And the simulation is performed by calling function `spwb` with this input object, the weather data and additional parameters:
+```{r, eval = FALSE}
+fb_adv <- spwb(fb_input, fb_meteo,  elevation = 420, latitude = 43.24083)
+```
+
+## Practice: Examining simulation results and fit to observations
+
+You can use the following command to pop-up an interactive tool that allows you examine multiple results from the simulation, as well as compare them to available observations:
+
+```{r, eval = FALSE}
+shinyplot(fb_adv, fb$measuredData)
+```
+
+Use the previous tool to do the following:
+
+1. Examine the seasonality of precipitation events and the generation of surface runoff and/or deep drainage.
+
+2. Examine the evapotranspiration flows (intercepted water, plant transpiration, bare soil evaporation), their seasonality and relative importance for the overall evapotranspiration.
+
+3. Examine the observed vs. simulated stand (total) evapotranspiration. The observed data does not have the same spikes as simulated data, which correspond to precipitation events. Examine the comparison but excluding the intercepted water, i.e. using the sum of modelled soil evaporation (SE) and transpiration (TR). Is the model performing equally well in winter and summer?
+
+4. Examine the dynamics of volumetric moisture and water potential in the different soil layers. Which ones are more dynamic? 
+
+5. Compare the observed vs. simulated soil water content dynamics (topmost layer). Why are the two series not scaled? Try repeating the comparison with relativized soil moisture series.
+
+6. Examine the simulated plant extraction from soil layers and the water input from hydraulic redistribution to understand the upward and downward water flows within the soil. Can you explain the seasonality of these flows?
+
+7. Examine plant transpiration dynamics at the leaf area level. For which plant species transpiration flows are predicted larger? Which species starts closing its stomata earlier?
+
+8. Evaluate the plant transpiration flows predicted for *Pinus halepensis* and *Quercus ilex* using observed sap-flow data. For which species does the model perform better in terms of absolute values? For which species is the correlation between observed and simulated values higher?
+
+9. Examine the range in leaf water potential predicted for the three species in the stand. Which species has strongest stomatal control in summer?
+
+10. Compare the predicted vs. observed leaf water potentials (pre-dawn and midday) for *Pinus halepensis* and *Quercus ilex*. Is the model  appropriately estimating leaf water potential dynamics with the amount of information available?
+
+11. Examine the seasonality of plant drought stress (as defined in the model) and stem percent loss of conductance (PLC). What are the differences between the two plant drought indicators? Do the three species behave differently?
