@@ -34,11 +34,11 @@ class: title-slide
 
 # 1.4 - Model inputs (exercise)
 
-### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
+### Miquel De Cáceres, Victor Granda
 
 ### Ecosystem Modelling Facility
 
-### `r as.Date("2022-06-13")`
+### `r as.Date("2022-11-30")`
 
 <img class="escher-title" src="resources/img/Escher_tower.jpg" width=250>
 

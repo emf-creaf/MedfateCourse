@@ -36,11 +36,11 @@ class: title-slide
 
 # 3.2 - Forest growth/dynamics (practice)
 
-### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
+### Miquel De Cáceres, Victor Granda
 
 ### Ecosystem Modelling Facility
 
-### `r as.Date("2022-06-15")`
+### `r as.Date("2022-12-02")`
 
 <img class= "escher-title" src="resources/img/Escher_updown.jpg" width=190>
 
@@ -602,6 +602,7 @@ Function `defaultManagementArguments()` returns a list with default values for *
 | Element |  Description                          |
 | ------- | ------------------------------------- |
 | `type` | Management model, either 'regular' or 'irregular' |
+| `targetTreeSpecies` | Either `"all"` for unspecific cuttings or a numeric vector of target tree species to be selected for cutting operations |
 | `thinning`  | Kind of thinning to be applied in irregular models or in regular models before the final cuts. Options are `"below"`, `"above"`, `"systematic"`, `"below-systematic"`, `"above-systematic"` or a string with the proportion of cuts to be applied to different diameter sizes |
 | `thinningMetric` | The stand-level metric used to decide whether thinning is applied, either `"BA"` (basal area), `"N"` (density) or `"HB"` (Hart-Becking index) |
 | `thinningThreshold` | The threshold value of the stand-level metric causing the thinning decision |

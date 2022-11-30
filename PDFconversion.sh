@@ -1,4 +1,5 @@
 `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '0_Outline.html' 'pdf/0_Outline.pdf'
+`npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '0_Outline_Joensuu.html' 'pdf/0_Outline_Joensuu.pdf'
 `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '1_1_IntroductionToProcessBasedModelling.html' 'pdf/1_1_IntroductionToProcessBasedModelling.pdf'
 `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '1_2_IntroductionToMedfate.html' 'pdf/1_2_IntroductionToMedfate.pdf'
 `npm bin`/decktape '--chrome-arg=--allow-file-access-from-files' '1_3_ModelInputs.html' 'pdf/1_3_ModelInputs.pdf'

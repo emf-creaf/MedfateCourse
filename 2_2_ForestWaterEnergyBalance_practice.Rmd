@@ -34,11 +34,11 @@ class: title-slide
 
 # 2.2 - Forest water/energy balance (practice)
 
-### Miquel De Cáceres, Victor Granda, Aitor Ameztegui
+### Miquel De Cáceres, Victor Granda
 
 ### Ecosystem Modelling Facility
 
-### `r as.Date("2022-06-14")`
+### `r as.Date("2022-12-01")`
 
 <img class="escher-title" src="resources/img/Escher_nightday.jpg" width=500>
 
@@ -584,7 +584,7 @@ x_adv$soil$W
 ---
 ## Water/energy balance run for multiple days
 
-We can now run the advanced water balance model (which takes 1 min aprox.)
+We can now run the advanced water balance model (which takes 15 sec. aprox.)
 
 .code80[
 ```{r, eval = FALSE, echo = TRUE}
