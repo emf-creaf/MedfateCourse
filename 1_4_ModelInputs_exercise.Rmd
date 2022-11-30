@@ -439,12 +439,12 @@ Retrieval of soil properties from SoilGrids can be done using function `soilgrid
 
 --
 
-Assuming we know the plot coordinates, we first create an object `SpatialPoints` (see package **sp**):
+Assuming we know the plot coordinates, we first create an object `sfc` (see package **sf**):
 
 .code80[
 ```{r}
 cc = c(1.0219, 41.3443)
-coords_sf <- sf::st_sfc(sf::st_point(cc), crs = 4326)
+coords_sfc <- sf::st_sfc(sf::st_point(cc), crs = 4326)
 ```
 ]
 
@@ -454,7 +454,7 @@ This object can be used to query SoilGrids using `soilgridsParams()`:
 
 .code80[
 ```{r, eval = FALSE}
-pobl_soil_props <- soilgridsParams(coords_sf, widths = c(300, 700, 1000))
+pobl_soil_props <- soilgridsParams(coords_sfc, widths = c(300, 700, 1000))
 ```
 ]
 
@@ -521,7 +521,7 @@ We begin by building an object of S4 class `SpatialPointsTopography`, which exte
 
 .code80[
 ```{r}
-coords_sp <- as(coords_sf, "Spatial")
+coords_sp <- as(coords_sfc, "Spatial")
 pobl_spt <- SpatialPointsTopography(coords_sp,
                                     elevation = 850, slope = 15.1, aspect = 15)
 pobl_spt

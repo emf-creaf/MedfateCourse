@@ -99,7 +99,7 @@ The management involved a reduction of the number of stems per individual (*suck
 
 ```
 
-12. Build a matrix with the geographic coordinates of Poblet stands and create an object of class `SpatialPoints` (package **sp**).
+12. Build a matrix with the geographic coordinates of Poblet stands and create an object of class `sfc` (package **sf**).
 
 ```{r}
 
@@ -123,7 +123,7 @@ The management involved a reduction of the number of stems per individual (*suck
 
 ```
 
-16. Build an object of the S4 class `SpatialPointsTopography` (defined in package **meteoland**), containing the `SpatialPoints` of Step 12 and the topographic variables (elevation, slope, aspect).
+16. Convert the `sfc` object that you created in step 12 into an object of class `SpatialPoints` (*hint*: use `as(x, "Spatial")`). Then use this and the topographic variables (elevation, slope, aspect) to create an object of the S4 class `SpatialPointsTopography` (defined in package **meteoland**).
 
 ```{r}
 
