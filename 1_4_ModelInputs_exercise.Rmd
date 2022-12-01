@@ -102,7 +102,7 @@ You may need to install **medfateutils** from GitHub:
 
 .code80[
 ```{r, eval=FALSE}
-devtools::install_github("emf-creaf/medfateutils")
+remotes::install_github("emf-creaf/medfateutils")
 ```
 ]
 

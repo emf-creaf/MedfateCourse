@@ -201,16 +201,13 @@ If rainfall occurs during a given day, three processes are simulated to update t
 Regardless of precipitation, soil moisture can be modified due to the following processes:
 
 .center[
-  <img src="resources/img/wb_outputs.svg", width = 500>
+  <img src="resources/img/wb_outputs.svg", width = 530>
 ]
 
 --
 
-Soil water uptake by plants and transpiration are modelled differently depending on the water balance model: **basic** vs **advanced**.
+Soil water uptake by plants, hydraulic redistribution and transpiration are modelled differently depending on the water balance model: **basic** vs **advanced**.
 
---
-
-Hydraulic redistribution is only simulated in the advanced water balance model.
 
 ---
 layout: true
