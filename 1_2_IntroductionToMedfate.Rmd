@@ -95,7 +95,7 @@ Representation of vegetation accounts for structural and compositional variation
 
 ## Development context
 
-I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Two other  research projects (FORESTCAST, DRESS) have funded developments.
+I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Four other research projects (FORESTCAST, DRESS, BOMFORES, IMPROMED) have funded further developments.
 
 --
 
@@ -107,7 +107,7 @@ A large number of people has contributed with *ideas*, *data* or *code* to the p
 
 .pull-left[
 + Jordi Martínez-Vilalta (CREAF-UAB, Spain)
-+ Maurizio Mencuccini (CREAF-ICREA, Spain)
++ Maurizio Mencuccini (ICREA, Spain)
 + Juli G. Pausas (CIDE-CSIC, Spain)
 + Pilar Llorens (CSIC, Spain)
 + Rafa Poyatos (CREAF, Spain)
@@ -147,19 +147,23 @@ During the development of **medfate** ancillary functions were originally includ
 
 --
 
-.. but many of them were later moved into more specialized packages, which now evolve in parallel to the main package:
+.. but many of them were later moved into more specialized packages:
 
---
+<img class="packages" src="resources/img/packages.png" width=800>
 
-1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating *daily weather input* for simulation models in medfate.
+<!-- -- -->
 
---
+<!-- 1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating *daily weather input* for simulation models in medfate. -->
 
-2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends medfate by allowing simulations to be performed in a *spatially explicit context*.
+<!-- -- -->
 
---
+<!-- 2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends medfate by allowing simulations to be performed in a *spatially explicit context*. -->
 
-3. Package [**medfateutils**](https://github.com/emf-creaf/medfateutils)  (ver. `r utils::packageDescription("medfateutils",fields="Version")`) provides functions to help *initializing* vegetation, soil and species inputs.
+<!-- -- -->
+
+<!-- 3. Package [**traits4models**](https://github.com/emf-creaf/traits4models)  (ver. `r utils::packageDescription("traits4models",fields="Version")`) provides functions to help *initializing* vegetation, soil and species inputs. -->
+
+
 
 
 ---
@@ -175,7 +179,7 @@ layout: false
 
 ## Installation
 
-From **CRAN** (stable versions; now ver. **2.8.0**):
+From **CRAN** (stable versions; now ver. **4.4.0**):
 
 .code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
@@ -195,12 +199,11 @@ remotes::install_github("emf-creaf/medfate")
 
 --
 
-Later today we will also use packages **meteoland** and **medfateutils**:
+Later today we will also use packages **meteoland**:
 
 .code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 install.packages("meteoland")
-remotes::install_github("emf-creaf/medfateutils") # Not on CRAN
 ```
 ]
 
@@ -209,7 +212,6 @@ remotes::install_github("emf-creaf/medfateutils") # Not on CRAN
 ```{r, echo = TRUE, eval = TRUE, message=FALSE, warning=FALSE, include = FALSE}
 library(meteoland)
 library(medfate)
-library(medfateutils)
 ```
 ]
 
