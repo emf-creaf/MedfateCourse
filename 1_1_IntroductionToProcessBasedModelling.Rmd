@@ -33,7 +33,7 @@ class: title-slide
 
 # 1.1 - Introduction to process-based forest modelling
 
-### Miquel De Cáceres, Victor Granda
+### Miquel De Cáceres, Rodrigo Balaguer
 
 ### Ecosystem Modelling Facility
 
@@ -73,53 +73,135 @@ layout: true
 
 ---
 
-.pull-left[
-### Models
+### Models: What are they?
 
-.font80[
 + *Model* - A simplification of reality constructed to gain insights into a set of attributes of a physical, biological, economic, or social system.
-
-+ *Conceptual model* - A hypothesis regarding the important factors that govern the behavior of an object or a process of interest.
-
-+ *Statistical model* - A model built using observations within a probabilistic framework.
-
-+ *Mechanistic (or process-based) model* -  A model that explicitly represents the understanding of physical, chemical or biological processes.
-
-+ *Simulation model* -  A model that represents the development of a solution by incremental steps through the model domain.
-
-### Model components
-
-+ *Modules* - An independent or self-contained component of a model.
-
-+ *State variables* - The dependent variables calculated within a model, which often change over the simulation.
-
-]
-]
 
 --
 
-.pull-right[
-.font80[
-+ *Parameters* - Terms in the model that are fixed during a model run or simulation but can be changed in different runs.
++ *Conceptual model* - A **hypothesis** regarding the important factors that govern the behavior of an object or a process of interest.
 
-+ *Constants* - Fixed values (e.g. the speed of light) representing known physical, biological or ecological activities.
-]
+--
+
++ *Statistical model* - A numerical model **built using observations** within a probabilistic framework.
+
+--
+
++ *Mechanistic (or process-based) model* -  A numerical model that explicitly **represents the understanding** of physical, chemical or biological processes.
+
+--
+
++ *Simulation model* -  A numerical model that represents the development of a solution by incremental steps through the model domain.
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 1. Fundamental concepts
+
+---
+
+### Model components
+
++ *Modules* or *sub-models* - An independent or self-contained component of a model.
+
+--
+
++ *State variables* - The dependent variables calculated within a model, which often **change over the simulation**.
+
+--
+
++ *Parameters* - Terms in the model that are **fixed during a model run** but can be changed in different runs.
+
+--
++ *Constants* - Terms that are **fixed values under all runs**, representing known physical, biological or ecological activities (e.g. the speed of light).
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 1. Fundamental concepts
+
+---
+
 
 ### Model assessment
-.font80[
+
 + *Verification* - Examination of the implementation to ascertain that they truly represents the conceptual model and there are no inherent numerical problems.
 
-+ *Qualitative assessment* - Uncertainty in model predictions that cannot be quantified (i.e. about the theory underlying the model or the model design).
+--
 
-+ *Uncertainty analysis* - Investigation of the effects of lack of knowledge or potential errors on the model output.
++ *Qualitative assessment* - Uncertainty in model predictions that **cannot be quantified** (i.e. about the theory underlying the model or the model design).
 
-+ *Robustness* - The capacity of a model to perform well across the full range of environmental conditions for which it was designed.
+--
 
-+ *Sensitivity* - The degree to which the model outputs are affected by changes in selected input parameters.
++ *Uncertainty analysis* - Investigation of the effects of lack of knowledge or potential errors of inputs (e.g. climate forcing) on the model output.
 
-+ *Transparency* - The clarity and completeness with which data, assumptions, and methods of analysis are documented.
+--
 
++ *Robustness* - The capacity of a model to perform well **across the full range of conditions** for which it was designed.
+
+--
+
++ *Sensitivity* - The degree to which the model outputs are **affected by changes in input parameters**.
+
+--
+
++ *Transparency* - The clarity and completeness with which data, assumptions, and methods of analysis are **documented**.
+
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 2. Modelling cycle
+
+---
+
+### Modelling tasks: Development
+
+.pull-left[
+.font90[
+1 - *Problem formulation*
+  + Definition of objectives
+  + Definition of the spatio-temporal physical domain
+
+2 - *Model design and formulation*
+  + Data availability
+  + Use of existing vs. new model
+  + Conceptual model
+  + Use of existing modules
+
+3 - *Implementation*
+  + Algorithmic design
+  + Model coding (e.g. C++)
+  + Profiling and code optimization
+
+4 - *Parameterization and calibration*
+  + Sources for direct parameter estimation
+  + Sources for parameter calibration
+  + Meta-modelling
+  
 ]
+]
+
+.pull-right[
+  <img src="resources/img/Schmolke_modelling_cycle.png", width = 400>
 ]
 
 ---
@@ -135,34 +217,17 @@ layout: true
 
 ---
 
-### Modelling tasks
+### Modelling tasks: Analysis and application
 
 .pull-left[
-.font80[
-1. *Problem formulation*
-  + Definition of objectives
-  + Definition of the spatio-temporal physical domain
+.font90[
 
-2. *Model design and formulation*
-  + Data availability
-  + Use of existing vs. new model
-  + Conceptual model
-  + Use of existing modules
-
-3. *Implementation*
-  + Algorithmic design
-  + Model coding (e.g. C++)
-
-4. *Parameterization and calibration*
-  + Sources for direct parameter estimation
-  + Sources for parameter calibration
-  
-5. *Model assessment*
+5 - *Model analysis*
   + Verification and qualitative assessment
   + Sensitivity/uncertainty analysis
   + Formal evaluation (validation)
   
-6. *Model application*
+6 - *Model application*
   + Simulation and documentation
   + Quantifying uncertainty
   + Evidence for decision
