@@ -441,7 +441,7 @@ coords_sf <- sf::st_sf(geometry = sf::st_sfc(sf::st_point(cc), crs=4326))
 
 --
 
-We then call `soilgridsParams()` along with a desired vertical width (in mm) of soil layers:
+We then call `add_soilgrids()` along with a desired vertical width (in mm) of soil layers:
 
 .code80[
 ```{r, eval = FALSE}
@@ -450,9 +450,9 @@ sf_soil <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
 ]
 
 ---
-## Soil input object
+## Initialized soil
 
-Soil input for simulations is an object of class `soil` (a list) that is created from physical description using a function with the same name:
+The soil initialized for simulations is a data frame of class `soil` that is created from physical description using a function with the same name:
 
 .code80[
 ```{r, echo = TRUE}
@@ -463,13 +463,17 @@ class(examplesoil)
 
 --
 
-A `print()` function has been defined for objects of class `soil`, that displays several soil parameters and properties.
+The initialised soil data frame contains additional columns with soil hydraulic parameters and state variables for moisture (`W`) and temperature (`Temp`):
 
 .code80[
 ```{r, echo = TRUE}
 examplesoil
 ```
 ]
+
+--
+
+We can skip calling function `soil()` in our scripts to run simulations, but again is good to know what is behind the scenes.
 
 ---
 
@@ -479,7 +483,7 @@ The **water retention curve** is used to represent the relationship between soil
 
 --
 
-The following code calls function `soil_retentionCurvePlot()` to illustrate the difference between the two water retention models in this soil:
+The following code calls function `soil_retentionCurvePlot()` to illustrate the difference between two (Saxton and Van Genuchten) water retention models in this soil:
 
 .center[
 .code80[
@@ -563,23 +567,25 @@ The following workflow summarises the initialisation for the three functions:
 
 ---
 
-# 7. Weather input
+# 7. Weather forcing
 
-All simulations in the package require **daily weather** inputs in form of a `data.frame` with dates as `row.names`.
+All simulations in the package require **daily weather** forcing inputs in form of a `data.frame` with dates as `row.names` or in a column called `dates`.
 
 --
 
+.font80[
 |   Variables  | Units |
 | ------------ | ----- |
-| Mean/maximum/minimum temperature | $ºC$ |
-| Precipitation and potential evapo-transpiration (PET) | $l \cdot m^{-2} \cdot day^{-1}$ |
-| Mean/maximum/minimum relative humidity | % |
+| Maximum/minimum temperature | $ºC$ |
+| Precipitation | $l \cdot m^{-2} \cdot day^{-1}$ |
+| Maximum/minimum relative humidity | % |
 | Radiation | $MJ \cdot m^{-2} \cdot day^{-1}$ |
 | Wind speed | $m \cdot s^{-1}$ |
+]
 
 --
 
-An example of daily weather data frame: 
+An example of daily weather data frame is included in package **medfate**: 
 
 .code80[
 ```{r, echo = TRUE}

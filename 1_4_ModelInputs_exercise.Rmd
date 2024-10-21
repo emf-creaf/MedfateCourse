@@ -98,23 +98,12 @@ layout: true
 
 ## Step 1. Loading packages
 
-You may need to install **medfateutils** from GitHub:
-
-.code80[
-```{r, eval=FALSE}
-remotes::install_github("emf-creaf/medfateutils")
-```
-]
-
---
-
-We begin by loading packages **medfate**, **medfateutils** and **meteoland**
+We begin by loading packages **medfate** and **medfateland** (**meteoland** is also loaded): 
 
 .code80[
 ```{r, message=FALSE}
 library(medfate)
-library(medfateutils)
-library(meteoland)
+library(medfateland)
 ```
 ]
 
@@ -170,7 +159,7 @@ To fill data for element `treeData` in the `forest` object, we need to define a 
 
 .code80[
 ```{r}
-mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm")
+mapping <- c("Species.name" = "Species", "DBH" = "Diameter.cm")
 ```
 ]
 
@@ -178,12 +167,13 @@ mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm")
 
 --
 
-We can now replace the empty `treeData` in `pobl_ctl` using functions `subset()` and `forest_mapTreeTable()` from **medfateutils**:
+We can now replace the empty `treeData` in `pobl_ctl` using functions `dplyr::filter()` and `forest_mapTreeTable()`:
 
 .code80[
 ```{r}
-pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
-                                         mapping_x = mapping, SpParams = SpParamsMED)
+pobl_ctl$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_CTL") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED)
 ```
 ]
 
@@ -204,7 +194,7 @@ summary(pobl_ctl$treeData)
 One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary()` function defined in **medfate** for this object class:
 
 .code80[
-```{r, highlight.output= c(1,2,5)}
+```{r, highlight.output= c(1,2,4)}
 summary(pobl_ctl, SpParamsMED)
 ```
 ]
@@ -221,7 +211,7 @@ We were told that forest stand sampling was done using a *circular plot* whose r
 
 .code80[
 ```{r}
-sampled_area = pi*15^2
+sampled_area <- pi*15^2
 ```
 ]
 
@@ -231,9 +221,10 @@ and use this information to map the tree data again, where we specify the parame
 
 .code80[
 ```{r}
-pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
-                                         mapping = mapping, SpParams = SpParamsMED, 
-                                         plot_size_x = sampled_area)
+pobl_ctl$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_CTL") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
 ```
 ]
 
@@ -242,7 +233,7 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 We run again the summary and check whether stand's basal area and LAI make more sense:
 
 .code80[
-```{r, eval = TRUE, highlight.output= c(1,2,5)}
+```{r, eval = TRUE, highlight.output= c(1,2,4)}
 summary(pobl_ctl, SpParamsMED)
 ```
 ]
@@ -259,7 +250,7 @@ We should somehow estimate tree heights (in cm), for example using an allometric
 
 .code80[
 ```{r}
-poblet_trees$Height.cm = 100 * 1.806*poblet_trees$Diameter.cm^0.518
+poblet_trees$Height.cm <- 100 * 1.806*poblet_trees$Diameter.cm^0.518
 summary(poblet_trees$Height.cm)
 ```
 ]
@@ -270,7 +261,7 @@ Once tree heights are defined, we can include them in our mapping vector:
 
 .code80[
 ```{r}
-mapping = c("Species.name" = "Species", "DBH" = "Diameter.cm", "Height" = "Height.cm")
+mapping <- c("Species.name" = "Species", "DBH" = "Diameter.cm", "Height" = "Height.cm")
 ```
 ]
 
@@ -280,9 +271,10 @@ and rerun the tree data mapping.
 
 .code80[
 ```{r, include = FALSE}
-pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_CTL"), 
-                                         mapping_x = mapping, SpParams = SpParamsMED, 
-                                         plot_size_x = sampled_area)
+pobl_ctl$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_CTL") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
 ```
 ]
 
@@ -293,11 +285,12 @@ pobl_ctl$treeData <- forest_mapTreeTable(subset(poblet_trees, Plot.Code=="POBL_C
 Now we can address the *managed* stand, which has two codes corresponding to *before* and *after* the thinning intervention. Let us first deal with the pre-thinning state:
 
 .code80[
-```{r, highlight.output= c(8)}
+```{r}
 pobl_thi_bef <- emptyforest()
-pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
-                                             mapping_x = mapping, SpParams = SpParamsMED, 
-                                             plot_size_x = sampled_area)
+pobl_thi_bef$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_THI_BEF") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
 summary(pobl_thi_bef$treeData)
 ```
 ]
@@ -339,10 +332,11 @@ poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] <- "Quercus pubesc
 Now we repeat our mapping and check the results:
 
 .code80[
-```{r, eval = TRUE, highlight.output=c(1,2,5)}
-pobl_thi_bef$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_BEF"), 
-                                             mapping_x = mapping, SpParams = SpParamsMED, 
-                                             plot_size_x = sampled_area)
+```{r, eval = TRUE, highlight.output=c(1,2,4)}
+pobl_thi_bef$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_THI_BEF") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
 summary(pobl_thi_bef, SpParamsMED)
 ```
 ]
@@ -356,11 +350,12 @@ Like the control plot, the `summary()` indicates a dense oak forest.
 We can finally map tree data for the forest plot *after* the thinning intervention:
 
 .code80[
-```{r, eval = TRUE, highlight.output=c(1,2,5)}
+```{r, eval = TRUE, highlight.output=c(1,2,4)}
 pobl_thi_aft <- emptyforest()
-pobl_thi_aft$treeData <- forest_mapTreeTable(subset(poblet_trees,Plot.Code=="POBL_THI_AFT"), 
-                                             mapping_x = mapping, SpParams = SpParamsMED, 
-                                             plot_size_x = sampled_area)
+pobl_thi_aft$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_THI_AFT") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
 summary(pobl_thi_aft, SpParamsMED)
 ```
 ]
@@ -435,26 +430,26 @@ Function `forest_mergeTrees()` will preserve the stand density and basal area th
 
 ## Steps 12-13. Retrieving SoilGrids data
 
-Retrieval of soil properties from SoilGrids can be done using function `soilgridsParams()` from package **medfateutils**. 
+Retrieval of soil properties from SoilGrids can be done using function `add_soilgrids()` from package **medfateland**. 
 
 --
 
-Assuming we know the plot coordinates, we first create an object `sfc` (see package **sf**):
+Assuming we know the plot coordinates, we first create an object `sf` (see package **sf**):
 
 .code80[
 ```{r}
-cc = c(1.0219, 41.3443)
-coords_sfc <- sf::st_sfc(sf::st_point(cc), crs = 4326)
+cc <- c(1.0219, 41.3443)
+coords_sf <- sf::st_sf(geometry = sf::st_sfc(sf::st_point(cc), crs = 4326))
 ```
 ]
 
 --
 
-This object can be used to query SoilGrids using `soilgridsParams()`:
+This object can be used to query SoilGrids using `add_soilgrids()`:
 
 .code80[
 ```{r, eval = FALSE}
-pobl_soil_props <- soilgridsParams(coords_sfc, widths = c(300, 700, 1000))
+pobl_soil_props <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
 ```
 ]
 
@@ -474,9 +469,9 @@ pobl_soil_props
 
 ---
 
-## Steps 14-15. Building the soil object
+## Steps 14-15. Building the initialized soil object
 
-This data frame is a physical description of the soil. Remember that the soil data structure for **medfate** simulations is built using function `soil()`:
+This data frame is a physical description of the soil. Remember that the initialized soil data structure for **medfate** simulations is built using function `soil()`:
 
 .code80[
 ```{r}
@@ -517,28 +512,13 @@ Obtaining daily weather data suitable for simulations is not straightforward eit
 
 --
 
-We begin by building an object of S4 class `SpatialPointsTopography`, which extends `SpatialPoints` and contains both the coordinates of our site as well as topographic variables.
+We begin by building an object of class `sf` containing both the coordinates of our site as well as topographic variables.
 
 .code80[
 ```{r}
-coords_sp <- as(coords_sfc, "Spatial")
-pobl_spt <- SpatialPointsTopography(coords_sp,
-                                    elevation = 850, slope = 15.1, aspect = 15)
-pobl_spt
-```
-]
-
---
-
-The more difficult part of using package **meteoland** is to assemble weather data from surface weather stations into an object of class `MeteorologyInterpolationData`.
-
---
-
-Here we will assume that such an object is already available, by using the example object provided in the **meteoland** package.
-
-.code80[
-```{r}
-data("exampleinterpolationdata")
+pobl_sf <- coords_sf |>
+  dplyr::mutate(elevation = 850, slope = 15.1, aspect = 15)
+pobl_sf
 ```
 ]
 
@@ -546,23 +526,47 @@ data("exampleinterpolationdata")
 
 ## Steps 16-17. Interpolating weather
 
-Once we have this interpolator, obtaining interpolated weather for a set of target points is rather straightforward using function `interpolationpoints()` from **meteoland**:
-
-.code80[
-```{r, warning = TRUE}
-meteo <- interpolationpoints(exampleinterpolationdata, pobl_spt)
-```
-]
-
-Note that a **warning** was raised, because the boundary box of the interpolator does not include the location of the Poblet forests. In this case, the result of the interpolation is not reliable and should not be used!
+The more difficult part of using package **meteoland** is to assemble weather data from surface weather stations into an object of class `stars`.
 
 --
 
-The output of function `interpolationpoints()` is an object of S4 class `SpatialPointsMeteorology`. We can access the weather data frame by subsetting the appropriate element of slot `data`:
+Here we will assume that such an object is already available, by using the example object provided in the **meteoland** package.
 
 .code80[
-```{r, eval = FALSE}
-pobl_weather <- meteo@data[[1]]
+```{r}
+data("meteoland_interpolator_example")
+```
+]
+
+--
+
+Once we have an interpolator, obtaining interpolated weather for a set of target points is rather straightforward using function `interpolate_data()` from **meteoland**:
+
+.code80[
+```{r, warning = TRUE}
+pobl_meteo <- pobl_sf |>
+  meteoland::interpolate_data(meteoland_interpolator_example, verbose = FALSE)
+```
+]
+
+---
+
+## Steps 16-17. Interpolating weather
+
+The output of function `interpolate_data()` is also an `sf` object, with a new column `interpolated_data`: 
+.code80[
+```{r, warning = TRUE}
+pobl_meteo
+```
+]
+
+--
+
+We can access the weather data frame by subsetting the appropriate element of `interpolated_data`:
+
+.code80[
+```{r, eval = TRUE}
+pobl_weather <- pobl_meteo$interpolated_data[[1]]
 head(pobl_weather, 2)
 ```
 ]
