@@ -1,5 +1,5 @@
 ---
-title: "1.2 - Introduction to medfate"
+title: "1.2 - Introduction to medfate modelling framework"
 author: "Miquel De Cáceres"
 institute: "Ecosystem Modelling Facility, CREAF"
 date: "`r Sys.Date()`"
@@ -31,9 +31,9 @@ library(sp)
 
 class: title-slide
 
-# 1.2 - Introduction to medfate
+# 1.2 - Introduction to medfate modelling framework
 
-### Miquel De Cáceres, Victor Granda
+### Miquel De Cáceres, Rodrigo Balaguer-Romano
 
 ### Ecosystem Modelling Facility
 
@@ -56,10 +56,10 @@ class: center, middle
 # Outline
 
 ##  1. Purpose and development context
-##  2. Companion packages
+##  2. Set of R packages
 ##  3. Package installation and documentation
-##  4. Overview of package functions
-
+##  4. Overview of medfate package functions
+##  5. Overview of medfateland package functions
 
 ---
 layout: true
@@ -81,7 +81,7 @@ Being able to anticipate the impact of global change on forest ecosystems is one
 
 --
 
-The R package **medfate** (ver. `r utils::packageDescription("medfate",fields="Version")`) has been designed to study the characteristics and simulate the functioning and dynamics of forest ecosystems.
+The set of R packages conforming the **medfate modelling framework** have been designed to study the characteristics and simulate the functioning and dynamics of forest ecosystems.
 
 --
 
@@ -141,7 +141,7 @@ layout: false
 
 <div class=my-footer></div>
 
-# 2. Companion packages
+# 2. Set of R packages
 
 During the development of **medfate** ancillary functions were originally included in the package itself...
 
@@ -150,19 +150,6 @@ During the development of **medfate** ancillary functions were originally includ
 .. but many of them were later moved into more specialized packages:
 
 <img class="packages" src="resources/img/packages.png" width=800>
-
-<!-- -- -->
-
-<!-- 1. Package [**meteoland**](https://github.com/emf-creaf/meteoland) (ver. `r utils::packageDescription("meteoland",fields="Version")`) allows generating *daily weather input* for simulation models in medfate. -->
-
-<!-- -- -->
-
-<!-- 2. Package [**medfateland**](https://github.com/emf-creaf/medfateland)  (ver. `r utils::packageDescription("medfateland",fields="Version")`) extends medfate by allowing simulations to be performed in a *spatially explicit context*. -->
-
-<!-- -- -->
-
-<!-- 3. Package [**traits4models**](https://github.com/emf-creaf/traits4models)  (ver. `r utils::packageDescription("traits4models",fields="Version")`) provides functions to help *initializing* vegetation, soil and species inputs. -->
-
 
 
 
@@ -179,31 +166,25 @@ layout: false
 
 ## Installation
 
-From **CRAN** (stable versions; now ver. **4.4.0**):
-
-.code80[
-```{r, eval = FALSE, include = TRUE, echo = TRUE}
-install.packages("medfate")
-```
-]
-
---
-
-From **GitHub** (frequent updates; now ver. **`r packageVersion("medfate")`**):
-
-.code80[
-```{r, eval = FALSE, include = TRUE, echo = TRUE}
-remotes::install_github("emf-creaf/medfate")
-```
-]
-
---
-
-Later today we will also use packages **meteoland**:
+In this course, we will use packages **meteoland**, **medfate**, **medfateland**, which are installed from CRAN (stable versions):
 
 .code80[
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 install.packages("meteoland")
+install.packages("medfate")
+install.packages("medfateland")
+```
+]
+
+--
+
+More frequent updates can be obtained if installing from **GitHub**:
+
+.code80[
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+remotes::install_github("emf-creaf/meteoland")
+remotes::install_github("emf-creaf/medfate")
+remotes::install_github("emf-creaf/medfateland")
 ```
 ]
 
@@ -212,6 +193,7 @@ install.packages("meteoland")
 ```{r, echo = TRUE, eval = TRUE, message=FALSE, warning=FALSE, include = FALSE}
 library(meteoland)
 library(medfate)
+library(medfateland)
 ```
 ]
 
@@ -219,11 +201,11 @@ library(medfate)
 
 ## Documentation
 
-Several vignettes are available at the package [web page](https://emf-creaf.github.io/medfate/).
+Several vignettes, describing creation of model inputs and how to perform simulations, are available at the web pages of  [medfate](https://emf-creaf.github.io/medfate/) and [medfateland](https://emf-creaf.github.io/medfate/).
 
 --
 
-A complete documentation of the models included in the package can be found in medfate’s [reference book](https://emf-creaf.github.io/medfatebook/index.html).
+A more complete and detailed documentation of the models included in the package, including formulation and parameterization, can be found in the [medfatebook](https://emf-creaf.github.io/medfatebook/index.html).
 
 
 ---
@@ -236,14 +218,15 @@ layout: true
 
 <div class=my-footer></div>
 
-# 3. Overview of package functions
+# 4. Overview of medfate package functions
 
 ---
 
 ## Simulation functions
 
-Three main simulation models can be executed in medfate, each building on the preceding ones:
+.pull-left[
 
+Three main simulation models can be executed in medfate:
 .font90[
 
 |  Function | Description                 |
@@ -253,25 +236,31 @@ Three main simulation models can be executed in medfate, each building on the pr
 | `fordyn()` | Forest dynamics, including recruitment and forest management |
 
 ]
+]
+.pull.right[
+<img class="packages" src="resources/img/Package_design_medfate.png" width=350>
+]
 
---
-
-Functions `spwb()` and `growth()` have single-day counterparts `spwb_day()` and `growth_day()`.
-
---
+---
 
 ## Plot/summary functions
 
-Specific `summary()`, `plot()` and `shinyplot()` functions are included to *extract* and *display* the time series included in the output of each simulation function.
+Functions are included to *extract*, *summarise* and *display* the time series included in the output of each simulation function:
 
----
+.font90[
+|  Function | Description                 |
+| --------- | --------------------------- |
+| `extract()` | Reshapes daily or subdaily output into data frames.  |
+| `summary()` | Temporal summaries of results.  |
+| `plot()` | Display time series of the results.  |
+| `shinyplot()` | Interactive exploration of results.  |
+]
+
+--
 
 ## Post-processing functions
 
 Some package functions are meant to be used on simulation results (some of them implementing static ancillary models) and produce time series of additional properties.
-
-
---
 
 .font90[
 |  Function | Description                 |
@@ -282,25 +271,20 @@ Some package functions are meant to be used on simulation results (some of them 
 | `fireHazard()` | Potential fire behaviour   |
 ]
 
-Other functions could be envisaged (e.g. light use efficiency) but have not been implemented.
-
 ---
-layout: false
 
-<div class=my-header>
-    <img class="emf-logo" src="resources/img/emf_logo.svg">
-</div>
-
-<div class=my-footer></div>
-
-# 3. Overview of package functions
 ## Sub-model functions
 
-A large number of functions implement sub-models (i.e. modules) on which the simulation functions are built. They are included in the package for the sake of transparency, but most users are not expected to use them directly.
+A large number of functions implement sub-models (i.e. modules) on which the simulation functions are built. 
+
+--
+
+They are included in the package, as **internal** (they are not visible in function index).
+
+--
 
 Sub-model functions are grouped by *subject*:
 
---
 .pull-left[
 .font90[
 |  Group    | Description                 |
@@ -331,8 +315,29 @@ Sub-model functions are grouped by *subject*:
 ]
 ]
 
-???
-Notes here
+---
+
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# 5. Overview of medfateland package functions
+
+---
+
+## Simulation functions
+
+.pull-left[
+Package medfateland allows simulating forest functioning and dynamics on sets forests stands distributed across space, with or without spatial processes:
+]
+
+.pull-right[
+<img class="packages" src="resources/img/Package_design_medfateland.png" width=500>
+]
 
 ---
 
