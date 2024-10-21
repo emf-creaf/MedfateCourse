@@ -24,17 +24,11 @@ options(
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, include = FALSE}
-library(medfate)
-library(sp)
-library(sf)
-```
-
 class: title-slide
 
 # 1.3 - Model inputs
 
-### Miquel De Cáceres, Victor Granda
+### Miquel De Cáceres, Rodrigo Balaguer-Romano
 
 ### Ecosystem Modelling Facility
 
@@ -62,13 +56,12 @@ class: center, middle
 ##  2. Forest input
 ##  3. Vertical profiles
 ##  4. Soil input
-##  5. Weather input
-##  6. Simulation control
-##  7. Simulation input object
+##  5. Simulation control
+##  6. Simulation input object
+##  7. Weather forcing
   
 ```{r, include=FALSE}
 library(medfate)
-library(medfateutils)
 ```
 
 ---
@@ -143,7 +136,7 @@ Each *forest plot* is represented in an object of class `forest`, a list that co
 
 .code80[
 ```{r, include = TRUE, echo = TRUE}
-forest <- exampleforestMED
+forest <- medfate::exampleforest
 ```
 ]
 
@@ -220,7 +213,7 @@ Forest inventories can be conducted in different ways, which means that the star
 
 --
 
-Building `forest` objects from inventory data will always require some data wrangling, but package **medfateutils** provides functions that may be helpful:
+Building `forest` objects from inventory data will always require some data wrangling, but package **medfate** provides functions that may be helpful:
 
 --
 .font90[
@@ -229,7 +222,6 @@ Building `forest` objects from inventory data will always require some data wran
 | `forest_mapShrubTable()` | Helps filling `shrubData` table  |
 | `forest_mapTreeTable()` | Helps filling `treeData` table  |
 | `forest_mapWoodyTables()` | Helps filling a `forest` object  |
-| `IFN2forestlist()` | Creates a list of `forest` objects from Spanish forest inventory data   |
 ]
 
 
@@ -246,7 +238,7 @@ The **medfate** package includes a number of functions to examine properties of 
 .pull-left[
 .code80[
 ```{r, echo = TRUE}
-plant_basalArea(forest)
+plant_basalArea(forest, SpParamsMED)
 ```
 ]
 .code80[
@@ -404,6 +396,7 @@ Soil physical characteristics are specified using a **data.frame** with soil lay
    + `clay` - Percentage of clay (within volume of soil particles). 
    + `sand` - Percentage of sand (within volume of soil particles). 
    + `om` - Percentage of organic matter per dry weight (within volume of soil particles).
+   + `nitrogen` - Total nitrogen (g/kg). Not used at present.
    + `bd` - Bulk density (g/cm3)
    + `rfc` - Rock fragment content (in whole-soil volume).
 
@@ -433,7 +426,7 @@ print(spar)
 
 --
 
-Package **medfateutils** allows retrieving Soilgrids data by connecting with the SoilGrids [REST API](https://rest.isric.org)
+Package **medfateland** allows retrieving Soilgrids data by connecting with the SoilGrids [REST API](https://rest.isric.org)
 
 --
 
@@ -442,7 +435,7 @@ To start with, we need a spatial object of class `sf` or `sfc` (from package **s
 .code80[
 ```{r}
 cc <- c(1.32, 42.20)
-coords_sf <- sf::st_sfc(sf::st_point(cc), crs=4326)
+coords_sf <- sf::st_sf(geometry = sf::st_sfc(sf::st_point(cc), crs=4326))
 ```
 ]
 
@@ -452,7 +445,7 @@ We then call `soilgridsParams()` along with a desired vertical width (in mm) of 
 
 .code80[
 ```{r, eval = FALSE}
-soilgridsParams(coords_sf, widths = c(300, 700, 1000))
+sf_soil <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
 ```
 ]
 
@@ -505,9 +498,72 @@ layout: true
 
 <div class=my-footer></div>
 
+
 ---
 
-# 5. Weather input
+# 5. Simulation control
+
+The behaviour of simulation models can be controlled using a set of **global parameters**.
+
+--
+
+The default parameterization is obtained using function `defaultControl()`:
+
+.code80[
+```{r, echo = TRUE}
+control <- defaultControl()
+```
+]
+
+--
+
+A large number of control parameters exist:
+
+.code80[
+```{r, echo = TRUE, eval = FALSE}
+names(control)
+```
+]
+
+Control parameters should be left to their **default values** until their effect on simulations is fully understood!
+
+---
+
+# 6. Simulation input object
+
+### Functions spwb() and growth()
+
+Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a *single input object*.
+
+--
+
+The combination can be done via functions  `spwbInput()` and `growthInput()`:
+
+.code80[
+```{r, echo = TRUE}
+{{x <- spwbInput(forest, examplesoil, SpParamsMED, control)}}
+```
+]
+
+--
+
+### Function fordyn()
+
+Function `fordyn()` is different from the other two models: the user enters forest, soil, species parameters and simulation control inputs *directly* into the simulation function.
+
+--
+
+### Summary
+
+The following workflow summarises the initialisation for the three functions:
+
+.center[
+<img src="resources/img/input_workflow.png" width=600>
+]
+
+---
+
+# 7. Weather input
 
 All simulations in the package require **daily weather** inputs in form of a `data.frame` with dates as `row.names`.
 
@@ -537,57 +593,6 @@ head(examplemeteo, 2)
 Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/). 
 
 
----
-
-# 6. Simulation control
-
-The behaviour of simulation models can be controlled using a set of **global parameters**.
-
---
-
-The default parameterization is obtained using function `defaultControl()`:
-
-.code80[
-```{r, echo = TRUE}
-control <- defaultControl()
-```
-]
-
---
-
-A large number of control parameters exist:
-
-.code80[
-```{r, echo = TRUE, eval = FALSE}
-names(control)
-```
-]
-
-Control parameters should be left to their **default values** until their effect on simulations is fully understood!
-
----
-
-# 7. Simulation input object
-
-Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a *single input object*.
-
---
-
-The combination can be done via functions  `forest2spwbInput()` and `forest2growthInput()`:
-
-.code80[
-```{r, echo = TRUE}
-{{x <- forest2spwbInput(forest, examplesoil, SpParamsMED, control)}}
-```
-]
-
---
-
-Having this additional step allows *modifying the value* of specific parameters or state variables before calling the simulation functions.
-
---
-
-Function `fordyn()` is different from the other two models: the user enters forest, soil, weather, species parameters and simulation control inputs *directly* into the simulation function.
 
 ---
 layout: false
