@@ -18,23 +18,29 @@ progress: true
 
 ## Outline
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
-####  1. Species parameters
-####  2. Forest input
-####  3. Vertical profiles
-####  4. Soil input
-####  5. Simulation control
-####  6. Simulation input object
-####  7. Weather forcing
+#### 1. Species parameters
+
+#### 2. Forest input
+
+#### 3. Vertical profiles
+
+#### 4. Soil input
+
+#### 5. Simulation control
+
+#### 6. Simulation input object
+
+#### 7. Weather forcing
 :::
 
 ::: {.column width="50%"}
-M.C. Escher - Dragon, 1952 
+M.C. Escher - Dragon, 1952
 
 ![](resources/img/Escher_dragon.jpg)
 :::
-::::
+:::::
 
 ```{r, include=FALSE}
 library(medfate)
@@ -56,7 +62,7 @@ data("SpParamsMED")
 
 . . .
 
-A large number of parameters (`r ncol(SpParamsMED)` columns) can be found in `SpParamsMED`, which may be intimidating. 
+A large number of parameters (`r ncol(SpParamsMED)` columns) can be found in `SpParamsMED`, which may be intimidating.
 
 . . .
 
@@ -67,7 +73,7 @@ data("SpParamsDefinition")
 ```
 
 ::: footer
-1. Species parameters
+1.  Species parameters
 :::
 
 ## Species parameter table
@@ -80,14 +86,14 @@ DT::datatable(SpParamsDefinition,
 ```
 
 ::: footer
-1. Species parameters
+1.  Species parameters
 :::
 
 # 2. Forest input
 
 ## Forest class
 
-Each *forest plot* is represented in an object of class `forest`, a list that contains several elements. 
+Each *forest plot* is represented in an object of class `forest`, a list that contains several elements.
 
 ```{r, include = TRUE, echo = TRUE}
 forest <- medfate::exampleforest
@@ -110,48 +116,46 @@ forest$shrubData
 ```
 
 ::: footer
-2. Forest input
+2.  Forest input
 :::
 
 ## Forest class
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
-
 #### Tree data
 
-| Variable | Definition |
-| -------- | --------------------- |
-|`Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
-| **`N`** | Density of trees (in individuals per hectare) |
-| **`DBH`** | Tree diameter at breast height (in cm) |
-| `Height` | Tree total height (in cm) |
-| `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
-| `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
-
+| Variable  | Definition                                                    |
+|--------------------|---------------------------------------------------|
+| `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
+| **`N`**   | Density of trees (in individuals per hectare)                 |
+| **`DBH`** | Tree diameter at breast height (in cm)                        |
+| `Height`  | Tree total height (in cm)                                     |
+| `Z50`     | Soil depth corresponding to 50% of fine roots (mm)            |
+| `Z95`     | Soil depth corresponding to 95% of fine roots (mm)            |
 :::
+
 ::: {.column width="50%"}
 #### Shrub data
 
-| Variable | Definition |
-| -------- | --------------------- |
-| `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
-| **`Cover`** | Shrub cover (%)  |
-| `Height` | Shrub total height (in cm) |
-| `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
-| `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
-
+| Variable    | Definition                                                    |
+|--------------------|---------------------------------------------------|
+| `Species`   | Species numerical code (should match `SpIndex` in `SpParams`) |
+| **`Cover`** | Shrub cover (%)                                               |
+| `Height`    | Shrub total height (in cm)                                    |
+| `Z50`       | Soil depth corresponding to 50% of fine roots (mm)            |
+| `Z95`       | Soil depth corresponding to 95% of fine roots (mm)            |
 :::
-::::
+:::::
 
 . . .
 
-:::{.callout-important}
+::: callout-important
 medfate's *naming conventions* for tree cohorts and shrub cohorts uses `T` or `S`, the row number and species numerical code (e.g. `"T1_148"` for the first tree cohort, corresponding to *Pinus halepensis*).
 :::
 
 ::: footer
-2. Forest input
+2.  Forest input
 :::
 
 ## Creating a 'forest' from forest inventory data
@@ -164,57 +168,60 @@ Building `forest` objects from inventory data will always require some data wran
 
 . . .
 
-|  Function | Description                 |
-| --------- | --------------------------- |
-| `forest_mapShrubTable()` | Helps filling `shrubData` table  |
-| `forest_mapTreeTable()` | Helps filling `treeData` table  |
-| `forest_mapWoodyTables()` | Helps filling a `forest` object  |
+| Function                  | Description                     |
+|---------------------------|---------------------------------|
+| `forest_mapShrubTable()`  | Helps filling `shrubData` table |
+| `forest_mapTreeTable()`   | Helps filling `treeData` table  |
+| `forest_mapWoodyTables()` | Helps filling a `forest` object |
 
 ::: footer
-2. Forest input
+2.  Forest input
 :::
 
 ## Forest attributes
 
 The **medfate** package includes a number of functions to examine properties of the plants conforming a `forest` object:
 
-::: {.nonincremental}
+::: nonincremental
 -   `plant_*`: Cohort-level information (species name, id, leaf area index, height...).
 -   `species_*`: Species-level attributes (e.g. basal area, leaf area index).
 -   `stand_*`: Stand-level attributes (e.g. basal area).
 :::
+
 . . .
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
 ```{r, echo = TRUE}
 plant_basalArea(forest, SpParamsMED)
 ```
 :::
+
 ::: {.column width="50%"}
 ```{r, echo = TRUE}
 stand_basalArea(forest)
 ```
 :::
-::::
+:::::
 
 . . .
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
 ```{r, echo = TRUE}
 plant_LAI(forest, SpParamsMED)
 ```
 :::
+
 ::: {.column width="50%"}
 ```{r, echo = TRUE}
 stand_LAI(forest, SpParamsMED)
 ```
 :::
-::::
+:::::
 
 ::: footer
-2. Forest input
+2.  Forest input
 :::
 
 ## Aboveground data
@@ -237,7 +244,7 @@ where species-specific allometric coefficients are taken from `SpParamsMED`.
 Users will not normally call `forest2aboveground()`, but is important to understand what is going on behind the scenes.
 
 ::: footer
-2. Forest input
+2.  Forest input
 :::
 
 # 3. Vertical profiles
@@ -246,43 +253,45 @@ Users will not normally call `forest2aboveground()`, but is important to underst
 
 Vertical leaf area distribution (at the cohort-, species- or stand-level) can be examined using:
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_leafAreaDensity(forest, SpParamsMED)
 ```
 :::
+
 ::: {.column width="50%"}
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
   vprofile_leafAreaDensity(forest, SpParamsMED, 
       byCohorts = TRUE, bySpecies = TRUE)
 ```
 :::
-::::
+:::::
 
 ::: footer
-3. Vertical profiles
+3.  Vertical profiles
 :::
 
 ## Radiation extinction
 
 Radiation extinction (PAR or SWR) profile across the vertical axis can also be examined:
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_PARExtinction(forest, SpParamsMED)
 ```
 :::
+
 ::: {.column width="50%"}
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
 vprofile_SWRExtinction(forest, SpParamsMED)
 ```
 :::
-::::
+:::::
 
 ::: footer
-3. Vertical profiles
+3.  Vertical profiles
 :::
 
 ## Belowground root distribution
@@ -294,7 +303,7 @@ vprofile_rootDistribution(forest, SpParamsMED)
 ```
 
 ::: footer
-3. Vertical profiles
+3.  Vertical profiles
 :::
 
 ## Interactive forest inspection
@@ -306,5 +315,210 @@ shinyplot(forest, SpParamsMED)
 ```
 
 ::: footer
-3. Vertical profiles
+3.  Vertical profiles
 :::
+
+# 4. Soil input
+
+## Soil physical description
+
+Soil physical attributes are specified using a **data.frame** with soil layers in rows and columns:
+
+| Attribute | Description |
+|-------------------|-----------------------------------------------------|
+| `widths` | Layer widths, in mm. |
+| `clay` | Percentage of clay (within volume of soil particles). |
+| `sand` | Percentage of sand (within volume of soil particles). |
+| `om` | Percentage of organic matter per dry weight (within volume of soil particles). |
+| `nitrogen` | Total nitrogen (g/kg). Not used at present. |
+| `bd` | Bulk density (g/cm3) |
+| `rfc` | Rock fragment content (in whole-soil volume). |
+
+. . .
+
+They can be initialized to default values using function `defaultSoilParams()`:
+
+```{r, echo = TRUE}
+spar <- defaultSoilParams(2)
+print(spar)
+```
+
+... and then you should modify default values according to available soil information.
+
+::: footer
+4. Soil input
+:::
+
+## Drawing soil physical attributes from *SoilGrids*
+
+[*SoilGrids*](https://soilgrids.org/) is a global database of soil properties:
+
+*Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Blagotic A, et al. (2017) SoilGrids250m: Global gridded soil information based on machine learning. PLoS ONE 12(2): e0169748. doi:10.1371/journal.pone.0169748.*
+
+. . .
+
+Package **medfateland** allows retrieving Soilgrids data by connecting with the SoilGrids [REST API](https://rest.isric.org)
+
+. . .
+
+To start with, we need a spatial object of class `sf` or `sfc` (from package **sf**) containing the geographic coordinates of our target forest stand:
+
+```{r}
+cc <- c(1.32, 42.20)
+coords_sf <- sf::st_sf(geometry = sf::st_sfc(sf::st_point(cc), crs=4326))
+```
+
+. . .
+
+We then call `add_soilgrids()` along with a desired vertical width (in mm) of soil layers:
+
+```{r}
+#| eval: false
+sf_soil <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
+```
+
+::: footer
+4. Soil input
+:::
+
+## Initialized soil
+
+The soil initialized for simulations is a data frame of class `soil` that is created from physical description using a function with the same name:
+
+```{r, echo = TRUE}
+examplesoil <- soil(spar)
+class(examplesoil)
+```
+
+. . .
+
+The initialised soil data frame contains additional columns with soil hydraulic parameters and state variables for moisture (`W`) and temperature (`Temp`):
+
+```{r, echo = TRUE}
+examplesoil
+```
+
+. . .
+
+We can skip calling function `soil()` in our scripts to run simulations, but again is good to know what is behind the scenes.
+
+::: footer
+4. Soil input
+:::
+
+## Water retention curves
+
+The **water retention curve** is used to represent the relationship between soil water content ( $\theta$ ; %) and soil water potential ( $\Psi$ ; MPa).
+
+. . .
+
+The following code calls function `soil_retentionCurvePlot()` to illustrate the difference between two (Saxton and Van Genuchten) water retention models in this soil:
+
+```{r, fig = TRUE, fig.width= 6, fig.height=4, echo=TRUE}
+soil_retentionCurvePlot(examplesoil, model="both")
+```
+
+::: footer
+4. Soil input
+:::
+
+# 5. Simulation control
+
+## Simulation control list
+
+The behaviour of simulation models can be controlled using a set of **global parameters**.
+
+. . .
+
+The default parameterization is obtained using function `defaultControl()`:
+
+```{r, echo = TRUE}
+control <- defaultControl()
+```
+
+. . .
+
+A large number of control parameters exist:
+
+```{r, echo = TRUE, eval = FALSE}
+names(control)
+```
+
+Control parameters should be left to their **default values** until their effect on simulations is fully understood!
+
+::: footer
+5. Simulation control
+:::
+
+# 6. Simulation input object
+
+## Simulation input object
+
+**Functions spwb() and growth()**
+
+Simulation functions `spwb()` and `growth()` require combining forest, soil, species-parameter and simulation control inputs into a *single input object*.
+
+. . .
+
+The combination can be done via functions  `spwbInput()` and `growthInput()`:
+
+```{r, echo = TRUE}
+x <- spwbInput(forest, examplesoil, SpParamsMED, control)
+```
+
+. . .
+
+**Function fordyn()**
+
+Function `fordyn()` is different from the other two models: the user enters forest, soil, species parameters and simulation control inputs *directly* into the simulation function.
+
+. . . 
+
+**Summary**
+
+The following workflow summarises the initialisation for the three functions:
+
+![](resources/img/input_workflow.png){width="500"}
+
+::: footer
+6. Simulation input object
+:::
+
+# 7. Weather forcing
+
+## Weather data frame 
+
+All simulations in the package require **daily weather** forcing inputs in form of a `data.frame` with dates as `row.names` or in a column called `dates`.
+
+. . .
+
+|   Variables  | Units |
+| ------------ | ----- |
+| Maximum/minimum temperature | $ºC$ |
+| Precipitation | $l \cdot m^{-2} \cdot day^{-1}$ |
+| Maximum/minimum relative humidity | % |
+| Radiation | $MJ \cdot m^{-2} \cdot day^{-1}$ |
+| Wind speed | $m \cdot s^{-1}$ |
+
+. . .
+
+An example of daily weather data frame is included in package **medfate**: 
+
+```{r, echo = TRUE}
+data(examplemeteo)
+head(examplemeteo, 2)
+```
+
+. . . 
+
+Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/). 
+
+::: footer
+7. Weather forcing
+:::
+
+---
+
+M.C. Escher - Dragon, 1952
+
+![](resources/img/Escher_dragon.jpg)

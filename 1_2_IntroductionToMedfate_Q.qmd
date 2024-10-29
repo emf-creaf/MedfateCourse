@@ -5,7 +5,6 @@ format:
     incremental: true
     smaller: true
     logo: resources/img/emf_logo.svg
-    footer: "1.2 - Introduction to medfate modelling framework"
     theme: [default, resources/scss/custom.scss]
 editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
@@ -49,6 +48,10 @@ M.C. Escher - Reptiles, 1943 ![](resources/img/Escher_reptiles.png)
 
 -   Representation of vegetation accounts for structural and compositional variation but is not spatially-explicit (i.e. trees or shrubs do not have explicit coordinates within forest stands).
 
+::: footer
+1. Purpose and development context
+:::
+
 ## Development context
 
 #### Funding
@@ -61,6 +64,10 @@ Developments were also supported by CTFC (until March 2021) and CREAF, where I c
 
 Jordi Martínez-Vilalta (CREAF-UAB, Spain), Maurizio Mencuccini (ICREA, Spain), Juli G. Pausas (CIDE-CSIC, Spain), Pilar Llorens (CSIC, Spain), Rafa Poyatos (CREAF, Spain), Lluís Brotons (CREAF-CSIC, Spain), Antoine Cabon (WSL, Switzerland), Roberto Molowny (EMF-CREAF, Spain), Victor Granda (EMF-CREAF, Spain), Adriana Tovar (EMF-CREAF, Spain) Alicia Forner (MNCN-CSIC, Spain), Lluís Coll (UdL, Spain), Pere Casals (CTFC, Spain), Mario Beltrán (CTFC, Spain), Aitor Améztegui (UdL, Spain), Nicolas Martin-StPaul (INRA, France), Shengli Huang (USDA, USA), Enric Batllori (UB-CREAF, Spain), Santi Sabaté (UB-CREAF, Spain), Daniel Nadal-Sala (UB, Spain), María González (UPV, Spain)
 
+::: footer
+1. Purpose and development context
+:::
+
 # 2. Set of R packages
 
 ## Package suite
@@ -72,6 +79,10 @@ During the development of **medfate** ancillary functions were originally includ
 ... but many of them were later moved into more specialized packages:
 
 ![](resources/img/packages.png){.absolute width="800"}
+
+::: footer
+2. Set of R packages
+:::
 
 # 3. Package installation and documentation
 
@@ -101,9 +112,18 @@ library(medfate)
 library(medfateland)
 ```
 
+::: footer
+3. Package installation and documentation
+:::
+
+
 ## Documentation
 
 Several vignettes, describing creation of model inputs and how to perform simulations, are available at the web pages of [medfate](https://emf-creaf.github.io/medfate/) and [medfateland](https://emf-creaf.github.io/medfate/).
+
+::: footer
+3. Package installation and documentation
+:::
 
 # 4. Overview of medfate package functions
 
@@ -125,6 +145,10 @@ Three main simulation models can be executed in medfate:
 :::
 :::::
 
+::: footer
+4. Overview of medfate package functions
+:::
+
 ## Plot/summary functions
 
 Functions are included to *extract*, *summarise* and *display* the time series included in the output of each simulation function:
@@ -136,6 +160,10 @@ Functions are included to *extract*, *summarise* and *display* the time series i
 | `plot()`      | Display time series of the results.                 |
 | `shinyplot()` | Interactive exploration of results.                 |
 
+::: footer
+4. Overview of medfate package functions
+:::
+
 ## Post-processing functions
 
 Some package functions are meant to be used on simulation results (some of them implementing static ancillary models) and produce time series of additional properties.
@@ -146,6 +174,10 @@ Some package functions are meant to be used on simulation results (some of them 
 | `waterUseEfficiency()` | Water use efficiency metrics             |
 | `resistances()`        | Hydraulic resistances to water transport |
 | `fireHazard()`         | Potential fire behaviour                 |
+
+::: footer
+4. Overview of medfate package functions
+:::
 
 ## Sub-model functions
 
@@ -185,6 +217,10 @@ Sub-model functions are grouped by *subject*:
 :::
 :::::
 
+::: footer
+4. Overview of medfate package functions
+:::
+
 # 5. Overview of medfateland package functions
 
 ## Simulation functions
@@ -204,3 +240,13 @@ Package medfateland allows simulating forest functioning and dynamics on sets fo
 ![](resources/img/Package_design_medfateland.png)
 :::
 :::::
+
+::: footer
+5. Overview of medfateland package functions
+:::
+
+---
+
+M.C. Escher - Reptiles, 1943 
+
+![](resources/img/Escher_reptiles.png)

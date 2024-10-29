@@ -5,7 +5,6 @@ format:
     incremental: true
     smaller: true
     logo: resources/img/emf_logo.svg
-    footer: "1.1 - Introduction to process-based forest modelling"
     theme: [default, resources/scss/custom.scss]
 editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
@@ -44,12 +43,20 @@ M.C. Escher - Ascending and Descending, 1960
 -   *Mechanistic (or process-based) model* - A numerical model that explicitly **represents the understanding** of physical, chemical or biological processes.
 -   *Simulation model* - A numerical model that represents the development of a solution by incremental steps through the model domain.
 
+::: footer
+1. Fundamental concepts
+:::
+
 ## Model components
 
 -   *Modules* or *sub-models* - An independent or self-contained component of a model.
 -   *State variables* - The dependent variables calculated within a model, which often **change over the simulation**.
 -   *Parameters* - Terms in the model that are **fixed during a model run** but can be changed in different runs.
 -   *Constants* - Terms that are **fixed values under all runs**, representing known physical, biological or ecological activities (e.g. the speed of light).
+
+::: footer
+1. Fundamental concepts
+:::
 
 ## Model assessment
 
@@ -59,6 +66,10 @@ M.C. Escher - Ascending and Descending, 1960
 -   *Robustness* - The capacity of a model to perform well **across the full range of conditions** for which it was designed.
 -   *Sensitivity* - The degree to which the model outputs are **affected by changes in input parameters**.
 -   *Transparency* - The clarity and completeness with which data, assumptions, and methods of analysis are **documented**.
+
+::: footer
+1. Fundamental concepts
+:::
 
 # 2. Modelling cycle
 
@@ -84,6 +95,11 @@ M.C. Escher - Ascending and Descending, 1960
 
 ![](resources/img/Schmolke_modelling_cycle.png){.absolute width="400" top="100" right="30"}
 
+::: footer
+2. Modelling cycle
+:::
+
+
 ## Modelling tasks: Development
 
 4.  *Parameterization and calibration*
@@ -106,6 +122,11 @@ M.C. Escher - Ascending and Descending, 1960
 
 ![](resources/img/Schmolke_modelling_cycle.png){.absolute width="400" top="100" right="30"}
 
+::: footer
+2. Modelling cycle
+:::
+
+
 # 3. Overview of process-based forest models
 
 ## A typology of forest processes
@@ -114,7 +135,10 @@ M.C. Escher - Ascending and Descending, 1960
 
 ![](resources/img/processes.svg){.absolute top="100" left="200" width="700" style="background-color:white"}
 
-------------------------------------------------------------------------
+::: footer
+3. Overview of process-based forest models
+:::
+
 
 ## A typology of forest processes
 
@@ -130,6 +154,10 @@ FORCLIM, FORCEEPS, GREFOS
 :::
 :::::
 
+::: footer
+3. Overview of process-based forest models
+:::
+
 ## A typology of forest processes
 
 #### Soil-vegetation-atmosphere transfer model
@@ -143,6 +171,10 @@ BILJOU, MuSICA, CANVEG
 ![](resources/img/svatmodel.svg){style="background-color:white"}
 :::
 :::::
+
+::: footer
+3. Overview of process-based forest models
+:::
 
 ## A typology of forest processes
 
@@ -158,6 +190,10 @@ CASTANEA, GOTILWA+, FOREST-BGC
 :::
 :::::
 
+::: footer
+3. Overview of process-based forest models
+:::
+
 ## A typology of forest processes
 
 #### Watershed ecohydrological model
@@ -171,3 +207,14 @@ RHESYS, ECH2O, Tethys-Chloris
 ![](resources/img/ecohydrologicalmodel.svg){style="background-color:white"}
 :::
 :::::
+
+::: footer
+3. Overview of process-based forest models
+:::
+
+
+---
+
+M.C. Escher - Ascending and Descending, 1960
+
+![](resources/img/Escher_ascending_descending.jpg)
