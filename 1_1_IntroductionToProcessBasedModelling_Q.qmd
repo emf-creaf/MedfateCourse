@@ -1,0 +1,173 @@
+---
+title: "Introduction to process-based forest modelling"
+title-slide-attributes: 
+  data-background-image: resources/img/Escher_ascending_descending.jpg
+  data-background-size: contain
+  data-background-position: right
+format:
+  revealjs:
+    incremental: true
+    smaller: true
+    logo: resources/img/emf_logo.svg
+    footer: "1.1 - Introduction to process-based forest modelling"
+    theme: default
+editor: visual
+author: "Miquel De Cáceres, Rodrigo Balaguer"
+institute: "Ecosystem Modelling Facility, CREAF"
+toc: false
+toc-depth: 2
+number-sections: false
+slide-number: true
+progress: true
+---
+
+# 1. Fundamental concepts
+
+## Models: What are they?
+
+-   *Model* - A simplification of reality constructed to gain insights into a set of attributes of a physical, biological, economic, or social system.
+-   *Conceptual model* - A **hypothesis** regarding the important factors that govern the behavior of an object or a process of interest.
+-   *Statistical model* - A numerical model **built using observations** within a probabilistic framework.
+-   *Mechanistic (or process-based) model* - A numerical model that explicitly **represents the understanding** of physical, chemical or biological processes.
+-   *Simulation model* - A numerical model that represents the development of a solution by incremental steps through the model domain.
+
+## Model components
+
+-   *Modules* or *sub-models* - An independent or self-contained component of a model.
+-   *State variables* - The dependent variables calculated within a model, which often **change over the simulation**.
+-   *Parameters* - Terms in the model that are **fixed during a model run** but can be changed in different runs.
+-   *Constants* - Terms that are **fixed values under all runs**, representing known physical, biological or ecological activities (e.g. the speed of light).
+
+## Model assessment
+
+-   *Verification* - Examination of the implementation to ascertain that they truly represents the conceptual model and there are no inherent numerical problems.
+-   *Qualitative assessment* - Uncertainty in model predictions that **cannot be quantified** (i.e. about the theory underlying the model or the model design).
+-   *Uncertainty analysis* - Investigation of the effects of lack of knowledge or potential errors of inputs (e.g. climate forcing) on the model output.
+-   *Robustness* - The capacity of a model to perform well **across the full range of conditions** for which it was designed.
+-   *Sensitivity* - The degree to which the model outputs are **affected by changes in input parameters**.
+-   *Transparency* - The clarity and completeness with which data, assumptions, and methods of analysis are **documented**.
+
+# 2. Modelling cycle
+
+## Modelling tasks: Development
+
+1.  *Problem formulation*
+
+    -   Definition of objectives
+    -   Definition of the spatio-temporal physical domain
+
+2.  *Model design and formulation*
+
+    -   Data availability
+    -   Use of existing vs. new model
+    -   Conceptual model
+    -   Use of existing modules
+
+![](resources/img/Schmolke_modelling_cycle.png){.absolute width="350" top="100" right="30"}
+
+
+## Modelling tasks: Development
+
+3.  *Implementation*
+
+    -   Algorithmic design
+    -   Model coding (e.g. C++)
+    -   Profiling and code optimization
+
+4.  *Parameterization and calibration*
+
+    -   Sources for direct parameter estimation
+    -   Sources for parameter calibration
+    -   Meta-modelling
+
+
+![](resources/img/Schmolke_modelling_cycle.png){.absolute width="350" top="100" right="30"}
+
+## Modelling tasks: Development
+
+5.  *Model analysis*
+    -   Verification and qualitative assessment
+    -   Sensitivity/uncertainty analysis
+    -   Formal evaluation (validation)
+6.  *Model application*
+    -   Simulation and documentation
+    -   Quantifying uncertainty
+    -   Evidence for decision
+
+![](resources/img/Schmolke_modelling_cycle.png){.absolute width="350" top="100" right="30"}
+
+
+# 3. Overview of process-based forest models
+
+## A typology of forest processes
+
+#### Processes
+
+![](resources/img/processes.svg){.absolute top="100" left=200 width="700"}
+
+---
+
+## A typology of forest processes
+
+#### Forest gap models
+
+:::: {.columns}
+
+::: {.column width="40%"}
+FORCLIM, FORCEEPS, GREFOS
+:::
+
+::: {.column width="60%"}
+![](resources/img/forestgapmodels.svg)
+:::
+::::
+
+## A typology of forest processes
+
+#### Soil-vegetation-atmosphere transfer model
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+BILJOU, MuSICA, CANVEG
+:::
+
+::: {.column width="60%"}
+
+![](resources/img/svatmodel.svg)
+:::
+::::
+
+
+## A typology of forest processes
+
+#### Forest biochemical model 
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+CASTANEA, GOTILWA+, FOREST-BGC
+:::
+
+::: {.column width="60%"}
+![](resources/img/biogeochemicalmodel.svg)
+:::
+::::
+
+## A typology of forest processes
+
+#### Watershed ecohydrological model
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+RHESYS, ECH2O, Tethys-Chloris
+:::
+
+::: {.column width="60%"}
+![](resources/img/ecohydrologicalmodel.svg)
+:::
+::::
