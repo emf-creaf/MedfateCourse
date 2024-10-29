@@ -1,0 +1,206 @@
+---
+title: "Introduction to medfate modelling framework"
+format:
+  revealjs:
+    incremental: true
+    smaller: true
+    logo: resources/img/emf_logo.svg
+    footer: "1.2 - Introduction to medfate modelling framework"
+    theme: [default, resources/scss/custom.scss]
+editor: source
+author: "Miquel De Cáceres, Rodrigo Balaguer"
+institute: "Ecosystem Modelling Facility, CREAF"
+toc: false
+toc-depth: 2
+number-sections: false
+slide-number: true
+progress: true
+---
+
+## Outline
+
+::::: columns
+::: {.column width="60%"}
+#### 1. Purpose and development context
+
+#### 2. Set of R packages
+
+#### 3. Package installation and documentation
+
+#### 4. Overview of medfate package functions
+
+#### 5. Overview of medfateland package functions
+:::
+
+::: {.column width="40%"}
+M.C. Escher - Reptiles, 1943 ![](resources/img/Escher_reptiles.png)
+:::
+:::::
+
+# 1. Purpose and development context
+
+## Model scope
+
+-   Being able to anticipate the impact of global change on forest ecosystems is one of the major environmental challenges in contemporary societies.
+
+-   The set of R packages conforming the **medfate modelling framework** have been designed to study the characteristics and simulate the functioning and dynamics of forest ecosystems.
+
+-   Climatic conditions are the main environmental drivers, with a particular focus on drought impacts under Mediterranean conditions.
+
+-   Representation of vegetation accounts for structural and compositional variation but is not spatially-explicit (i.e. trees or shrubs do not have explicit coordinates within forest stands).
+
+## Development context
+
+#### Funding
+
+I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Four other research projects (FORESTCAST, DRESS, BOMFORES, IMPROMED) have funded further developments.
+
+Developments were also supported by CTFC (until March 2021) and CREAF, where I currently coordinate its *Ecosystem Modelling Facility*.
+
+#### A large number of people has contributed with *ideas*, *data* or *code* to the project:
+
+Jordi Martínez-Vilalta (CREAF-UAB, Spain), Maurizio Mencuccini (ICREA, Spain), Juli G. Pausas (CIDE-CSIC, Spain), Pilar Llorens (CSIC, Spain), Rafa Poyatos (CREAF, Spain), Lluís Brotons (CREAF-CSIC, Spain), Antoine Cabon (WSL, Switzerland), Roberto Molowny (EMF-CREAF, Spain), Victor Granda (EMF-CREAF, Spain), Adriana Tovar (EMF-CREAF, Spain) Alicia Forner (MNCN-CSIC, Spain), Lluís Coll (UdL, Spain), Pere Casals (CTFC, Spain), Mario Beltrán (CTFC, Spain), Aitor Améztegui (UdL, Spain), Nicolas Martin-StPaul (INRA, France), Shengli Huang (USDA, USA), Enric Batllori (UB-CREAF, Spain), Santi Sabaté (UB-CREAF, Spain), Daniel Nadal-Sala (UB, Spain), María González (UPV, Spain)
+
+# 2. Set of R packages
+
+## Package suite
+
+During the development of **medfate** ancillary functions were originally included in the package itself...
+
+. . .
+
+... but many of them were later moved into more specialized packages:
+
+![](resources/img/packages.png){.absolute width="800"}
+
+# 3. Package installation and documentation
+
+## Installation
+
+In this course, we will use packages **meteoland**, **medfate**, **medfateland**, which are installed from CRAN (stable versions):
+
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+install.packages("meteoland")
+install.packages("medfate")
+install.packages("medfateland")
+```
+
+. . .
+
+More frequent updates can be obtained if installing from **GitHub**:
+
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+remotes::install_github("emf-creaf/meteoland")
+remotes::install_github("emf-creaf/medfate")
+remotes::install_github("emf-creaf/medfateland")
+```
+
+```{r, echo = TRUE, eval = FALSE, message=FALSE, warning=FALSE, include = FALSE}
+library(meteoland)
+library(medfate)
+library(medfateland)
+```
+
+## Documentation
+
+Several vignettes, describing creation of model inputs and how to perform simulations, are available at the web pages of [medfate](https://emf-creaf.github.io/medfate/) and [medfateland](https://emf-creaf.github.io/medfate/).
+
+# 4. Overview of medfate package functions
+
+## Simulation functions
+
+::::: columns
+::: {.column width="50%"}
+Three main simulation models can be executed in medfate:
+
+| Function   | Description                                                  |
+|-------------------|-----------------------------------------------------|
+| `spwb()`   | Water and energy balance                                     |
+| `growth()` | Carbon balance, growth and mortality                         |
+| `fordyn()` | Forest dynamics, including recruitment and forest management |
+:::
+
+::: {.column width="45%"}
+![](resources/img/Package_design_medfate.png)
+:::
+:::::
+
+## Plot/summary functions
+
+Functions are included to *extract*, *summarise* and *display* the time series included in the output of each simulation function:
+
+| Function      | Description                                         |
+|---------------|-----------------------------------------------------|
+| `extract()`   | Reshapes daily or subdaily output into data frames. |
+| `summary()`   | Temporal summaries of results.                      |
+| `plot()`      | Display time series of the results.                 |
+| `shinyplot()` | Interactive exploration of results.                 |
+
+## Post-processing functions
+
+Some package functions are meant to be used on simulation results (some of them implementing static ancillary models) and produce time series of additional properties.
+
+| Function               | Description                              |
+|------------------------|------------------------------------------|
+| `droughtStress()`      | Plant drought stress indices             |
+| `waterUseEfficiency()` | Water use efficiency metrics             |
+| `resistances()`        | Hydraulic resistances to water transport |
+| `fireHazard()`         | Potential fire behaviour                 |
+
+## Sub-model functions
+
+A large number of functions implement sub-models (i.e. modules) on which the simulation functions are built.
+
+. . .
+
+They are included in the package, as **internal** (they are not visible in function index).
+
+. . .
+
+Sub-model functions are grouped by *subject*:
+
+::::: columns
+::: {.column width="50%"}
+| Group          | Description                    |
+|----------------|--------------------------------|
+| `biophysics_*` | Physics and biophysics         |
+| `carbon_*`     | Carbon balance                 |
+| `fuel_*`       | Fuel properties                |
+| `fire_*`       | Fire behaviour                 |
+| `hydraulics_*` | Plant hydraulics               |
+| `hydrology_*`  | Canopy and soil hydrology      |
+| `light_*`      | Light extinction and absortion |
+| `moisture_*`   | Live tissue moisture           |
+:::
+
+::: {.column width="50%"}
+| Group      | Description                                           |
+|------------|-------------------------------------------------------|
+| `pheno_*`  | Leaf phenology                                        |
+| `photo_*`  | Leaf photosynthesis                                   |
+| `root_*`   | Root distribution and conductance calculations        |
+| `soil_*`   | Soil hydraulics and thermodynamics                    |
+| `transp_*` | Stomatal regulation, transpiration and photosynthesis |
+| `wind_*`   | Canopy turbulence                                     |
+:::
+:::::
+
+# 5. Overview of medfateland package functions
+
+## Simulation functions
+
+::::: columns
+::: {.column width="60%"}
+Package medfateland allows simulating forest functioning and dynamics on sets forests stands distributed across space, with or without spatial processes:
+
+| Function            | Description                                          |
+|-------------------|-----------------------------------------------------|
+| `*_spatial()`       | Simulation on multiple forest stands                 |
+| `*_land()`          | Simulations including spatial processes              |
+| `fordyn_scenario()` | Regional simulations of climate/management scenarios |
+:::
+
+::: {.column width="40%"}
+![](resources/img/Package_design_medfateland.png)
+:::
+:::::

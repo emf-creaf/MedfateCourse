@@ -1,0 +1,310 @@
+---
+title: "Model inputs"
+format:
+  revealjs:
+    incremental: true
+    smaller: true
+    logo: resources/img/emf_logo.svg
+    theme: [default, resources/scss/custom.scss]
+editor: visual
+author: "Miquel De Cáceres, Rodrigo Balaguer"
+institute: "Ecosystem Modelling Facility, CREAF"
+toc: false
+toc-depth: 2
+number-sections: false
+slide-number: true
+progress: true
+---
+
+## Outline
+
+:::: {.columns}
+::: {.column width="50%"}
+####  1. Species parameters
+####  2. Forest input
+####  3. Vertical profiles
+####  4. Soil input
+####  5. Simulation control
+####  6. Simulation input object
+####  7. Weather forcing
+:::
+
+::: {.column width="50%"}
+M.C. Escher - Dragon, 1952 
+
+![](resources/img/Escher_dragon.jpg)
+:::
+::::
+
+```{r, include=FALSE}
+library(medfate)
+```
+
+# 1. Species parameters
+
+## Species parameter table
+
+Simulation models in **medfate** require a `data.frame` with species parameter values.
+
+. . .
+
+The package includes a default data set of parameter values for `r nrow(SpParamsMED)` Mediterranean taxa.
+
+```{r, echo = TRUE}
+data("SpParamsMED")
+```
+
+. . .
+
+A large number of parameters (`r ncol(SpParamsMED)` columns) can be found in `SpParamsMED`, which may be intimidating. 
+
+. . .
+
+You can find parameter definitions in table `SpParamsDefinition`:
+
+```{r, echo = TRUE}
+data("SpParamsDefinition")
+```
+
+::: footer
+1. Species parameters
+:::
+
+## Species parameter table
+
+The following table shows parameter definitions and units:
+
+```{r, eval= require("DT"), tidy = FALSE, echo = FALSE}
+DT::datatable(SpParamsDefinition,
+              fillContainer = FALSE, options=list(pageLength = 4))
+```
+
+::: footer
+1. Species parameters
+:::
+
+# 2. Forest input
+
+## Forest class
+
+Each *forest plot* is represented in an object of class `forest`, a list that contains several elements. 
+
+```{r, include = TRUE, echo = TRUE}
+forest <- medfate::exampleforest
+```
+
+. . .
+
+The most important items are two data frames, `treeData` (for trees):
+
+```{r, echo = TRUE}
+forest$treeData
+```
+
+. . .
+
+and `shrubData` (for shrubs):
+
+```{r, echo = TRUE}
+forest$shrubData
+```
+
+::: footer
+2. Forest input
+:::
+
+## Forest class
+
+:::: {.columns}
+::: {.column width="50%"}
+
+#### Tree data
+
+| Variable | Definition |
+| -------- | --------------------- |
+|`Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
+| **`N`** | Density of trees (in individuals per hectare) |
+| **`DBH`** | Tree diameter at breast height (in cm) |
+| `Height` | Tree total height (in cm) |
+| `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
+| `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
+
+:::
+::: {.column width="50%"}
+#### Shrub data
+
+| Variable | Definition |
+| -------- | --------------------- |
+| `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
+| **`Cover`** | Shrub cover (%)  |
+| `Height` | Shrub total height (in cm) |
+| `Z50` | Soil depth corresponding to 50% of fine roots (mm) |
+| `Z95` | Soil depth corresponding to 95% of fine roots (mm) |
+
+:::
+::::
+
+. . .
+
+:::{.callout-important}
+medfate's *naming conventions* for tree cohorts and shrub cohorts uses `T` or `S`, the row number and species numerical code (e.g. `"T1_148"` for the first tree cohort, corresponding to *Pinus halepensis*).
+:::
+
+::: footer
+2. Forest input
+:::
+
+## Creating a 'forest' from forest inventory data
+
+Forest inventories can be conducted in different ways, which means that the starting form of forest data is diverse.
+
+. . .
+
+Building `forest` objects from inventory data will always require some data wrangling, but package **medfate** provides functions that may be helpful:
+
+. . .
+
+|  Function | Description                 |
+| --------- | --------------------------- |
+| `forest_mapShrubTable()` | Helps filling `shrubData` table  |
+| `forest_mapTreeTable()` | Helps filling `treeData` table  |
+| `forest_mapWoodyTables()` | Helps filling a `forest` object  |
+
+::: footer
+2. Forest input
+:::
+
+## Forest attributes
+
+The **medfate** package includes a number of functions to examine properties of the plants conforming a `forest` object:
+
+::: {.nonincremental}
+-   `plant_*`: Cohort-level information (species name, id, leaf area index, height...).
+-   `species_*`: Species-level attributes (e.g. basal area, leaf area index).
+-   `stand_*`: Stand-level attributes (e.g. basal area).
+:::
+. . .
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r, echo = TRUE}
+plant_basalArea(forest, SpParamsMED)
+```
+:::
+::: {.column width="50%"}
+```{r, echo = TRUE}
+stand_basalArea(forest)
+```
+:::
+::::
+
+. . .
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r, echo = TRUE}
+plant_LAI(forest, SpParamsMED)
+```
+:::
+::: {.column width="50%"}
+```{r, echo = TRUE}
+stand_LAI(forest, SpParamsMED)
+```
+:::
+::::
+
+::: footer
+2. Forest input
+:::
+
+## Aboveground data
+
+An important information for simulation model is the estimation of initial **leaf area index** and **crown dimensions** for each plant cohort, which is normally done using *allometries*.
+
+. . .
+
+We can illustrate this step using function `forest2aboveground()`:
+
+```{r, echo = TRUE}
+above <- forest2aboveground(forest, SpParamsMED)
+above
+```
+
+where species-specific allometric coefficients are taken from `SpParamsMED`.
+
+. . .
+
+Users will not normally call `forest2aboveground()`, but is important to understand what is going on behind the scenes.
+
+::: footer
+2. Forest input
+:::
+
+# 3. Vertical profiles
+
+## Leaf distribution
+
+Vertical leaf area distribution (at the cohort-, species- or stand-level) can be examined using:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
+vprofile_leafAreaDensity(forest, SpParamsMED)
+```
+:::
+::: {.column width="50%"}
+```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
+  vprofile_leafAreaDensity(forest, SpParamsMED, 
+      byCohorts = TRUE, bySpecies = TRUE)
+```
+:::
+::::
+
+::: footer
+3. Vertical profiles
+:::
+
+## Radiation extinction
+
+Radiation extinction (PAR or SWR) profile across the vertical axis can also be examined:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
+vprofile_PARExtinction(forest, SpParamsMED)
+```
+:::
+::: {.column width="50%"}
+```{r, fig = TRUE, fig.width= 6, fig.height=4, fig.align= 'center', echo=TRUE}
+vprofile_SWRExtinction(forest, SpParamsMED)
+```
+:::
+::::
+
+::: footer
+3. Vertical profiles
+:::
+
+## Belowground root distribution
+
+Users can visually inspect the distribution of fine roots of `forest` objects by calling function `vprofile_rootDistribution()`:
+
+```{r, fig = TRUE, fig.width= 6, fig.height=4, echo=TRUE}
+vprofile_rootDistribution(forest, SpParamsMED)
+```
+
+::: footer
+3. Vertical profiles
+:::
+
+## Interactive forest inspection
+
+Function `shinyplot()` is a more convenient way to display properties and profiles of `forest` objects:
+
+```{r, eval = FALSE, include = TRUE, echo = TRUE}
+shinyplot(forest, SpParamsMED)
+```
+
+::: footer
+3. Vertical profiles
+:::

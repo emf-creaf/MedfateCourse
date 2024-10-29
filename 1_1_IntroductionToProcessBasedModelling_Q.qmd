@@ -1,17 +1,13 @@
 ---
 title: "Introduction to process-based forest modelling"
-title-slide-attributes: 
-  data-background-image: resources/img/Escher_ascending_descending.jpg
-  data-background-size: contain
-  data-background-position: right
 format:
   revealjs:
     incremental: true
     smaller: true
     logo: resources/img/emf_logo.svg
     footer: "1.1 - Introduction to process-based forest modelling"
-    theme: default
-editor: visual
+    theme: [default, resources/scss/custom.scss]
+editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
 institute: "Ecosystem Modelling Facility, CREAF"
 toc: false
@@ -20,6 +16,23 @@ number-sections: false
 slide-number: true
 progress: true
 ---
+
+## Outline
+
+::::: columns
+::: {.column width="50%"}
+#### 1. Fundamental concepts
+
+#### 2. Modelling cycle
+
+#### 3. Overview of process-based forest models
+:::
+
+::: {.column width="45%"}
+M.C. Escher - Ascending and Descending, 1960
+![](resources/img/Escher_ascending_descending.jpg)
+:::
+:::::
 
 # 1. Fundamental concepts
 
@@ -63,16 +76,15 @@ progress: true
     -   Conceptual model
     -   Use of existing modules
 
-![](resources/img/Schmolke_modelling_cycle.png){.absolute width="350" top="100" right="30"}
-
-
-## Modelling tasks: Development
-
 3.  *Implementation*
 
     -   Algorithmic design
     -   Model coding (e.g. C++)
     -   Profiling and code optimization
+
+![](resources/img/Schmolke_modelling_cycle.png){.absolute width="400" top="100" right="30"}
+
+## Modelling tasks: Development
 
 4.  *Parameterization and calibration*
 
@@ -80,22 +92,19 @@ progress: true
     -   Sources for parameter calibration
     -   Meta-modelling
 
-
-![](resources/img/Schmolke_modelling_cycle.png){.absolute width="350" top="100" right="30"}
-
-## Modelling tasks: Development
-
 5.  *Model analysis*
+
     -   Verification and qualitative assessment
     -   Sensitivity/uncertainty analysis
     -   Formal evaluation (validation)
+
 6.  *Model application*
+
     -   Simulation and documentation
     -   Quantifying uncertainty
     -   Evidence for decision
 
-![](resources/img/Schmolke_modelling_cycle.png){.absolute width="350" top="100" right="30"}
-
+![](resources/img/Schmolke_modelling_cycle.png){.absolute width="400" top="100" right="30"}
 
 # 3. Overview of process-based forest models
 
@@ -103,71 +112,62 @@ progress: true
 
 #### Processes
 
-![](resources/img/processes.svg){.absolute top="100" left=200 width="700"}
+![](resources/img/processes.svg){.absolute top="100" left="200" width="700" style="background-color:white"}
 
----
+------------------------------------------------------------------------
 
 ## A typology of forest processes
 
 #### Forest gap models
 
-:::: {.columns}
-
+::::: columns
 ::: {.column width="40%"}
 FORCLIM, FORCEEPS, GREFOS
 :::
 
 ::: {.column width="60%"}
-![](resources/img/forestgapmodels.svg)
+![](resources/img/forestgapmodels.svg){style="background-color:white"}
 :::
-::::
+:::::
 
 ## A typology of forest processes
 
 #### Soil-vegetation-atmosphere transfer model
 
-:::: {.columns}
-
+::::: columns
 ::: {.column width="40%"}
-
 BILJOU, MuSICA, CANVEG
 :::
 
 ::: {.column width="60%"}
-
-![](resources/img/svatmodel.svg)
+![](resources/img/svatmodel.svg){style="background-color:white"}
 :::
-::::
-
+:::::
 
 ## A typology of forest processes
 
-#### Forest biochemical model 
+#### Forest biochemical model
 
-:::: {.columns}
-
+::::: columns
 ::: {.column width="40%"}
-
 CASTANEA, GOTILWA+, FOREST-BGC
 :::
 
 ::: {.column width="60%"}
-![](resources/img/biogeochemicalmodel.svg)
+![](resources/img/biogeochemicalmodel.svg){style="background-color:white"}
 :::
-::::
+:::::
 
 ## A typology of forest processes
 
 #### Watershed ecohydrological model
 
-:::: {.columns}
-
+::::: columns
 ::: {.column width="40%"}
-
 RHESYS, ECH2O, Tethys-Chloris
 :::
 
 ::: {.column width="60%"}
-![](resources/img/ecohydrologicalmodel.svg)
+![](resources/img/ecohydrologicalmodel.svg){style="background-color:white"}
 :::
-::::
+:::::
