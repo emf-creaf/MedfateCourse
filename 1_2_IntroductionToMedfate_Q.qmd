@@ -3,7 +3,7 @@ title: "Introduction to medfate modelling framework"
 format:
   revealjs:
     incremental: true
-    smaller: true
+    smaller: false
     logo: resources/img/emf_logo.svg
     theme: [default, resources/scss/custom.scss]
 editor: source
@@ -59,6 +59,8 @@ M.C. Escher - Reptiles, 1943 ![](resources/img/Escher_reptiles.png)
 I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Four other research projects (FORESTCAST, DRESS, BOMFORES, IMPROMED) have funded further developments.
 
 Developments were also supported by CTFC (until March 2021) and CREAF, where I currently coordinate its *Ecosystem Modelling Facility*.
+
+. . .
 
 #### A large number of people has contributed with *ideas*, *data* or *code* to the project:
 

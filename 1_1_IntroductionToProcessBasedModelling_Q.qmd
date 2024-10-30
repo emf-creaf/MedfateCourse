@@ -3,7 +3,7 @@ title: "Introduction to process-based forest modelling"
 format:
   revealjs:
     incremental: true
-    smaller: true
+    smaller: false
     logo: resources/img/emf_logo.svg
     theme: [default, resources/scss/custom.scss]
 editor: source

@@ -126,7 +126,7 @@ forest$shrubData
 #### Tree data
 
 | Variable  | Definition                                                    |
-|--------------------|---------------------------------------------------|
+|-----------|---------------------------------------------------------------|
 | `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
 | **`N`**   | Density of trees (in individuals per hectare)                 |
 | **`DBH`** | Tree diameter at breast height (in cm)                        |
@@ -139,7 +139,7 @@ forest$shrubData
 #### Shrub data
 
 | Variable    | Definition                                                    |
-|--------------------|---------------------------------------------------|
+|-------------|---------------------------------------------------------------|
 | `Species`   | Species numerical code (should match `SpIndex` in `SpParams`) |
 | **`Cover`** | Shrub cover (%)                                               |
 | `Height`    | Shrub total height (in cm)                                    |
@@ -325,7 +325,7 @@ shinyplot(forest, SpParamsMED)
 Soil physical attributes are specified using a **data.frame** with soil layers in rows and columns:
 
 | Attribute | Description |
-|-------------------|-----------------------------------------------------|
+|----|----|
 | `widths` | Layer widths, in mm. |
 | `clay` | Percentage of clay (within volume of soil particles). |
 | `sand` | Percentage of sand (within volume of soil particles). |
@@ -346,7 +346,7 @@ print(spar)
 ... and then you should modify default values according to available soil information.
 
 ::: footer
-4. Soil input
+4.  Soil input
 :::
 
 ## Drawing soil physical attributes from *SoilGrids*
@@ -378,7 +378,7 @@ sf_soil <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
 ```
 
 ::: footer
-4. Soil input
+4.  Soil input
 :::
 
 ## Initialized soil
@@ -403,7 +403,7 @@ examplesoil
 We can skip calling function `soil()` in our scripts to run simulations, but again is good to know what is behind the scenes.
 
 ::: footer
-4. Soil input
+4.  Soil input
 :::
 
 ## Water retention curves
@@ -419,7 +419,7 @@ soil_retentionCurvePlot(examplesoil, model="both")
 ```
 
 ::: footer
-4. Soil input
+4.  Soil input
 :::
 
 # 5. Simulation control
@@ -447,7 +447,7 @@ names(control)
 Control parameters should be left to their **default values** until their effect on simulations is fully understood!
 
 ::: footer
-5. Simulation control
+5.  Simulation control
 :::
 
 # 6. Simulation input object
@@ -460,7 +460,7 @@ Simulation functions `spwb()` and `growth()` require combining forest, soil, spe
 
 . . .
 
-The combination can be done via functions  `spwbInput()` and `growthInput()`:
+The combination can be done via functions `spwbInput()` and `growthInput()`:
 
 ```{r, echo = TRUE}
 x <- spwbInput(forest, examplesoil, SpParamsMED, control)
@@ -472,7 +472,7 @@ x <- spwbInput(forest, examplesoil, SpParamsMED, control)
 
 Function `fordyn()` is different from the other two models: the user enters forest, soil, species parameters and simulation control inputs *directly* into the simulation function.
 
-. . . 
+. . .
 
 **Summary**
 
@@ -481,43 +481,43 @@ The following workflow summarises the initialisation for the three functions:
 ![](resources/img/input_workflow.png){width="500"}
 
 ::: footer
-6. Simulation input object
+6.  Simulation input object
 :::
 
 # 7. Weather forcing
 
-## Weather data frame 
+## Weather data frame
 
 All simulations in the package require **daily weather** forcing inputs in form of a `data.frame` with dates as `row.names` or in a column called `dates`.
 
 . . .
 
-|   Variables  | Units |
-| ------------ | ----- |
-| Maximum/minimum temperature | $ºC$ |
-| Precipitation | $l \cdot m^{-2} \cdot day^{-1}$ |
-| Maximum/minimum relative humidity | % |
-| Radiation | $MJ \cdot m^{-2} \cdot day^{-1}$ |
-| Wind speed | $m \cdot s^{-1}$ |
+| Variables                         | Units                            |
+|-----------------------------------|----------------------------------|
+| Maximum/minimum temperature       | $ºC$                             |
+| Precipitation                     | $l \cdot m^{-2} \cdot day^{-1}$  |
+| Maximum/minimum relative humidity | \%                               |
+| Radiation                         | $MJ \cdot m^{-2} \cdot day^{-1}$ |
+| Wind speed                        | $m \cdot s^{-1}$                 |
 
 . . .
 
-An example of daily weather data frame is included in package **medfate**: 
+An example of daily weather data frame is included in package **medfate**:
 
 ```{r, echo = TRUE}
 data(examplemeteo)
 head(examplemeteo, 2)
 ```
 
-. . . 
+. . .
 
-Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/). 
+Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/).
 
 ::: footer
-7. Weather forcing
+7.  Weather forcing
 :::
 
----
+------------------------------------------------------------------------
 
 M.C. Escher - Dragon, 1952
 
