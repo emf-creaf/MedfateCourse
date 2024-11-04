@@ -99,7 +99,7 @@ examplesoil <- soil(defaultSoilParams(4))
 and a simulation control list:
 .code80[
 ```{r, echo = TRUE}
-control <- defaultControl("Granier")
+control <- defaultControl(transpirationMode = "Granier", soilDomains = "buckets")
 ```
 ]
 
