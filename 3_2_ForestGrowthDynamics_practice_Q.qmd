@@ -27,6 +27,9 @@ progress: true
 #### 3. Evaluation of growth predictions
 
 #### 4. Forest dynamics
+
+#### 5. Forest dynamics including management
+
 :::
 
 ::: {.column width="40%"}
@@ -160,7 +163,7 @@ names(G)
 . . .
 
 | Elements | Information |
-|----|----|
+|--------------------|----------------------------------------------------|
 | `latitude`, `topography`, `weather`, `growthInput` | Copies of the information used in the call to `growth()` |
 | `growthOutput` | State variables at the end of the simulation (can be used as input to a subsequent one) |
 | `WaterBalance`, `Soil`, `Snow`, `Stand`, `Plants` | \[same as `spwb` ...\] |
@@ -193,6 +196,310 @@ plot(G, "MaintenanceRespiration", bySpecies = TRUE)
 ::: footer
 2.  Forest growth
 :::
+
+# 3. Evaluation of growth predictions
+
+
+## Observed data frame {.smaller}
+
+Evaluation of growth simulations will normally imply the comparison of predicted vs observed **basal area increment** (BAI) or **diameter increment** (DI) at a given temporal resolution. 
+
+. . .
+
+Here, we illustrate the evaluation functions included in the package using a fake data set at *daily* resolution, consisting on the predicted values and some added error.
+
+```{r, echo = TRUE}
+data(exampleobs)
+head(exampleobs)
+```
+
+. . .
+
+To specify observed growth data at *monthly* or *annual scale*, you should specify the first day of each month/year (e.g. `2001-01-01`, `2002-01-01`, etc for years) as row names in your observed data frame. 
+
+
+::: footer
+3. Evaluation of growth predictions
+:::
+
+## Evaluation plot {.smaller}
+
+Assuming we want to evaluate the predictive capacity of the model in terms of monthly basal area increment for the *pine cohort* (i.e. `T1_148`), we can plot the relationship between observed and predicted values using `evaluation_plot()`:
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r, fig=TRUE, echo=TRUE,  message=FALSE, fig.width=6, fig.height=3.0}
+evaluation_plot(G, exampleobs, "BAI", 
+                cohort = "T1_148", 
+                temporalResolution = "month", 
+                plotType = "scatter")
+```
+:::
+
+::: {.column width="50%"}
+```{r, fig=TRUE, echo=TRUE,  message=FALSE, fig.width=6, fig.height=3.0}
+evaluation_plot(G, exampleobs, "BAI", 
+                cohort = "T1_148", 
+                temporalResolution = "month", 
+                plotType = "dynamics")
+```
+:::
+::::
+
+. . .
+
+Using `temporalResolution = "month"` we indicate that simulated and observed data should be temporally aggregated to conduct the comparison.
+
+. . .
+
+The following code would help us quantifying the *strength* of the relationship:
+
+```{r, echo = TRUE, eval = TRUE}
+evaluation_stats(G, exampleobs, "BAI", cohort = "T1_148", temporalResolution = "month")
+```
+
+::: footer
+3. Evaluation of growth predictions
+:::
+
+#  4. Forest dynamics
+
+## Forest dynamics run {.smaller}
+
+**Weather preparation**
+
+In this vignette we will fake a three-year weather input by repeating the example weather data frame four times:
+
+```{r, echo = TRUE}
+meteo <- rbind(examplemeteo, examplemeteo, examplemeteo, examplemeteo)
+```
+
+. . .
+
+we need to update the dates in row names so that they span four consecutive years:
+
+```{r, echo = TRUE}
+meteo$dates <- seq(as.Date("2001-01-01"), 
+                   as.Date("2004-12-30"), by="day")
+```
+
+. . .
+
+**Simulation**
+
+The call to `fordyn()` has the following form:
+ 
+```{r, echo = TRUE}
+fd<-fordyn(exampleforest, examplesoil, SpParamsMED, meteo, control, 
+           latitude = 41.82592, elevation = 100)
+```
+
+. . .
+
+::: {.callout-important}
++ `fordyn()` operates on `forest` objects directly, instead of using an intermediary object (such as `spwbInput` and `growthInput`).
++ `fordyn()` calls function `growth()` internally for each simulated year, but all console output from `growth()` is hidden.
+:::
+
+::: footer
+4. Forest dynamics
+:::
+
+## Forest dynamics output {.smaller}
+
+As with other models, the output of `fordyn()` is a list, which has the following elements:
+
+| Elements | Information   |
+| ----- | -------------- |
+| `StandSummary`, `SpeciesSummary`, `CohortSummary` | *Annual* summary statistics at different levels |
+| `TreeTable`, `ShrubTable` | Structural variables of **living** cohorts at each annual time step. |
+| `DeadTreeTable`,  `DeadShrubTable` | Structural variables of **dead** cohorts at each annual time step  |
+| `CutTreeTable`,  `CutShrubTable` | Structural variables of **cut** cohorts at each annual time step  |
+| `ForestStructures` | Vector of `forest` objects at each time step. |
+| `GrowthResults` | Result of internally calling `growth()` at each time step. |
+| `ManagementArgs` | Management arguments for a subsequent call to `fordyn()`. |
+| `NextInputObject`, `NextForestObject` | Objects `growthInput` and `forest` to be used in a subsequent call to `fordyn()`. |
+
+
+::: footer
+4. Forest dynamics
+:::
+
+## Forest dynamics output {.smaller}
+
+For example, we can compare the initial `forest` object with the final one:
+
+:::: {.columns}
+::: {.column width = "50%"}
+```{r, echo = TRUE}
+exampleforest
+```
+:::
+
+::: {.column width = "50%"}
+```{r, echo = TRUE}
+fd$NextForestObject
+```
+:::
+::::
+
+::: footer
+4. Forest dynamics
+:::
+
+## Forest dynamics output {.smaller}
+
+The output includes **summary statistics** that describe the structural and compositional state of the forest corresponding to *each annual time step*. 
+
+. . .
+
+For example, we can access *stand-level* statistics using:
+
+```{r, echo = TRUE, eval = TRUE}
+fd$StandSummary
+```
+
+
+::: footer
+4. Forest dynamics
+:::
+
+## Forest dynamics output {.smaller}
+
+Another useful output of `fordyn()` are tables in long format with cohort structural information (i.e. DBH, height, density, etc) for each time step:
+
+```{r, echo = TRUE}
+fd$TreeTable
+```
+
+. . .
+
+::: {.callout-note}
+The `NA` values in `Year` correspond to the initial state.
+:::
+
+. . .
+
+The same information can be shown for trees that are predicted to die during each simulated year:
+
+```{r, echo = TRUE}
+fd$DeadTreeTable
+```
+
+::: footer
+4. Forest dynamics
+:::
+
+## Post-processing {.smaller}
+
+Accessing elements of `GrowthResults`, we can extract, summarize or plot simulation results for a particular year:
+
+```{r, fig=TRUE, echo=TRUE,  fig.width=8, fig.height=2}
+plot(fd$GrowthResults[[2]], "LeafArea", bySpecies = TRUE)
+```
+
+. . .
+
+It is also possible to plot the whole series of results by passing a `fordyn` object to the `plot()` function:
+
+```{r, fig=TRUE, echo=TRUE,  fig.width=8, fig.height=2}
+plot(fd, "LeafArea", bySpecies = TRUE)
+```
+
+. . .
+
+Finally, we can create interactive plots using function `shinyplot()`, in the same way as with other simulations.
+
+
+::: footer
+4. Forest dynamics
+:::
+
+# 5. Forest dynamics including management
+
+
+## Running simulations with management {.smaller}
+
+`fordyn()` allows the user to supply an *arbitrary* function implementing a desired management strategy for the stand whose dynamics are to be simulated. 
+ 
+. . .
+ 
+ The package includes an in-built default function called `defaultManagementFunction()` along management parameter defaults provided by function `defaultManagementArguments()`.
+ 
+. . .
+ 
+To run simulations with management we need to define (and modify) management arguments...
+
+```{r, echo  = TRUE, eval = FALSE}
+# Default arguments
+args <- defaultManagementArguments()
+# Here one can modify defaults before calling fordyn()
+#
+```
+
+. . .
+
+... and call `fordyn()` specifying the management function and its arguments:
+
+```{r, echo = TRUE, eval = FALSE}
+fd<-fordyn(exampleforest, examplesoil, SpParamsMED, meteo, control, 
+           latitude = 41.82592, elevation = 100,
+           management_function = defaultManagementFunction,
+           management_args = args)
+```
+
+. . .
+
+When management is included, tables `CutTreeTable` and `CutShrubTable` will contain extraction data:
+
+```{r, echo = TRUE, eval = FALSE}
+fd$CutTreeTable
+fd$CutShrubTable
+```
+
+
+::: footer
+5. Forest dynamics including management
+:::
+
+## Forest management parameters (1) {.smaller}
+
+Function `defaultManagementArguments()` returns a list with default values for *management parameters* to be used in conjunction with `defaultManagementFunction()`:
+
+| Element |  Description                          |
+| ------- | ------------------------------------- |
+| `type` | Management model, either 'regular' or 'irregular' |
+| `targetTreeSpecies` | Either `"all"` for unspecific cuttings or a numeric vector of target tree species to be selected for cutting operations |
+| `thinning`  | Kind of thinning to be applied in irregular models or in regular models before the final cuts. Options are `"below"`, `"above"`, `"systematic"`, `"below-systematic"`, `"above-systematic"` or a string with the proportion of cuts to be applied to different diameter sizes |
+| `thinningMetric` | The stand-level metric used to decide whether thinning is applied, either `"BA"` (basal area), `"N"` (density) or `"HB"` (Hart-Becking index) |
+| `thinningThreshold` | The threshold value of the stand-level metric causing the thinning decision |
+| `thinningPerc` | Percentage of stand's basal area to be removed in thinning operations |
+| `minThinningInterval` | Minimum number of years between thinning operations |
+| `finalMeanDBH` | Mean DBH threshold to start final cuts |
+| `finalPerc` | String with percentages of basal area to be removed in final cuts, separated by '-' (e.g. "40-60-100") |
+| `finalYearsBetweenCuts` | Number of years separating final cuts |
+
+## Forest management parameters (2) {.smaller}
+
+The same list includes *state variables* for management (these are modified during the simulation):
+
+| Element |  Description                          |
+| ------- | ------------------------------------- |
+| `yearsSinceThinning`  | State variable to count the years since the last thinning ocurred |
+| `finalPreviousStage` | Integer state variable to store the stage of final cuts ('0' before starting final cuts) |
+| `finalYearsToCut` | State variable to count the years to be passed before new final cut is applied. |
+
+. . .
+
+::: {.callout-tip}
+Instead of using the in-built management function, you could code your own management function and specify its own set of parameters!
+:::
+
+::: footer
+5. Forest dynamics including management
+:::
+
 
 ------------------------------------------------------------------------
 
