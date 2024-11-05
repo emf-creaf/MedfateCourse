@@ -285,14 +285,16 @@ layout: true
 
 ---
 
-## Leaf area/fine root biomass growth
+## Leaf area/sapwood/fine root biomass growth
 
 Daily leaf area increment $\Delta LA$ and fine root biomass increment $\Delta B_{fineroot}$ are defined as the minimum of three constraints:
 
 $$\Delta LA = \min( \Delta LA_{alloc}, \Delta LA_{source}, \Delta LA_{sink})$$
+
+
 $$\Delta B_{fineroot} = \min( \Delta B_{fineroot,alloc}, \Delta B_{fineroot,source}, \Delta B_{fineroot,sink})$$
 
-   1. $\Delta LA_{alloc}$ and $\Delta B_{fineroot,alloc}$ are the increments allowed according to the targets set by **allocation rules**.
+   1. $\Delta LA_{alloc}$, $\Delta SA_{alloc}$  and $\Delta B_{fineroot,alloc}$ are the increments allowed according to the targets set by **allocation rules**.
    2. $\Delta LA_{source}$ and $\Delta B_{fineroot,source}$ are the maximum increments allowed by current **carbon availability**.
    3. $\Delta LA_{sink}$ and $\Delta B_{fineroot,sink}$ are the increments expected by taking into account maximum growth rates as well as **temperature and turgor limitations** (Cabon et al. 2020). 
 
