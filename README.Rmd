@@ -1,9 +1,10 @@
 ---
 title: "README"
 author: "Miquel De Cáceres"
-date: "2024-11-05"
 output: github_document
 ---
+
+# Course on the medfate modelling framework
 
 ## Introduction
 
@@ -13,7 +14,7 @@ Course sessions are updated to the most recent course edition and package versio
 
 ## Usage
 
-The course slides are made using [Quarto](https://quarto.org/). This publishing system should be installed in order to modify the presentation.
+The course slides are made using [Quarto](https://quarto.org/). This publishing system should be installed in order to recreate and modify course slides.
 
 ## Course sessions
 
@@ -43,6 +44,6 @@ These are required to recreate slide presentations from `*.qmd` files.
 
 Three different course editions have been done so far:
 
-+ **June 2022**: CREAF (Barcelona, Spain), Miquel De Cáceres & Víctor Granda
++ **June 2022**: CREAF (Barcelona, Spain), Miquel De Cáceres, Víctor Granda, Aitor Améztegui
 + **December 2022**: University of Eastern Finland (Joensuu, Finland), Miquel De Cáceres & Víctor Granda
 + **November 2024**: Universidad de Valladolid (Soria, Spain), Miquel De Cáceres & Rodrigo Balaguer-Romano
