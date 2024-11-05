@@ -3,8 +3,8 @@ title: "Exercise 1 guidelines"
 author: "Miquel De Cáceres"
 date: '2022-06-13'
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -33,7 +33,7 @@ The management involved a reduction of the number of stems per individual (*suck
 
 ## Guidelines by steps
 
-1. Install packages **medfate**, **meteoland** and **medfateland** (if not already installed).
+1. Load packages **medfate**, **meteoland** and **medfateland**.
 
 ```{r}
 
@@ -123,13 +123,13 @@ The management involved a reduction of the number of stems per individual (*suck
 
 ```
 
-16. Convert the `sfc` object that you created in step 12 into an object of class `SpatialPoints` (*hint*: use `as(x, "Spatial")`). Then use this and the topographic variables (elevation, slope, aspect) to create an object of the S4 class `SpatialPointsTopography` (defined in package **meteoland**).
+16. Convert the `sfc` object that you created in step 12 into an object of class `sf` while adding the topographic variables (elevation, slope, aspect).
 
 ```{r}
 
 ```
 
-17. Load the `"exampleinterpolationdata"` object provided in package **meteoland** and interpolate daily weather on the location of the Poblet stands (hint: use function `interpolationpoints()`). What do the warnings mean? Extract the daily weather data frame corresponding to your point from the output of `interpolationpoints()`.
+17. Load the `"meteoland_interpolator_example"` object provided in package **meteoland** and interpolate daily weather on the location of the Poblet stands (hint: use function `interpolate_data()`).
 
 ```{r}
 

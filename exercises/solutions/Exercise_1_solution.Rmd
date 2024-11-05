@@ -1,718 +1,366 @@
 ---
-title: "2.3 - Forest water and energy balance (exercise)"
+title: "Exercise 1 solution"
 author: "Miquel De Cáceres"
-institute: "Ecosystem Modelling Facility, CREAF"
-date: "`r Sys.Date()`"
+date: '2022-06-13'
 output:
-  xaringan::moon_reader:
-    css: ["resources/css/custom.css", "default-fonts", "default"]
-    lib_dir: libs
-    nature:
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-    seal: false
-editor_options: 
-  chunk_output_type: console
+  html_document: default
+  pdf_document: default
 ---
 
-```{r setup, include=FALSE, warning=FALSE}
-options(
-  htmltools.dir.version = FALSE,
-  width = 100
-)
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
+``` 
 
-```{r, include = FALSE}
-library(meteoland)
-library(medfate)
-library(sp)
-```
-
-class: title-slide
-
-
-# 2.3 - Forest water/energy balance (exercise)
-
-### Miquel De Cáceres, Victor Granda
-
-### Ecosystem Modelling Facility
-
-### `r as.Date("2022-12-01")`
-
-
-<img class= "escher-title" src="resources/img/Escher_relativity.jpg" width=400>
-
-<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
-
----
-layout: true
-
-<div class=my-header>
-    <img class="emf-logo" src="resources/img/emf_logo.svg">
-</div>
-
-<div class=my-footer></div>
 
 # Exercise setting
 
----
-## Overall goal
+## Objectives
 
-Learn how to use *medfate* for forest water balance simulations.
+1. Build `forest` objects from a tree data frame of forest inventory data
+2. Retrieve soil physical properties from SoilGrids
+3. Interpolate daily weather on the plot location
 
---
+## Data
 
-## Specific objectives
+Package **medfateutils** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. 
 
-  1. Perform a basic water balance run on a real-case data and inspect the results
-  2. Evaluate the performance of the water balance model with observed data
-  3. Perform an advanced water balance run on the same data and inspect the results
-  4. Compare the results and performance between the two models
-  
---
+   + *Location*: Poblet (Catalonia, Spain); long/lat: 1.0219º, 41.3443º
+   + *Topography*: elevation = 850 m, slope = 15.1º, aspect = 15º
+   + *Plot*: Circular plot of 15-m radius
+   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. 
 
-## Exercise material
+As a result of the abandonment of former coppicing in the area, there is a high density of stems per individual in the control plot. 
 
-+ Exercise_2.Rmd
-+ fontblanche.rds
+The management involved a reduction of the number of stems per individual (*sucker cutback* or *selecció de tanys*). 
 
----
-
-<div class=my-header>
-    <img class="emf-logo" src="resources/img/emf_logo.svg">
-</div>
-
-<div class=my-footer></div>
-
-## Font-Blanche research forest
-
- + The Font-Blanche research forest is located in southeastern France (43º14'27'' N 5°40'45'' E) at 420 m elevation)
-
---
-
- + The stand is composed of a top strata of *Pinus halepensis* (Aleppo pine) reaching about 12 m, a lower strata of *Quercus ilex* (holm oak), reaching about 6 m, and an understorey strata dominated by *Quercus coccifera* and *Phillyrea latifolia*. 
-
---
-
- + Soils are shallow and rocky, have a low retention capacity and are of Jurassic limestone origin. 
- 
---
- 
- + The climate is Mediterranean, with a water stress period in summer, cold or mild winters and most precipitation occurring between September and May. 
-
---
-
-## Target stand
-
-+ The experimental site, which is dedicated to study forest carbon and water cycles, has an enclosed area of 80×80 m but our target stand is a quadrat of dimensions 25×25 m. 
-
---
-
-+ The following observations are available for year 2014:
-
-   + Stand total evapotranspiration estimated using an Eddy-covariance flux tower.
-   + Soil moisture content of the topmost (0-30 cm) layer.
-   + Transpiration estimates per leaf area, derived from sapflow measurements for *Q. ilex* and *P. halepensis*.
-   + Pre-dawn and midday leaf water potentials for *Q. ilex* and *P. halepensis*.
-
----
-layout: true
-
-<div class=my-header>
-    <img class="emf-logo" src="resources/img/emf_logo.svg">
-</div>
-
-<div class=my-footer></div>
 
 # Exercise solution
 
----
-## Step 1. Load Font-Blanche data
+## Step 1. Loading packages
+
+We begin by loading packages **medfate**, **medfateland** and **meteoland** into the search path: 
+
+```{r, eval = TRUE, message=FALSE}
+library(medfate)
+library(medfateland)
+library(meteoland)
+```
+
+## Step 2. Load and inspect Poblet data
+
+Normally, tree data would be in a **.csv** or **.xlsx** file. Here, we simply load the tree data from Poblet included in the package:
+
+```{r}
+data("poblet_trees")
+```
+
+We can inspect its content, for example using:
+
+```{r}
+summary(poblet_trees)
+```
+
+The data frame includes tree data corresponding to three forest inventories:
+
+```{r}
+table(poblet_trees$Plot.Code)
+```
+
+## Step 3. Mapping trees from the control stand
+
+We initialize an empty forest object using function `emptyforest()` from package **medfate**:
+
+```{r, echo = TRUE}
+pobl_ctl <- emptyforest()
+```
+
+To fill data for element `treeData` in the `forest` object, we need to define a mapping from column names in `poblet_trees` to variables in `treeData`. The mapping can be defined using a **named string vector**, i.e. a vector where element names are variable names in `treeData` and vector elements are strings of the variable names in `poblet_trees`:
+
+```{r}
+mapping <- c("Species.name" = "Species", "DBH" = "Diameter.cm")
+```
+
+*Note*: Using `"Species.name" = "Species"` we indicate that the function should interpret values in column `Species` as species names, not species codes.
+
+We can now replace the empty `treeData` in `pobl_ctl` using functions `dplyr::filter()` and `forest_mapTreeTable()`:
+
+```{r}
+pobl_ctl$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_CTL") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED)
+```
+
+## Step 4. Check the mapping result
+
+We can inspect the result using:
+
+```{r}
+summary(pobl_ctl$treeData)
+```
+
+One way to evaluate if the tree data is correctly specified is to display a summary of the `forest` object using the `summary()` function defined in **medfate** for this object class:
+
+```{r}
+summary(pobl_ctl, SpParamsMED)
+```
+
+
+Are the values of tree density, stand basal area and stand LAI acceptable for a dense oak forest?
+
+## Step 5. Specifying plot size
+
+We were told that forest stand sampling was done using a *circular plot* whose radius was 15 m. We can calculate the sampled area using:
+
+```{r}
+sampled_area <- pi*15^2
+```
+
+and use this information to map the tree data again, where we specify the parameter `plot_size_x`:
+
+```{r}
+pobl_ctl$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_CTL") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
+```
+
+We run again the summary and check whether stand's basal area and LAI make more sense:
+
+```{r, eval = TRUE, highlight.output= c(1,2,4)}
+summary(pobl_ctl, SpParamsMED)
+```
+
+## Step 6. Adding tree heights
+
+Another issue that we see is the `summary()` concerns percentage of PAR and SWR that reaches the ground, which have missing values. This indicates that light extinction cannot be calculated, in our case because tree heights are missing.
+
+We should somehow estimate tree heights (in cm), for example using an allometric relationship:
+
+```{r}
+poblet_trees$Height.cm <- 100 * 1.806*poblet_trees$Diameter.cm^0.518
+summary(poblet_trees$Height.cm)
+```
+
+Once tree heights are defined, we can include them in our mapping vector:
+
+```{r}
+mapping <- c("Species.name" = "Species", "DBH" = "Diameter.cm", "Height" = "Height.cm")
+```
+
+and rerun the tree data mapping.
+
+```{r, include = FALSE}
+pobl_ctl$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_CTL") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
+```
+
+## Step 7. Mapping trees from the managed stand
+
+Now we can address the *managed* stand, which has two codes corresponding to *before* and *after* the thinning intervention. Let us first deal with the pre-thinning state:
+
+```{r}
+pobl_thi_bef <- emptyforest()
+pobl_thi_bef$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_THI_BEF") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
+summary(pobl_thi_bef$treeData)
+```
+
+Beware of the missing values in column `Species`
+
+## Step 8. Fixing species nomenclature
+
+The `Species` variable contains two missing values. This will normally happen when some species cannot be identified. We can verify if this happens for other parts of the Poblet tree data:
+
+```{r}
+sum(!(poblet_trees$Species %in% SpParamsMED$Name))
+```
+
+If we display species counts we can identify which species is not being parsed:
+
+```{r}
+table(poblet_trees$Species)
+```
+
+In this case, the name used for the downy oak (*Quercus humilis*) is a synonym and needs to be replaced by its accepted name (*Quercus pubescens*), e.g.:
+
+```{r}
+poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] <- "Quercus pubescens"
+```
+
+## Step 8. Fixing species nomenclature
+
+Now we repeat our mapping and check the results:
+
+```{r, eval = TRUE}
+pobl_thi_bef$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_THI_BEF") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
+summary(pobl_thi_bef, SpParamsMED)
+```
+
+Like the control plot, the `summary()` indicates a dense oak forest.
+
+## Step 9. Mapping trees from the managed stand
+
+We can finally map tree data for the forest plot *after* the thinning intervention:
+
+```{r, eval = TRUE}
+pobl_thi_aft <- emptyforest()
+pobl_thi_aft$treeData <- poblet_trees |>
+  dplyr::filter(Plot.Code=="POBL_THI_AFT") |>
+  forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
+                      plot_size_x = sampled_area)
+summary(pobl_thi_aft, SpParamsMED)
+```
+
+And check the reduction caused by the thinning.
+
+
+## Step 10. Checking the number of cohorts
+
+So far we have considered that each tree record should correspond to a woody cohort. We can check the number of tree cohorts in each `forest` structure using:
+
+```{r}
+nrow(pobl_ctl$treeData)
+nrow(pobl_thi_bef$treeData)
+nrow(pobl_thi_aft$treeData)
+```
+
+This large amount of cohorts can slow done simulations considerably!
+
+## Step 11. Reducing the number of cohorts
+
+One way of reducing the number of cohorts is via function `forest_mergeTrees()` from package **medfate**:
+
+```{r}
+pobl_ctl <- forest_mergeTrees(pobl_ctl)
+pobl_thi_bef <- forest_mergeTrees(pobl_thi_bef)
+pobl_thi_aft <- forest_mergeTrees(pobl_thi_aft)
+```
+
+By default, the function will pool tree cohorts of the same species and diameter class (defined every 5 cm). 
+
+We can check the new number of tree cohorts using again:
+
+```{r}
+nrow(pobl_ctl$treeData)
+nrow(pobl_thi_bef$treeData)
+nrow(pobl_thi_aft$treeData)
+```
+
+## Step 11. Reducing the number of cohorts
+
+We can check whether stand properties were altered using the `summary()` function:
+
+```{r}
+summary(pobl_thi_aft, SpParamsMED)
+```
+
+Function `forest_mergeTrees()` will preserve the stand density and basal area that the stand description had before merging cohorts. Other properties like leaf area index may be slightly modified.
+
+*Tip*: It is advisable to reduce the number of woody cohorts before running simulation models in **medfate**.
+
+## Steps 12-13. Retrieving SoilGrids data
+
+Retrieval of soil properties from SoilGrids can be done using function `add_soilgrids()` from package **medfateland**. 
+
+Assuming we know the plot coordinates, we first create an object `sf` (see package **sf**):
+
+```{r}
+cc <- c(1.0219, 41.3443)
+coords_sf <- sf::st_sf(geometry = sf::st_sfc(sf::st_point(cc), crs = 4326))
+```
+
+This object can be used to query SoilGrids using `add_soilgrids()`:
+
+```{r, eval = FALSE}
+pobl_soil_props <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
+```
 
 ```{r, include=FALSE}
-library(medfate)
-library(ggplot2)
-library(cowplot)
+pobl_soil_props = readRDS("pobl_soil_props.rds")
 ```
 
-We are given all the necessary data, bundled in a single list:
+This function returns a data frame of soil properties:
 
-.code80[
 ```{r}
-fb <- readRDS("StudentRdata/fontblanche.rds")
-names(fb)
+pobl_soil_props
 ```
-]
 
---
+## Steps 14-15. Building the initialized soil object
 
-## Step 2. Build forest object
+This data frame is a physical description of the soil. Remember that the initialized soil data structure for **medfate** simulations is built using function `soil()`:
 
-We can easily assemble the tree and shrub data into a forest object:
-
-.code80[
 ```{r}
-fb_forest <- emptyforest() 
-fb_forest$treeData <- fb$treeData
-fb_forest$shrubData <- fb$shrubData
+pobl_soil <- soil(pobl_soil_props)
 ```
-]
 
-and examine its characteristics:
-
-.code80[
-```{r, highlight.output = c(1,2,5)}
-summary(fb_forest, SpParamsMED)
-```
-]
-
----
-
-## Step 3. Build soil object
-
-A data frame with soil physical attributes are defined in:
-
-.code80[
+We can inspect the soil definition using `summary()`.
 ```{r}
-fb$soilData
+summary(pobl_soil)
 ```
-]
 
---
 
-We need, however, to build a `soil` object:
-.code80[
+*SoilGrids* usually underestimates the amount of rocks in the soil, because soil samples do not normally contain large stones or blocks. Realistic simulations should reduce the soil water holding capacity by increasing `rfc`. For example, here we will assume that the third layer contains 80% of rocks:
+
 ```{r}
-fb_soil <- soil(fb$soilData)
+pobl_soil_props$rfc[3] = 80
 ```
-]
 
---
+If we rebuild the soil object and inspect its properties...
 
-From which we can estimate the extractable water capacity for each layer (in mm):
-.code80[
+```{r, eval= FALSE}
+pobl_soil <- soil(pobl_soil_props)
+summary(pobl_soil)
+```
+
+...we will see the decrease in water-holding capacity.
+
+
+## Steps 16-17. Interpolating weather
+
+Obtaining daily weather data suitable for simulations is not straightforward either. Here we illustrate one way of obtaining such data with package **meteoland**. 
+
+We begin by building an object of class `sf` containing both the coordinates of our site as well as topographic variables.
+
 ```{r}
-soil_waterExtractable(fb_soil)
+pobl_sf <- coords_sf |>
+  dplyr::mutate(elevation = 850, slope = 15.1, aspect = 15)
+pobl_sf
 ```
-]
 
---
+The more difficult part of using package **meteoland** is to assemble weather data from surface weather stations into an object of class `stars`.
 
-The same information can be found in the output of `print()`.
 
----
+Here we will assume that such an object is already available, by using the example object provided in the **meteoland** package.
 
-## Step 4. Species parameters
-
-We will normally take `SpParamsMED` as starting point for species parameters:
-.code80[
 ```{r}
-data("SpParamsMED")
-```
-]
-
-However, sometimes one may wish to override species defaults with custom values. In the case of FontBlanche there is a table of preferred values for some parameters, especially in the case of *Quercus ilex* (code 168):
-
-.code80[
-```{r}
-fb$customParams
-```
-]
-
---
-
-We can use function `modifySpParams()` to replace the values of parameters for the desired traits, leaving the rest unaltered:
-
-.code80[
-```{r}
-fb_SpParams <- modifySpParams(SpParamsMED, fb$customParams)
-```
-]
-
----
-
-## Steps 5-6. Basic water balance
-
-Since we are about to run a basic water balance simulation, we initialize a simulation control parameter list with `transpirationMode = "Granier"`, i.e.:
-
-.code80[
-```{r}
-fb_control <- defaultControl("Granier")
-```
-]
-
-and we assemble our inputs into a `spwbInput` object, using:
-
-.code80[
-```{r}
-fb_x1 <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
-```
-]
-
---
-
-The daily weather data comprises one year:
-.code80[
-```{r}
-fb_meteo <- fb$meteoData
-nrow(fb_meteo)
-```
-]
-
---
-
-Now, we are ready to launch the simulation:
-.code80[
-```{r, eval=FALSE}
-fb_basic <- spwb(fb_x1, fb_meteo,  elevation = 420, latitude = 43.24083)
-```
-]
-
-```{r include = FALSE}
-# saveRDS(fb_basic, "Rdata/spwb_basic.rds")
-fb_basic <- readRDS("Rdata/spwb_basic.rds")
+data("meteoland_interpolator_example")
 ```
 
----
+Once we have an interpolator, obtaining interpolated weather for a set of target points is rather straightforward using function `interpolate_data()` from **meteoland**:
 
-## Step 7. Examine precipitation events, runoff and deep drainage
-
-Surface run-off occurs the same day as precipitation events, whereas deep drainage can last for some days after the event: 
-.code80[
-```{r fig=TRUE, fig.width=10, fig.height = 4.5}
-g1<-plot(fb_basic)+scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  theme(legend.position = "none")
-g2<-plot(fb_basic, "Export")+scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  theme(legend.position = c(0.35,0.60))
-plot_grid(g1,g2, ncol=1, rel_heights = c(0.5,1))
-```
-]
-
----
-
-## Step 8. Examine evapotranspiration flows
-
-Precipitation events also generate flows of intercepted water the same day of the event. Evaporation from the bare soil can proceed some days after the event. Transpiration flow is the dominant one in most days, decreasing in summer due to drought.
-
-.code80[
-```{r fig=TRUE, fig.width=10, fig.height = 4.5}
-g1<-plot(fb_basic)+scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  theme(legend.position = "none")
-g2<-plot(fb_basic, "Evapotranspiration")+scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  theme(legend.position = c(0.13,0.73))
-plot_grid(g1,g2, ncol=1, rel_heights = c(0.5,1))
-```
-]
-
-
----
-
-## Step 9. Soil water potential dynamics
-
-We can display the dynamics of water potential in different soil layers using:
-.center[
-.code80[
-```{r fig=TRUE, fig.width=10, fig.height = 4}
-plot(fb_basic, "SoilPsi")
-```
-]
-]
-
---
-
-**Tip**: Normally, we should expect lower layers to have a less dynamic behaviour, but strange results can occur if, for instance, a large proportion of roots is in deeper layers.
-
----
-
-## Steps 10-12. Evaluation of stand evapotranspiration
-
-Observations are in element `measuredData` of the list:
-
-.code80[
-```{r}
-fb_observed <- fb$measuredData
-```
-]
-
-
---
-
-We can compare the observed vs modelled total evapotranspiration by plotting the two time series:
-
-.center[
-.code80[
-```{r fig=TRUE, fig.width=10, fig.height = 3.5, warning=FALSE}
-evaluation_plot(fb_basic, fb_observed, type = "ETR", plotType="dynamics")
-```
-]
-]
-
---
-
-It is easy to see that in rainy days the predicted evapotranspiration is much higher than that of the observed data. 
-
----
-
-## Steps 10-12. Evaluation of stand evapotranspiration
-
-We repeat the comparison but excluding the intercepted water from modeled results:
-
-.pull-left[
-### Time series plot
-.code80[
-```{r fig=TRUE, fig.align="center", fig.width=6, fig.height = 4, warning=FALSE}
-evaluation_plot(fb_basic, fb_observed, 
-    type = "SE+TR", plotType="dynamics")+
-  theme(legend.position = c(0.8,0.85))
-```
-]
-]
-
-
-.pull-right[
-### Scatter plot
-.code80[
-```{r, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3.5, warning=FALSE, message=FALSE}
-evaluation_plot(fb_basic, fb_observed, 
-    type = "SE+TR", plotType="scatter")
-```
-]
-]
-
---
-
-Where we see a reasonably good relationship, but the model tends to underestimate total evapotranspiration during seasons with low evaporative demand. 
-
----
-
-## Steps 10-12. Evaluation of stand evapotranspiration
-
-Function `evaluation_stats()` allows us to generate evaluation statistics:
-
-.code80[
-```{r, warning=FALSE, message=FALSE}
-evaluation_stats(fb_basic, fb_observed, type = "SE+TR")
-```
-]
-
----
-
-## Step 13. Evaluation of soil moisture content
-
-We can now compare the soil moisture content dynamics using:
-
-.center[
-.code80[
-```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=3}
-evaluation_plot(fb_basic, fb_observed, type = "SWC", plotType="dynamics")
-```
-]
-]
-
---
-
-The two series have similar shape but not absolute values. This may be an indication that the parameters of the soil water retention curve do not match the data produced by the moisture sensor.
-
-
----
-## Step 13. Evaluation of soil moisture content
-
-We repeat the same comparison but after relativizing both series, using `type = "REW"`:
-
-.pull-left[
-### Time series plot
-.code80[
-```{r fig=TRUE, fig.align="center", fig.width=6, fig.height = 3.0, warning=FALSE}
-evaluation_plot(fb_basic, fb_observed, 
-    type = "REW", plotType="dynamics")+
-  theme(legend.position = c(0.8,0.85))
-```
-]
-]
-
-.pull-right[
-### Scatter plot
-.code80[
-```{r, fig=TRUE, fig.align="center", fig.width=4, fig.height = 3.0, warning=FALSE, message=FALSE}
-evaluation_plot(fb_basic, fb_observed, 
-    type = "REW", plotType="scatter")
-```
-]
-]
-
---
-
-.code80[
-```{r, warning=FALSE, message=FALSE}
-evaluation_stats(fb_basic, fb_observed, type = "REW")
-```
-]
-
----
-## Step 14. Advanced water/energy balance
-
-Since we are about to run a advanced water balance simulation, we initialize a simulation control parameter list with `transpirationMode = "Sperry"`, i.e.:
-
-.code80[
-```{r}
-fb_control <- defaultControl("Sperry")
-```
-]
-
---
-
-and assemble our inputs into a `spwbInput` object, using:
-
-.code80[
-```{r}
-fb_x2 <- forest2spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
-```
-]
-
---
-
-Finally, we launch the simulation (takes 8 seconds in ver. 2.7.4):
-
-.code80[
-```{r, eval=FALSE}
-fb_adv <- spwb(fb_x2, fb_meteo,  elevation = 420, latitude = 43.24083)
-```
-]
-
-```{r include = FALSE}
-# saveRDS(fb_adv, "Rdata/spwb_adv.rds")
-fb_adv <- readRDS("Rdata/spwb_adv.rds")
+```{r, warning = TRUE}
+pobl_meteo <- pobl_sf |>
+  meteoland::interpolate_data(meteoland_interpolator_example, verbose = FALSE)
 ```
 
 
----
+The output of function `interpolate_data()` is also an `sf` object, with a new column `interpolated_data`: 
 
-## Step 15. Comparing the performance of the two models
-
-To compare the performance of the two models with respect to observed data we can calculate the evaluation statistics for soil moisture:
-
-.code80[
-```{r, warning=FALSE, message=FALSE}
-evaluation_stats(fb_basic, fb_observed, type = "REW")
+```{r, warning = TRUE}
+pobl_meteo
 ```
-]
 
-.code80[
-```{r, warning=FALSE, message=FALSE}
-evaluation_stats(fb_adv, fb_observed, type = "REW")
+We can access the weather data frame by subsetting the appropriate element of `interpolated_data`:
+
+```{r, eval = TRUE}
+pobl_weather <- pobl_meteo$interpolated_data[[1]]
+head(pobl_weather, 2)
 ```
-]
 
---
-
-... and for stand evapotranspiration:
-
-.code80[
-```{r, warning=FALSE, message=FALSE}
-evaluation_stats(fb_basic, fb_observed, type = "SE+TR")
-```
-]
-
-.code80[
-```{r, warning=FALSE, message=FALSE}
-evaluation_stats(fb_adv, fb_observed, type = "SE+TR")
-```
-]
-
----
-
-## Step 16. Comparing soil moisture dynamics
-
-We can compare soil layer moisture dynamics by drawing soil water potentials:
-
-.code80[
-```{r fig=TRUE, fig.width=10, fig.height = 4.0}
-g1<-plot(fb_basic, "SoilPsi", ylim= c(-7,0))+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = "none")
-g2<-plot(fb_adv, "SoilPsi", ylim= c(-7,0))+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = c(0.1,0.47))
-plot_grid(g1,g2, ncol=1)
-```
-]
-
---
-
-The basic model dries the soil more than the advanced model, which produces a stronger coupling between soil layers because of hydraulic redistribution.
-
----
-
-## Step 17. Understanding extraction and hydraulic redistribution
-
-The following shows the daily root water uptake (or release) from different soil layers, and the daily amount of water entering soil layers due to hydraulic redistribution:
-
-.code80[
-```{r, fig.width=10, fig.height = 4.5}
-g1<-plot(fb_adv, "PlantExtraction")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = "none")
-g2<-plot(fb_adv, "HydraulicRedistribution")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = c(0.08,0.5))
-plot_grid(g1, g2, rel_heights = c(0.8,0.8), ncol=1)
-```
-]
-
----
-
-## Step 18. Comparing leaf-level transpiration dynamics
-
-We can display the transpiration per leaf area unit basis using `"TranspirationPerLeaf"`. 
-.code80[
-```{r fig=TRUE, fig.width=10, fig.height = 4.25}
-g1<-plot(fb_basic, "TranspirationPerLeaf", bySpecies = TRUE, ylim = c(0,1.7))+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = "none")
-g2<-plot(fb_adv, "TranspirationPerLeaf", bySpecies = TRUE, ylim = c(0,1.7))+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+theme(legend.position = c(0.1,0.7))
-plot_grid(g1,g2, ncol=1)
-```
-]
---
-The basic model produces higher transpiration than the advanced model.
-
-
----
-
-## Step 19. Evaluation of tree transpiration
-
-The following displays the observed and predicted transpiration for *Pinus halepensis* ...
-.code80[
-```{r fig.width = 9, fig.height=3.8, warning=FALSE, message=FALSE}
-evaluation_plot(fb_adv, fb_observed, cohort = "T2_148", type="E", plotType = "dynamics")+
-  theme(legend.position = c(0.85,0.83))
-```
-```{r, warning=FALSE, message=FALSE}
-evaluation_stats(fb_adv, fb_observed, cohort = "T2_148", type="E")
-```
-]
-
----
-
-## Step 19. Evaluation of tree transpiration
-
-... and *Quercus ilex*:
-
-
-.code80[
-```{r fig.width = 9, fig.height=3.8, warning=FALSE, message=FALSE}
-evaluation_plot(fb_adv, fb_observed, cohort = "T3_168", type="E", plotType = "dynamics")+
-  theme(legend.position = c(0.85,0.83))
-```
-```{r, warning=FALSE, message=FALSE}
-evaluation_stats(fb_adv, fb_observed, cohort = "T3_168", type="E")
-```
-]
-
----
-
-## Step 20. Examining leaf water potentials
-
-The following plots illustrate that the model simulates a tighter stomatal control for *Pinus halepensis*.
-
-.code80[
-```{r, fig.width = 10, fig.height=4.5, warning=FALSE, message=FALSE}
-g1<-plot(fb_adv)+scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  theme(legend.position = "none")
-g2<-plot(fb_adv, "LeafPsiRange", bySpecies = TRUE)+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  theme(legend.position = c(0.1,0.25)) + ylab("Leaf water potential (MPa)")
-plot_grid(g1, g2, ncol=1, rel_heights = c(0.4,0.8))
-```
-]
-
----
-
-## Step 21. Comparing leaf water potentials with observations
-
-If we compare leaf water potentials against observations (`type = "WP"`) we obtain a rather good performance for *Q. ilex*, but midday water potentials are less well approximated for *P. halepensis*.
-
-.code80[
-```{r, fig.width = 10, fig.height=5, warning=FALSE, message=FALSE}
-g1<-evaluation_plot(fb_adv, fb_observed, cohort = "T2_148", type="WP", plotType = "dynamics")
-g2<-evaluation_plot(fb_adv, fb_observed, cohort = "T3_168", type="WP", plotType = "dynamics")
-plot_grid(g1, g2, ncol=1)
-```
-]
-
----
-
-## Steps 22-23. Drought stress and PLC
-
-.pull-left[
-### Basic model
-.code80[
-```{r fig=TRUE, fig.width=6, fig.height = 5}
-g1<-plot(fb_basic, "PlantStress", bySpecies = TRUE)+
-  theme(legend.position = "none")
-g2<-plot(fb_basic, "StemPLC", bySpecies = TRUE)+
-  theme(legend.position = c(0.15,0.45))
-plot_grid(g1, g2, ncol=1)
-```
-]
-]
-
-
-.pull-right[
-### Advanced model
-.code80[
-```{r fig=TRUE, fig.width=6, fig.height = 5}
-g3<-plot(fb_adv, "PlantStress", bySpecies = TRUE)+
-  theme(legend.position = "none")
-g4<-plot(fb_adv, "StemPLC", bySpecies = TRUE)+
-  theme(legend.position = c(0.15,0.45))
-plot_grid(g3, g4, ncol=1)
-```
-]
-]
-
----
-
-## Steps 22-23. Drought stress and PLC
-
-The basic model seems to overestimate PLC for *Pinus halepensis*, compared to the advanced model. 
-
---
-
-This could arise from a difference in the parameters determining PLC or differences in the water potential simulated by both models. We examine the first option using:
-
-.pull-left[
-### Basic model
-.code80[
-```{r fig=TRUE, fig.width=6, fig.height = 3.5}
-plot(fb_basic, "PlantPsi", bySpecies = TRUE)+
-  theme(legend.position = c(0.15,0.45))
-```
-]
-]
-
-.pull-right[
-### Advanced model
-.code80[
-```{r fig=TRUE, fig.width=6, fig.height = 3.5}
-plot(fb_adv, "StemPsi", bySpecies = TRUE)+
-  theme(legend.position = c(0.15,0.45))
-```
-]
-]
-
---
-
-The two models produce similar overall patterns, but the advanced model predicts less negative water potentials for *P. halepensis* in summer.
-
-
----
-layout: false
-class: back-slide
-
-
-## M.C. Escher - Relativity, 1953
-
-.center[
-<img src="resources/img/Escher_relativity.jpg" width=500>
-]
-
-<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
