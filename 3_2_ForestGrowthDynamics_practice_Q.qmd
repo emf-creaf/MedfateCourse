@@ -20,16 +20,13 @@ progress: true
 
 ::::: columns
 ::: {.column width="50%"}
+#### 1. Forest growth inputs
 
+#### 2. Running forest growth
 
-####  1. Forest growth inputs
+#### 3. Evaluation of growth predictions
 
-####  2. Running forest growth
-
-####  3. Evaluation of growth predictions
-
-####  4. Forest dynamics
-
+#### 4. Forest dynamics
 :::
 
 ::: {.column width="40%"}
@@ -86,9 +83,8 @@ With these four elements we can build our input object for function `growth()`:
 x <- forest2growthInput(exampleforest, examplesoil, SpParamsMED, control)
 ```
 
-
 ::: footer
-1. Forest growth inputs
+1.  Forest growth inputs
 :::
 
 ## Structure of the growth input object (1)
@@ -108,12 +104,12 @@ x$above
 ```
 
 ::: footer
-1. Forest growth inputs
+1.  Forest growth inputs
 :::
 
 ## Structure of the growth input object (2)
 
-Elements starting with `params*` contain cohort-specific model parameters.  An important set of parameters are in `paramsGrowth`:
+Elements starting with `params*` contain cohort-specific model parameters. An important set of parameters are in `paramsGrowth`:
 
 ```{r}
 x$paramsGrowth
@@ -128,10 +124,10 @@ x$internalCarbon
 ```
 
 ::: footer
-1. Forest growth inputs
+1.  Forest growth inputs
 :::
 
-#  2. Forest growth
+# 2. Forest growth
 
 ## Forest growth run {.smaller}
 
@@ -142,7 +138,7 @@ G <- growth(x, examplemeteo, latitude = 41.82592, elevation = 100)
 ```
 
 ::: footer
-2. Forest growth
+2.  Forest growth
 :::
 
 ## Growth output object {.smaller}
@@ -153,7 +149,7 @@ Function `growth()` returns an object of class with the same name, actually a li
 class(G)
 ```
 
-. . . 
+. . .
 
 ... whose elements are:
 
@@ -163,11 +159,11 @@ names(G)
 
 . . .
 
-| Elements | Information   |
-| ----- | -------------- |
+| Elements | Information |
+|----|----|
 | `latitude`, `topography`, `weather`, `growthInput` | Copies of the information used in the call to `growth()` |
 | `growthOutput` | State variables at the end of the simulation (can be used as input to a subsequent one) |
-| `WaterBalance`, `Soil`, `Snow`, `Stand`,  `Plants` | [same as `spwb` ...] |
+| `WaterBalance`, `Soil`, `Snow`, `Stand`, `Plants` | \[same as `spwb` ...\] |
 | `CarbonBalance` | Stand-level carbon blance |
 | `LabileCarbonBalance` | Components of the individual-level labile carbon balance |
 | `PlantBiomassBalance` | Components of indvidual- and cohort-level biomass balance |
@@ -175,12 +171,12 @@ names(G)
 | `GrowthMortality` | Growth and mortality rates |
 
 ::: footer
-2. Forest growth
+2.  Forest growth
 :::
 
 ## Post-processing {.smaller}
 
-Users can inspect the output of `growth()` simulations using functions `extract()`, `summary()` and `plot()` on the simulation output. 
+Users can inspect the output of `growth()` simulations using functions `extract()`, `summary()` and `plot()` on the simulation output.
 
 . . .
 
@@ -194,12 +190,11 @@ plot(G, "MaintenanceRespiration", bySpecies = TRUE)
 
 ... but instead of typing all plots, we can call the interactive plot function `shinyplot()`.
 
-
 ::: footer
-2. Forest growth
+2.  Forest growth
 :::
 
----
+------------------------------------------------------------------------
 
 M.C. Escher - Up and down, 1947
 
