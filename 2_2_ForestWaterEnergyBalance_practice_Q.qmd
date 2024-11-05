@@ -20,17 +20,15 @@ progress: true
 
 ::::: columns
 ::: {.column width="50%"}
+#### 1. Water balance input object
 
-####  1. Water balance input object
+#### 2. Basic water balance
 
-####  2. Basic water balance
+#### 3. Evaluating model performance
 
-####  3. Evaluating model performance
+#### 4. Advanced water/energy balance
 
-####  4. Advanced water/energy balance
-
-####  5. Modifying model inputs
-
+#### 5. Modifying model inputs
 :::
 
 ::: {.column width="50%"}
@@ -46,9 +44,7 @@ library(sp)
 library(ggplot2)
 ```
 
-
 # 1. Water balance input object
-
 
 ## Creating the water balance input object {.smaller}
 
@@ -75,7 +71,7 @@ and a simulation control list:
 control <- defaultControl(transpirationMode = "Granier", soilDomains = "buckets")
 ```
 
-::: {.callout-important}
+::: callout-important
 Plant transpiration (`transpirationMode`) should be `"Granier"` (basic), `"Sperry"` (advanced with Sperry) or `"Sureau"` (advanced with Sureau-ECOS).
 
 Soil water movement (`soilDomains`) should be `"buckets"` (multi-bucket), `"single"` (single-domain) or `"dual"` (dual-permeability).
@@ -88,8 +84,6 @@ With these four elements we can build our input object for function `spwb()`:
 ```{r, echo = TRUE}
 x <- spwbInput(exampleforest, examplesoil, SpParamsMED, control)
 ```
-
-
 
 ::: footer
 1.  Water balance input object
@@ -138,6 +132,7 @@ Element `below` contains below-ground description of vegetation:
 ```{r, echo = TRUE}
 x$below
 ```
+
 . . .
 
 Elements `params*` contain cohort-level parameters, for example...
@@ -146,13 +141,11 @@ Elements `params*` contain cohort-level parameters, for example...
 x$paramsTranspiration
 ```
 
-
 ::: footer
 1.  Water balance input object
 :::
 
 # 2. Basic water balance
-
 
 ## Water balance run {.smaller}
 
@@ -170,9 +163,8 @@ The call to function `spwb()` needs the water balance input object, the weather 
 S <- spwb(x, examplemeteo, latitude = 41.82592, elevation = 100)
 ```
 
-
 ::: footer
-2. Basic water balance
+2.  Basic water balance
 :::
 
 ## Water balance output object (1) {.smaller}
@@ -183,7 +175,7 @@ Function `spwb()` returns an object of class with the same name, actually a list
 class(S)
 ```
 
-. . . 
+. . .
 
 It is interesting to inspect the list element names:
 
@@ -193,15 +185,14 @@ names(S)
 
 . . .
 
-| Elements | Information   |
-| ----- | -------------- |
+| Elements | Information |
+|--------------------|----------------------------------------------------|
 | `latitude`, `topography`, `weather`, `spwbInput` | Copies of the information used in the call to `spwb()` |
 | `spwbOutput` | State variables at the end of the simulation (can be used as input to a subsequent one) |
-| `WaterBalance`, `Soil`, `Snow`, `Stand`,  `Plants` | Daily outputs |
-
+| `WaterBalance`, `Soil`, `Snow`, `Stand`, `Plants` | Daily outputs |
 
 ::: footer
-2. Basic water balance
+2.  Basic water balance
 :::
 
 ## Water balance output object (2) {.smaller}
@@ -229,7 +220,7 @@ names(S$Plants)
 ```
 
 ::: footer
-2. Basic water balance
+2.  Basic water balance
 :::
 
 ## Accessing and summarizing model result {.smaller}
@@ -256,7 +247,7 @@ summary(S, freq="months",FUN=mean, output="PlantStress")
 
 **Extraction function**
 
-Post-processing is much more convenient using function `extract()` which extracts model results in a format compatible with **tidyverse** manipulation. 
+Post-processing is much more convenient using function `extract()` which extracts model results in a format compatible with **tidyverse** manipulation.
 
 For example, the following returns all stand level results by date:
 
@@ -265,18 +256,16 @@ extract(S, level = "forest")
 ```
 
 ::: footer
-2. Basic water balance
+2.  Basic water balance
 :::
 
 ## Plotting {.smaller}
-
 
 The package provides a `plot()` function for objects of class `spwb`. It can be used to show weather inputs and different components of the water balance, for example:
 
 ```{r, echo = TRUE, fig=TRUE, fig.width=6, fig.height = 4}
 plot(S, type = "PET_Precipitation")
 ```
-
 
 The help page of `?plot.spwb` lists all the possible plots...
 
@@ -289,12 +278,13 @@ shinyplot(S)
 ```
 
 ::: footer
-2. Basic water balance
+2.  Basic water balance
 :::
 
 # 3. Evaluating model performance
 
 ## Observed data and evaluation metrics {.smaller}
+
 The package provides functions to compare predictions with observations (use `?evaluation` for details on how observations should be arranged).
 
 . . .
@@ -310,6 +300,7 @@ Note the observation dates in `dates` column. The remaining variables are observ
 . . .
 
 A single evaluation metric for soil water content can be calculated using:
+
 ```{r, echo = TRUE}
 evaluation_metric(S, exampleobs, type = "SWC", metric = "MAE")
 ```
@@ -323,7 +314,7 @@ evaluation_stats(S, exampleobs, type = "SWC")
 ```
 
 ::: footer
-3. Evaluating model performance
+3.  Evaluating model performance
 :::
 
 ## Evaluation plots and interactive evaluation {.smaller}
@@ -342,9 +333,8 @@ Alternatively, the observed data can be supplied as an additional parameter to `
 shinyplot(S, exampleobs)
 ```
 
-
 ::: footer
-3. Evaluating model performance
+3.  Evaluating model performance
 :::
 
 # 4. Advanced water/energy balance
@@ -381,9 +371,8 @@ The water balance input object contains the same elements...
 names(x_adv)
 ```
 
-
 ::: footer
-4. Advanced water/energy balance
+4.  Advanced water/energy balance
 :::
 
 ## Vulnerability curves and supply functions {.smaller}
@@ -397,7 +386,7 @@ cowplot::plot_grid(g1, g2, ncol = 2)
 ```
 
 ::: footer
-4. Advanced water/energy balance
+4.  Advanced water/energy balance
 :::
 
 ## Water/energy balance run for a single day (1) {.smaller}
@@ -411,13 +400,14 @@ meteovec
 ```
 
 and a string with the target date:
+
 ```{r}
 date <- as.character(examplemeteo$dates[d])
 date
 ```
 
-
 At this point, we can call function `spwb_day()`
+
 ```{r, echo = TRUE}
 sd1<-spwb_day(x_adv, date, meteovec, 
              latitude = 41.82592, elevation = 100, 
@@ -426,12 +416,12 @@ sd1<-spwb_day(x_adv, date, meteovec,
 
 . . .
 
-::: {.callout-warning}
-By default, a call to `spwb_day()` will modify the input object. This behavior can be deactivated by using `modifyInput = FALSE` in the simulation call (see also  `?resetInputs`).
+::: callout-warning
+By default, a call to `spwb_day()` will modify the input object. This behavior can be deactivated by using `modifyInput = FALSE` in the simulation call (see also `?resetInputs`).
 :::
 
 ::: footer
-4. Advanced water/energy balance
+4.  Advanced water/energy balance
 :::
 
 ## Water/energy balance run for a single day (2) {.smaller}
@@ -451,7 +441,7 @@ shinyplot(sd1)
 ```
 
 ::: footer
-4. Advanced water/energy balance
+4.  Advanced water/energy balance
 :::
 
 ## Water/energy balance run for multiple days {.smaller}
@@ -492,14 +482,14 @@ shinyplot(S_adv)
 ```
 
 ::: footer
-4. Advanced water/energy balance
+4.  Advanced water/energy balance
 :::
 
 # 5. Modifying model inputs
 
 ## Modifying forest input data {.smaller}
 
-Medfate uses allometric equations to estimate structural properties such as leaf area index (LAI) or the crown ratio (CR). 
+Medfate uses allometric equations to estimate structural properties such as leaf area index (LAI) or the crown ratio (CR).
 
 . . .
 
@@ -517,16 +507,15 @@ One possibility is to specify LAI values directly in the `forest` object, as can
 exampleforest2
 ```
 
-
 ::: footer
-5. Modifying model inputs
+5.  Modifying model inputs
 :::
 
 ## Modifying species and cohort parameters {.smaller}
 
 **Species-level parameters**
 
-Advanced users may desire to have control on species-level parameter values used in simulation. 
+Advanced users may desire to have control on species-level parameter values used in simulation.
 
 . . .
 
@@ -549,10 +538,10 @@ x_mod <- modifyInputParams(x_adv, c("T2_168/VCstem_d" = -7.0))
 which will display messages describing the parameters that are modified.
 
 ::: footer
-5. Modifying model inputs
+5.  Modifying model inputs
 :::
 
----
+------------------------------------------------------------------------
 
 M.C. Escher - Night and day, 1938
 
