@@ -37,16 +37,23 @@ Code for course sessions is in `sessions/*.qmd` files. Printed
     - Running forest growth and forest dynamics (practice)
 4.  Large-scale simulations
 
-## Exercises
-
 ## Ancillary files
 
 These are required to recreate slide presentations from `*.qmd` files.
 
-- `resources/scss` contains style sheets that customize slide
+- `sessions/resources/scss` contains style sheets that customize slide
   appearance.
-- `resources/img` contains figures in PNG, SVG or JPG format used in
-  slides.
+- `sessions/resources/img` contains figures in PNG, SVG or JPG format
+  used in slides.
+
+## Exercises
+
+Exercises are included in a separate folder.
+
+- `exercises/guidelines/Exercise_*.Rmd` are guidelines for exercises
+- `exercises/solutions/Exercise_*_solution.Rmd` are solutions for
+  exercises
+- `exercises/StudentRdata/*.rds` are data sets required for exercises
 
 ## Course editions
 
