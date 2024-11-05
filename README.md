@@ -22,8 +22,8 @@ course slides.
 
 ## Course sessions
 
-Code for course sessions is in `*.qmd` files. Printed `*.pdf` files can
-also be found in PDF directory.
+Code for course sessions is in `sessions/*.qmd` files. Printed
+`sessions/pdf/*.pdf` files can also be found.
 
 1.  Introduction
     - Introduction to process-based forest modelling (theory)

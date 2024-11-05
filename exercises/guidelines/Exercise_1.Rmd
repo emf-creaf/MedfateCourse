@@ -1,0 +1,137 @@
+---
+title: "Exercise 1 guidelines"
+author: "Miquel De Cáceres"
+date: '2022-06-13'
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+``` 
+
+## Exercise objectives
+
+  1. Build `forest` objects from a tree data frame of forest inventory data
+  2. Retrieve soil physical properties from SoilGrids
+  3. Interpolate daily weather on the plot location
+
+## Exercise data
+
+Package **medfate** includes a data frame (`poblet_trees`), corresponding to forest inventory data in a dense holm oak forest. 
+
+   + *Location*: Poblet (Catalonia, Spain); long/lat: 1.0219º, 41.3443º
+   + *Topography*: elevation = 850 m, slope = 15.1º, aspect = 15º
+   + *Plot*: Circular plot of 15-m radius
+   + *Tree data*: Stem diameter measurements on two plots: *control* and *managed*. 
+   
+As a result of the abandonment of former coppicing in the area, there is a high density of stems per individual in the control plot. 
+
+The management involved a reduction of the number of stems per individual (*sucker cutback* or *selecció de tanys*). 
+
+
+## Guidelines by steps
+
+1. Install packages **medfate**, **meteoland** and **medfateland** (if not already installed).
+
+```{r}
+
+```
+
+2. Load the data set `"poblet_trees"` included in package **medfate** and examine its content. How many and which forest structures are described?
+
+```{r}
+
+```
+
+3. Create an empty `forest` object (*hint*: see function `emptyforest()`) and populate its tree data from the appropriate subset of `"poblet_trees"` (*hint*: define a named string vector to specify a column mapping and use function `forest_mapTreeTable()` for the actual mapping).
+
+```{r}
+
+```
+
+4. What are the tree density and  basal area of the stand? And the stand's leaf area index? Are these values acceptable for a dense oak forest? (*hint*: use function `summary()` for objects of class `forest`)
+
+```{r}
+
+```
+
+5. Calculate the area of the plot used for sampling tree data and use it to repeat the tree mapping. Check the new values of tree density, stand basal area and leaf area index.
+
+```{r}
+
+```
+
+6. Why is the amount of light reaching the ground missing in the forest summary? What tree measurements are needed to estimate light extinction through the canopy? Try to complete the information in `"poblet_trees"` using an allometric relationship (*hint*: you can draw allometries from 'AllometrApp' in *Laboratory Forestal Català*) and repeat the tree mapping. Check that the light reaching the ground can now be estimated.
+
+```{r}
+
+```
+
+7. Try to map the tree data of the *managed* forest stand *before* the intervention. Why is the summary function returning an error? Are there missing values in some variables of `treeData`? Why is this happening?
+
+```{r}
+
+```
+
+8. Which species names in the `"poblet_trees"` dataset are not included in `SpParamsMED` and determine the reason. Correct the species names in `"poblet_trees"`, repeat the tree mapping and check the results.
+
+```{r}
+
+```
+
+9. Map the tree data of the *managed* forest stand *after* the intervention and compare its summary with that of the stand *before* the intervention.
+
+```{r}
+
+```
+
+10. What is the number of tree cohorts in each of the forest structures? What is the density of each cohort? What can be the consequences of such a large number of cohorts for simulations? 
+
+```{r}
+
+```
+
+11. Merge tree cohorts by DBH class using function `forest_mergeTrees()` and check the resulting number of tree cohorts.
+
+```{r}
+
+```
+
+12. Build a matrix with the geographic coordinates of Poblet stands and create an object of class `sfc` (package **sf**).
+
+```{r}
+
+```
+
+13. Retrieve a data frame of soil physical properties from SoilGrids using function `add_soilgrids()`, included in package **medfateland**.
+
+```{r}
+
+```
+
+14. Initialize an object of class `soil` using the data frame of the previous step examine the result. Is the soil water capacity high or low?
+
+```{r}
+
+```
+
+15. Modify the column `rfc` of the data frame of soil physical properties to increase the percentage of rocks in layer #3 and check the water capacity again.
+
+```{r}
+
+```
+
+16. Convert the `sfc` object that you created in step 12 into an object of class `SpatialPoints` (*hint*: use `as(x, "Spatial")`). Then use this and the topographic variables (elevation, slope, aspect) to create an object of the S4 class `SpatialPointsTopography` (defined in package **meteoland**).
+
+```{r}
+
+```
+
+17. Load the `"exampleinterpolationdata"` object provided in package **meteoland** and interpolate daily weather on the location of the Poblet stands (hint: use function `interpolationpoints()`). What do the warnings mean? Extract the daily weather data frame corresponding to your point from the output of `interpolationpoints()`.
+
+```{r}
+
+```
+

@@ -1,0 +1,693 @@
+---
+title: "Forest water and energy balance (theory)"
+format:
+  revealjs:
+    incremental: true
+    smaller: false
+    logo: resources/img/emf_logo.svg
+    theme: [default, resources/scss/custom.scss]
+editor: visual
+author: "Miquel De Cáceres, Rodrigo Balaguer"
+institute: "Ecosystem Modelling Facility, CREAF"
+toc: false
+toc-depth: 2
+number-sections: false
+slide-number: true
+progress: true
+---
+
+## Outline
+
+::::: columns
+::: {.column width="50%"}
+#### 1. Preliminary concepts
+
+#### 2. Forest water balance in medfate
+
+#### 3. Transpiration and photosynthesis under the basic model
+
+#### 4. Transpiration and photosynthesis under the advanced model
+
+#### 5. Plant drought stress and cavitation
+
+#### 6. Basic vs. advanced models: a summary of differences
+:::
+
+::: {.column width="50%"}
+M.C. Escher - Waterfall, 1961
+
+![](resources/img/Escher_waterfall.png)
+:::
+:::::
+
+```{r, include = FALSE}
+library(medfate)
+library(sp)
+library(ggplot2)
+```
+
+# 1. Preliminary concepts
+
+## Water potential {.smaller}
+
+The water potential, $\Psi$, is the potential energy of water relative to pure water under reference conditions. It quantifies the tendency of water to move from one area to another.
+
+. . .
+
+It has pressure units (e.g. MPa) and can be divided into different components:
+
+![](resources/img/water_potential.svg){width="70%"}
+
+. . .
+
+But not all components are equally relevant in all contexts
+
+::: footer
+1.  Preliminary concepts
+:::
+
+## Soil water retention curves {.smaller}
+
+The *water retention curve* of a soil (or *soil moisture characteristic curve*) is the relationship between volumetric soil moisture content ( $\theta$ in $m^3 \cdot m^{-3}$ of soil excluding rock fragments) and the corresponding soil water potential ( $\Psi$, in MPa)
+
+. . .
+
+Two water retention curve models are available in **medfate**:
+
+. . .
+
+::::: columns
+::: {.column width="60%"}
+**Saxton model**:
+
+$$\theta(\Psi) = (\Psi/A)^{(1/B)}$$ where $A$ and $B$ depend on the texture and, if available, organic matter in the soil.
+
+**Van Genuchten model**: $$\theta(\Psi) = \theta_{res}+\frac{\theta_{sat}-\theta_{res}}{\left[1+ (\alpha \cdot \Psi)^n \right]^{1-1/n}}$$ where $\theta(\psi)$ is the water retention, $\theta_{sat}$ is the saturated water content, $\theta_{res}$ is the residual water content, $\alpha$ is related to the inverse of the air entry pressure, and $n$ is a measure of the pore-size distribution.
+:::
+
+::: {.column width="40%"}
+```{r retention-curves, fig.align='center', fig.width=4.5, fig.height=4, echo = FALSE}
+soil_retentionCurvePlot(soil(defaultSoilParams()), model="both")+
+  theme(legend.position =c(0.7,0.8))
+```
+:::
+:::::
+
+. . .
+
+::: callout-important
+Parameters of the water retention curves can be calibrated empirically but are normally derived from soil texture and bulk density.
+:::
+
+::: footer
+1.  Preliminary concepts
+:::
+
+## Hydraulic conductance and vulnerability curves {.smaller}
+
+-   **Hydraulic conductance** $k$ is used to measure how much flow exists along a pathway segment (e.g. soil, stem, leaves, ... ) for a given difference in water potential.
+
+-   Hydraulic conductance decreases when **air replaces water** in any segment.
+
+-   **Vulnerability curve** specifies the relationship between water potential, $\Psi$, and hydraulic conductance, $k$, of a given segment.
+
+. . .
+
+::::: columns
+::: {.column width="50%"}
+**Rhizosphere**
+
+Conductance is modelled as a van Genuchten (1980) function:
+
+$$k(\Psi) = k_{max} \cdot v^{(n-1)/(2\cdot n)} \cdot ((1-v)^{(n-1)/n}-1)^2$$
+
+![](resources/img/soil_vulnerability.png){width="60%"}
+:::
+
+::: {.column width="50%"}
+**Xylem**
+
+Conductance is modelled using a **Weibull** or a **Sigmoid**:
+
+$$k(\Psi) = k_{max}\cdot e^{-((\Psi/d)^c)}$$
+
+$$k(\Psi) = \frac{k_{max}}{1 + e^{(slope/25) \cdot (\Psi - \Psi_{50})}}$$ ![](resources/img/vulnerability_curves.png){width="60%"}
+:::
+:::::
+
+::: footer
+1.  Preliminary concepts
+:::
+
+## Water potential drop in plants {.smaller}
+
+When stomata are closed (e.g. pre-down), plant leaf water potential is assumed to be in equilibrium with the water potential in the rhizosphere (neglecting gravity effects).
+
+. . .
+
+When stomata are open, a larger transpiration flow (*E*) implies (in steady state) a larger drop in water potential along the transpiration pathway [^1]:
+
+[^1]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+
+![](resources/img/waterpotential_drop.png){width="50%"}
+
+::: footer
+1.  Preliminary concepts
+:::
+
+## Drought impacts on plants {.smaller}
+
+The decrease in soil water potential caused by drought has multiple effects on plants [^2], with some processes ceasing to occur and others becoming important or being promoted, depending on the plant response strategy [^3].
+
+[^2]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+
+[^3]: Baldocchi D. (1994) Tree Phys., 14, 1069-1079
+
+::::: columns
+::: {.column width="40%"}
+![](resources/img/drought_effects.png)
+:::
+
+::: {.column width="50%"}
+![](resources/img/drought_effects_processes.png)
+:::
+:::::
+
+::: footer
+1.  Preliminary concepts
+:::
+
+# 2. Forest water balance in medfate
+
+## Water balance components {.smaller}
+
+The water balance models in available in medfate simulate the following vertical water flows in a given forest stand.
+
+::::: columns
+::: {.column width="50%"}
+![](resources/img/waterbalance.jpg)
+:::
+
+::: {.column width="50%"}
+| Component           | Symbol       | Description                             |
+|---------------------|--------------|-----------------------------------------|
+| Infiltration        | $If$         | Water entering the soil from above      |
+| Capillarity rise    | $Cr$         | Water entering the soil from below      |
+| Deep drainage       | $Dd$         | Water leaving the soil beyond root zone |
+| Saturation excess   | $Se$         | Excess of water in the soil             |
+| Soil evaporation    | $Es$         | Evaporation from soil surface           |
+| Woody transpiration | $Tr_{woody}$ | Woody plant transpiration               |
+| Herb transpiration  | $Tr_{herb}$  | Herbaceous plant transpiration          |
+:::
+:::::
+
+. . .
+
+Variations in soil water content can be summarized as: $$\Delta{V_{soil}} = (If + Cr) - (Dd + Se + Es + Tr_{herb} + Tr_{woody})$$
+
+::: footer
+2.  Forest water balance in medfate
+:::
+
+## Soil water inputs {.smaller}
+
+If rainfall occurs during a given day, three processes are simulated to update the water content in soil layers:
+
+![](resources/img/wb_inputs.png){width="70%"}
+
+::: footer
+2.  Forest water balance in medfate
+:::
+
+## Soil water outputs {.smaller}
+
+Regardless of precipitation, soil moisture can be modified due to the following processes:
+
+![](resources/img/wb_outputs.png)
+
+. . .
+
+::: callout-important
+Soil water uptake by plants, hydraulic redistribution and transpiration are modelled differently depending on the water balance model: **basic** vs **advanced**.
+:::
+
+::: footer
+2.  Forest water balance in medfate
+:::
+
+## Flows in the soil {.smaller}
+
+Three submodels are available to simulate water movement *into*, *out of* and *within* the soil:
+
+A. **Multi-bucket model**: Water inputs and drainage during a rainy day (and may be the next if over field capacity).
+
+B. **Single-domain model**: Vertical water movement any day following gravitational and matric potentials (Richards equation).
+
+C. **Dual permeability model**: Flows in the soil matrix following the previous model. Flows in the macropore domain following gravitational forces. Saturation excess possible.
+
+![](resources/img/soil_flow_design.png){width="85%"}
+
+. . .
+
+::: callout-warning
+The three sub-models differ greatly in computational demand.
+:::
+
+::: footer
+2.  Forest water balance in medfate
+:::
+
+# 3. Transpiration and photosynthesis under the basic model
+
+## Maximum transpiration {.smaller}
+
+### Maximum canopy transpiration
+
+::::: columns
+::: {.column width="60%"}
+Maximum canopy transpiration $Tr_{\max}$ depends on potential evapotranspiration, $PET$, and the amount of transpirating surface, i.e. the stand leaf area index, thanks to: $$\frac{Tr_{\max}}{PET}= -0.006\cdot (LAI^{\phi}_{stand})^2+0.134\cdot LAI^{\phi}_{stand}$$
+
+and therefore:
+
+$$Tr_{\max} = PET \cdot \left( -0.006\cdot (LAI^{\phi}_{stand})^2+0.134\cdot LAI^{\phi}_{stand} \right)$$
+:::
+
+::: {.column width="40%"}
+![](resources/img/granier_model.png){width="70%"}
+
+*Granier et al. (1999). Ecol. Model., 116, 269-283.*
+:::
+:::::
+
+Maximum canopy transpiration is divided among plant cohorts according to the amount of light absorbed by each one.
+
+::: callout-note
+Granier's equation is actually species-specific in medfate.
+:::
+
+::: footer
+3.  Transpiration and photosynthesis under the basic model
+:::
+
+## Actual plant transpiration {.smaller}
+
+Actual plant transpiration depends on soil moisture and is calculated for each soil layer $s$ separately.
+
+. . .
+
+::::: columns
+::: {.column width="\"50%"}
+A *relative whole-plant water conductance*, $K$ is defined for any given soil layer $s$ using:
+
+$$K(\Psi_s) = \exp \left \{\ln{(0.5)}\cdot \left[ \frac{\Psi_{s}}{\Psi_{extract}}\right] ^r \right \}$$
+
+where $\Psi_{extract}$ is the water potential at which transpiration is 50% of maximum, and $\Psi_s$, the water potential in layer $s$.
+:::
+
+::: {.column width="\"50%"}
+```{r, fig.width=4, fig.height=3.0, fig.align="center", echo=FALSE}
+par(mar=c(4,4,1,1))
+x = seq(-10, 0, by=0.01)
+plot(-x ,unlist(lapply(x,hydraulics_psi2K,-2.0,3.0)), type="l", ylab="K (relative conductance)", xlim=c(0,10), ylim=c(0,1),xlab="Soil water potential (-MPa)", frame=FALSE)
+lines(-x, unlist(lapply(x,hydraulics_psi2K,-3.0,3.0)), lty=2)
+lines(-x, unlist(lapply(x,hydraulics_psi2K,-4.0,3.0)), lty=3)
+lines(-x, unlist(lapply(x,hydraulics_psi2K,-5.0,3.0)), lty=4)
+legend("topright", lty=1:4, col=c(rep("black",4)), 
+       legend = paste("Psi_extract = ", c(-2.0,-3.0,-4.0, -5.0), "MPa"), bty="n", cex=0.8)
+abline(h=50, col="gray", lwd=2)
+```
+:::
+:::::
+
+. . .
+
+The water extracted by a plant cohort from soil layer $s$ and transpired, $Tr_{s}$, is the product:
+
+$$Tr_{s} =  Tr_{\max} \cdot K(\Psi_{s}) \cdot FRP_{s}$$ where $FRP_{s}$ is the proportion of plant fine roots in layer $s$.
+
+. . .
+
+::: callout-important
+This transpiration model allows emulating stomatal closure in response to soil water deficit but do not allow modelling stomatal responses to other factors.
+:::
+
+::: footer
+3.  Transpiration and photosynthesis under the basic model
+:::
+
+## Plant photosynthesis {.smaller}
+
+Gross photosynthesis for a plant cohort, $A_g$, is estimated as a function of transpiration, $Tr$, using:
+
+$$A_{g} = Tr \cdot WUE_{\max} \cdot (L^{PAR})^{WUE_{PAR}} \cdot (1 - e^{WUE_{CO2} \cdot C_{air}}) \cdot VPD^{WUE_{VPD}} $$
+
+where:
+
+-   $WUE_{\max}$ is the maximum water use efficiency of the cohort under maximum light availability, $VPD = 1kPa$ and no CO2 limitations.
+-   $L^{PAR}$ is the proportion of PAR available and $WUE_{PAR}$ is an exponent.
+-   $C_{air}$ is the carbon dioxide concentration in the air and $WUE_{CO2}$ is a regulating coefficient.
+-   $VPD$ is vapour pressure deficit and $WUE_{VPD}$ is a regulating coefficient.
+
+. . .
+
+::: callout-note
+Parameters regulating photosynthesis cannot be related to traits. The estimation of these parameters and those regulating transpiration is done via a [metamodelling exercise](https://emf-creaf.github.io/medfate/articles/parametrization/Metamodelling.html).
+:::
+
+::: footer
+3.  Transpiration and photosynthesis under the basic model
+:::
+
+## Plant water potential {.smaller}
+
+The basic water balance model **does not** estimate the water potential drop from soil to the leaf.
+
+. . .
+
+Despite its simplicity, a gross surrogate of **'plant' water potential**, $\Psi_{plant}$, may be obtained using:
+
+$$\Psi_{plant}= K^{-1}\left(\sum_{s}{K(\Psi_s)\cdot FRP_{s}}\right)$$
+
+which can be intuitively understood as an *average of soil water potential* taking into account fine root distribution.
+
+::: footer
+3.  Transpiration and photosynthesis under the basic model
+:::
+
+# 4. Transpiration and photosynthesis under the advanced model
+
+```{r, echo = FALSE}
+data(examplemeteo)
+data(exampleforest)
+data(SpParamsMED)
+examplesoil <- defaultSoilParams(4)
+d1 <- 100
+d2 <- 100
+meteovec1 <- unlist(examplemeteo[d1,-1])
+meteovec2 <- unlist(examplemeteo[d2,-1])
+control <- defaultControl("Sperry")
+control$subdailyResults=TRUE
+date1 <- as.character(examplemeteo$dates[d1])
+date2 <- as.character(examplemeteo$dates[d2])
+x <- spwbInput(exampleforest, examplesoil, SpParamsMED, control)
+sd1 <-spwb_day(x, date1, meteovec1,
+               latitude = 41.82592, elevation = 100, slope=0, aspect=0)
+sd2 <-spwb_day(x, date2, meteovec2,
+               latitude = 41.82592, elevation = 100, slope=0, aspect=0)
+
+```
+
+## Advanced features {.smaller}
+
+-   The advanced transpiration and photosynthesis model operates at **sub-daily** time steps.
+
+-   *Temperature* and *radiation* inputs are temporally disaggregated.
+
+. . .
+
+```{r, echo = FALSE, fig.height=2.5}
+g1 <- plot(sd2, "Temperature")
+g2 <- plot(sd2, "LeafAbsorbedSWR") + ggplot2::ylab("Absorbed SWR per leaf area")
+cowplot::plot_grid(g1, g2, nrow=1, ncol=2)
+```
+
+. . .
+
+-   The model is **explicit** with respect to many additional processes:
+
+. . .
+
+| Process | Source |
+|----|----|
+| Soil & canopy energy balance | *Best et al. (2011) Geosci. Mod. Dev. 4, 677-699* |
+| Canopy turbulence | *Katul et al. (2004) Bound. Lay. Met. 113, 81-109* |
+| Sunlit/shade leaf photosynthesis | *De pury & Farquhar (1997) Plant, Cell & Env., 20, 537–557* |
+| Direct/diffuse short-wave extinction model | *Anten & Bastiaans (2016) Canopy photosynthesis: From basics to application* |
+| Long-wave radiation model | *Flerchinger et al. (2009) Wan. J. Life Sci. 57, 5-15* |
+| Plant hydraulics & stomatal regulation | \[next slides\] |
+
+::: footer
+4.  Transpiration and photosynthesis under the advanced model
+:::
+
+## Sperry and Sureau sub-models {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+**Sperry**
+
+![](resources/img/hydraulics_network.jpg){width="80%"}
+
+-   **Steady-state** plant hydraulics [^4].
+-   Optimality-based stomatal regulation [^5].
+:::
+
+::: {.column width="50%"}
+**Sureau**
+
+![](resources/img/hydraulics_sureau.jpg){width="80%"}
+
+-   Plant hydraulics of **SurEau-ECOS** [^6], including plant water storage.
+-   Stomatal regulation based on a Baldocchi-type model.
+:::
+:::::
+
+[^4]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+
+[^5]: Baldocchi D. (1994) Tree Phys., 14, 1069-1079
+
+[^6]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+
+::: footer
+4.  Transpiration and photosynthesis under the advanced model
+:::
+
+## Sperry sub-model: Supply function {.smaller}
+
+The supply function describes the **steady-state** rate of water flow, $E$, as a function of water potential drop.
+
+. . .
+
+The steady-state flow rate $E_i$ through any element $i$ is related to the flow-induced drop in water potential across that element, $\Delta \Psi_i  = \Psi_{down} - \Psi_{up}$, by the integral of the vulnerability curve $k_i(\Psi)$ [^7]:
+
+[^7]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+
+$$E_i = \int_{\Psi_{up}}^{\Psi_{down}}{k_i(\Psi) d\Psi}$$
+
+where $\Psi_{up}$ and $\Psi_{down}$ are the upstream and downstream water potential values.
+
+. . .
+
+::::: columns
+::: {.column width="65%"}
+The supply function can be integrated across the **whole hydraulic network**.
+
+$$E(\Psi_{leaf}) = \int_{\Psi_{soil}}^{\Psi_{leaf}}{k(\Psi) d\Psi}$$
+:::
+
+::: {.column width="35%"}
+![](resources/img/supply_network.png)
+:::
+:::::
+
+::: footer
+4.  Transpiration and photosynthesis under the advanced model
+:::
+
+## Sperry sub-model: Stomatal regulation {.smaller}
+
+:::::: columns
+::: {.column width="33%"}
+**1. Cost function**
+
+The hydraulic supply function is used to derive a **cost function** $\theta(\Psi_{leaf})$, reflecting the increasing damage from cavitation.
+
+$$\theta(\Psi_{leaf}) = \frac{k_{c,max}-k_{c}(\Psi_{leaf})}{k_{c,max}-k_{crit}}$$
+
+where $k_c(\Psi_{leaf}) = dE/d\Psi(\Psi)$ is the slope of the (whole-plant) supply function.
+
+![](resources/img/costfunction.png){width="90%"}
+:::
+
+::: {.column width="33%"}
+**2. Gain function**
+
+The normalized photosynthetic **gain function** $\beta(\Psi_{leaf})$ reflects the increase in assimilation rate, with respect to the maximum.
+
+$$\beta(\Psi_{leaf}) = \frac{A(\Psi_{leaf})}{A_{max}}$$
+
+where $A_{max}$ is the instantaneous maximum (gross) assimilation rate estimated over the full $\Psi_{leaf}$ range.
+
+![](resources/img/gainfunction.png){width="90%"}
+:::
+
+::: {.column width="33%"}
+**3. Profit function**
+
+Stomatal regulation can be effectively estimated by determining the maximum of the *profit function*: $$Profit(\Psi_{leaf}) = \beta(\Psi_{leaf})-\theta(\Psi_{leaf})$$
+
+![](resources/img/profitfunction.png){width="80%"}
+
+The maximization is achieved when the slopes of the gain and cost functions are equal: $$\frac{\delta \beta(\Psi_{leaf})}{\delta \Psi_{leaf}} = \frac{\delta \theta(\Psi_{leaf})}{\delta \Psi_{leaf}}$$
+:::
+::::::
+
+::: footer
+4.  Transpiration and photosynthesis under the advanced model
+:::
+
+## Sureau sub-model {.smaller}
+
+SurEau’s sub-model, leaf energy balance, stomatal and cuticular conductances, transpirational flows, photosynthesis and plant hydraulics are computed **iteratively** in small temporal sub-steps (e.g. 10 min).
+
+. . .
+
+**Plant hydraulics**
+
+Water dynamics in SurEau-ECOS [^8] are governed by **partial differential equations** of mass conservation:
+
+[^8]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+
+$$C_i \cdot \frac{\mathrm{d}\Psi_i}{\mathrm{d}t} + \sum_{j}{k_{ij}\cdot (\Psi_i - \Psi_j)} - S = 0$$
+
+where $\Psi_i$ and $\Psi_j$ are the water potential of compartments $i$ and $j$, respectively, $C_i$ is the **capacitance** associated to the compartment $i$ and $S$ is an outflow component (e.g. stomatal transpiration, cuticular transpiration or cavitation flux).
+
+. . .
+
+**Stomatal regulation**
+
+Stomatal conductance takes into account the dependence of stomata on light and temperature [^9], as well as leaf water status:
+
+[^9]: Baldocchi D. (1994) Tree Phys., 14, 1069-1079
+
+$$g_{sw} = g_{sw, light, temp} \cdot \lambda(\Psi_{leaf,sym}) $$
+
+where $g_{sw, light, temp}$ is the stomatal conductance value without water stress, and $\lambda$ is a regulation factor that represents stomatal closure according to leaf water potential, using a sigmoid function.
+
+. . .
+
+**Cuticular conductance**
+
+Cuticular conductances are not only species-specific but also change with leaf temperature, according to changes in permeability of lipids in the epidermis.
+
+::: footer
+4.  Transpiration and photosynthesis under the advanced model
+:::
+
+# 5. Plant drought stress and cavitation
+
+## Daily drought stress {.smaller}
+
+Daily drought stress, $DDS$, is defined using $\phi$, the phenological status, and the *one-complement* of *relative whole-plant conductance*:
+
+::::: columns
+::: {.column width="50%"}
+**Basic model**
+
+Since $K$ is defined as a relative whole-plant conductance:
+
+$$DDS=\phi \cdot (1-K(\Psi_{plant}))$$
+:::
+
+::: {.column width="50%"}
+**Advanced model**
+
+Since the derivative of the supply function, i.e. $dE / d\Psi_{leaf}$, is the *absolute* whole-plant conductance:
+
+$$DDS=\phi \cdot \left[ 1 - \frac{dE / d\Psi_{leaf}}{k_{max,plant}} \right]$$
+:::
+:::::
+
+::: footer
+5.  Plant drought stress and cavitation
+:::
+
+## Cavitation {.smaller}
+
+If cavitation has occurred in previous steps then the capacity of the plant to transport water is impaired via the estimation of percent loss conductance (PLC).
+
+. . .
+
+::::: columns
+::: {.column width="50%"}
+**Basic model**
+
+Estimation of PLC:
+
+$$PLC_{stem} = 1 - \exp \left \{ \ln{(0.5)}\cdot \left[ \frac{\Psi_{plant}}{\Psi_{critic}} \right] ^r \right \}$$
+
+Effect on plant transpiration:
+
+$$K^{PLC}_{s} = \min \{K_{s}, 1.0 - PLC_{stem} \}$$
+:::
+
+::: {.column width="50%"}
+**Advanced model**
+
+Estimation of PLC:
+
+$PLC_{stem} = 1 - \frac{k_{stem}(\Psi_{stem})}{k_{max,stem}}$
+
+Effect on the stem vulnerability curve:
+
+![](resources/img/vulnerability_curves.png){width="70%"}
+:::
+:::::
+
+::: footer
+5.  Plant drought stress and cavitation
+:::
+
+# 6. Basic vs. advanced models: a summary of differences
+
+## Process representation {.smaller}
+
+| Group             | Process                             | Basic  | Advanced |
+|-------------------|-------------------------------------|--------|----------|
+| Forest hydrology  | Rainfall interception               | \*     | \*       |
+|                   | Infiltration/percolation            | \*     | \*       |
+|                   | Soil gravitational and matric flows | \[\*\] | \[\*\]   |
+|                   | Bare soil evaporation               | \*     | \*       |
+|                   | Snow dynamics                       | \*     | \*       |
+|                   | Transpiration through stomata       | \[\*\] | \*       |
+|                   | Cuticular transpiration             |        | \[\*\]   |
+|                   | Hydraulic redistribution            | \[\*\] | \*       |
+| Radiation balance | Radiation extinction                | \*     | \*       |
+|                   | Diffuse/direct separation           |        | \*       |
+|                   | Longwave/shortwave separation       |        | \*       |
+| Plant physiology  | Photosynthesis                      | \[\*\] | \*       |
+|                   | Stomatal regulation                 |        | \*       |
+|                   | Plant hydraulics                    |        | \*       |
+|                   | Stem cavitation                     | \*     | \*       |
+| Energy balance    | Leaf energy balance                 |        | \*       |
+|                   | Canopy energy balance               |        | \*       |
+|                   | Soil energy balance                 |        | \*       |
+
+::: footer
+6.  Basic vs. advanced models: a summary of differences
+:::
+
+## Basic vs. advanced: State variables {.smaller}
+
+| Group  | State variable               | Basic | Advanced |
+|--------|------------------------------|-------|----------|
+| Soil   | Soil moisture gradients      | \*    | \*       |
+|        | Soil temperature gradients   |       | \*       |
+| Canopy | Canopy temperature gradients |       | \*       |
+|        | Canopy moisture gradients    |       | \*       |
+|        | Canopy $CO_2$ gradients      |       | \*       |
+| Plant  | Leaf phenology status        | \*    | \*       |
+|        | Plant water status           | \*    | \*       |
+|        | Plant water content          |       | \*       |
+|        | Water potential gradients    |       | \*       |
+|        | Stem cavitation level        | \*    | \*       |
+
+::: footer
+6.  Basic vs. advanced models: a summary of differences
+:::
+
+------------------------------------------------------------------------
+
+M.C. Escher - Waterfall, 1961
+
+![](resources/img/Escher_waterfall.png)

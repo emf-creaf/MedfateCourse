@@ -1,0 +1,678 @@
+---
+title: "3.3 - Forest growth and dynamics balance (exercise)"
+author: "Miquel De Cáceres"
+institute: "Ecosystem Modelling Facility, CREAF"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["resources/css/custom.css", "default-fonts", "default"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    seal: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+options(
+  htmltools.dir.version = FALSE,
+  width = 100
+)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+library(meteoland)
+library(medfate)
+library(sp)
+```
+
+class: title-slide
+
+
+# 3.3 - Forest growth/dynamics (exercise)
+
+### Miquel De Cáceres, Victor Granda
+
+### Ecosystem Modelling Facility
+
+### `r as.Date("2022-12-02")`
+
+
+<img class= "escher-title" src="resources/img/Escher_concaveconvex.jpg" width=450>
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Exercise setting
+
+---
+
+##  Objectives
+
+  1. Learn to perform simulations of forest growth and forest dynamics with medfate
+  2. Evaluate tree growth predictions with tree ring data
+  3. Compare simulated vs observed forest changes between inventories 
+  4. Project forest dynamics with/without forest management
+  
+--
+
+## Data
+
+We will use data corresponding to a forest plot of sampled during the third and fourth Spanish National Forest Inventory (SNFI3) in the province of Tarragona (latitude 41º N aprox.).
+
+--
+
++ The forest plot is dominated by Aleppo pine (*Pinus halepensis*) with an understory of composed of several shrub species.
+
+--
+
++ Tree ring data are available for some trees of the forest plot, because it was included in a research project focused on intraspecific variability of functional traits (FUN2FUN, granted to J. Martínez-Vilalta).
+
+--
+
++ Soil has been already drawn from *SoilGrids*
+
+--
+
++ Daily weather data corresponding to the plot location has been obtained with **meteoland**, corresponding to an historical period (SNFI3-SNFI4) and a  future period (2015-2100) under scenario RCP 8.5 (from Earth system model MPI-ESM regionalized to Europe using model RCA4).
+
+---
+layout: true
+
+<div class=my-header>
+    <img class="emf-logo" src="resources/img/emf_logo.svg">
+</div>
+
+<div class=my-footer></div>
+
+# Exercise solution
+
+
+---
+## Step 1. Load Alepo pine forest data
+
+```{r, include=FALSE}
+library(medfate)
+library(ggplot2)
+library(cowplot)
+```
+
+We are given all the necessary data, bundled in a single list:
+
+.code80[
+```{r}
+alepo <- readRDS("StudentRdata/alepo.rds")
+```
+]
+
+--
+
+Whose elements are...
+
+.font80[
+|  Element  | Description                                    |
+| --------- | ---------------------------------------------- |
+| `forest_snfi3` | Object of class `forest` with the stand structure and composition in SNFI3 (yr. 2001) |
+| `forest_snfi4` | Object of class `forest` with the stand structure and composition in SNFI4 (yr. 2014) |
+| `spt` | Object of class `SpatialPointsTopography` with the coordinates and topography of the plot |
+| `soildesc` | Data frame with soil properties. |
+| `historic_weather` | Data frame with daily weather for years 2001-2014. |
+| `projected_weather` | Data frame with daily weather for years 2015-2100 under RCP8.5 (climate model couple MPIESM/RCA4). |
+| `observed_growth` | Data frame with **annual** basal area increments during the 2001-2014 period for four *P. halepensis* trees in the forest plot (`T20_148`, `T14_148`, `T25_148` and `T3_148`). |
+| `snfi34_growth` | Data frame with density, diameter and height for *P. halepensis* as measured in SNFI3 and SNFI3. |
+]
+
+---
+
+## Step 2. Forest stand metrics
+
+We can use the `summary()` function for objects of class `forest` to know the leaf area index and basal area estimated at yr. 2001 (SNFI3):
+
+.code80[
+```{r, highlight.output = c(2,5)}
+summary(alepo$forest_snfi3, SpParamsMED)
+```
+]
+
+--
+
+The contribution of the different species to these stand metrics can be known using:
+
+.code80[
+```{r}
+species_basalArea(alepo$forest_snfi3, SpParamsMED)
+```
+]
+
+.code80[
+```{r}
+species_LAI(alepo$forest_snfi3, SpParamsMED)
+```
+]
+
+---
+
+## Step 2. Forest stand metrics
+
+We repeat the same calculations for yr. 2014 (SNFI4):
+
+.code80[
+```{r, highlight.output = c(2,5)}
+summary(alepo$forest_snfi4, SpParamsMED)
+```
+]
+
+There has been an increase of `r round(stand_basalArea(alepo$forest_snfi4) - stand_basalArea(alepo$forest_snfi3))` m2/ha in basal area, whereas stand LAI has increased `r round(stand_LAI(alepo$forest_snfi4, SpParamsMED) - stand_LAI(alepo$forest_snfi3, SpParamsMED),2)` m2/m2.
+
+---
+
+## Step 3. Growth simulation between SNFI3 and SNFI4
+
+We were given soil physical characteristics, but we need to build an object of class `soil`, which we can store in the same `alepo` list:
+
+.code80[
+```{r}
+alepo$soil <- soil(alepo$soildesc)
+```
+]
+
+--
+
+we can check the water holding capacity of the soil using:
+.code80[
+```{r}
+sum(soil_waterFC(alepo$soil))
+```
+]
+
+which is rather high but we leave it as is.
+
+--
+
+We now have all the elements to call function `forest2growthInput()` to generate the input for `growth()`:
+
+.code80[
+```{r}
+x_alepo <- forest2growthInput(x = alepo$forest_snfi3,
+                              soil = alepo$soil,
+                              SpParams = SpParamsMED,
+                              control = defaultControl())
+```
+]
+
+
+---
+
+## Step 3. Growth simulation between SNFI3 and SNFI4
+
+Since the list contains also the historic weather for years 2001-2014 and topography, we are ready to simulate growth:
+
+.code80[
+```{r, eval = FALSE}
+G_34 <- growth(x = x_alepo, 
+               meteo = alepo$historic_weather,
+               latitude = 41, 
+               elevation = alepo$spt$elevation,
+               slope = alepo$spt$slope,
+               aspect = alepo$spt$aspect)
+```
+]
+
+---
+
+## Step 4. Examine growth results
+```{r, include = FALSE}
+# saveRDS(G_34, "Rdata/growth_snfi34.rds")
+G_34 <- readRDS("Rdata/growth_snfi34.rds")
+```
+
+Many outputs can be inspected using `shinyplot()` but here we use `plot()` to display the LAI dynamics of the different species
+
+.code80[
+```{r, fig.width=8, fig.height=4, fig.align="center"}
+plot(G_34, "PlantLAI", bySpecies = TRUE)
+```
+]
+
+The model predicts an increase in LAI for *P. halepensis* (except some years), but shrub species are predicted to lose leaf area.
+
+---
+
+## Step 5. Evaluate tree basal area increment
+
+We can use function `evaluation_plot()` to display the predicted and observed BAI for the four trees with measurements:
+
+.code80[
+```{r}
+g1<-evaluation_plot(G_34, alepo$observed_growth, type="BAI",
+                    cohort = "T20_148", temporalResolution = "year")
+g2<-evaluation_plot(G_34, alepo$observed_growth, type="BAI",
+                 cohort = "T14_148", temporalResolution = "year")
+g3<-evaluation_plot(G_34, alepo$observed_growth, type="BAI",
+                 cohort = "T25_148", temporalResolution = "year")
+g4<-evaluation_plot(G_34, alepo$observed_growth, type="BAI",
+                 cohort = "T3_148", temporalResolution = "year")
+```
+]
+
+---
+
+## Step 5. Evaluate tree basal area increment
+
+When we display the plots we see that the model is overestimating growth in many cases:
+.code80[
+```{r, fig=TRUE, fig.width=10, fig.height=6}
+plot_grid(g1,g2,g3,g4, ncol = 2, nrow=2)
+```
+]
+
+---
+
+## Step 5. Evaluate tree basal area increment
+
+*Tip*: To decide how to proceed when a model fails to fit observations is important to know which model parameters may be responsible for a given result (this is called *sensitivity analysis*).
+
+--
+
+In medfate, sapwood (and tree) growth is strongly controlled by parameter `RGRcambiummax`, which specifies the maximum  growth rate of sapwood relative to stem diameter. 
+
+--
+
+For *P. halepensis* its default value is:
+.code80[
+```{r}
+SpParamsMED$RGRcambiummax[SpParamsMED$Name=="Pinus halepensis"]
+```
+]
+
+---
+
+## Step 6. Modify maximum growth rate for P. halepensis and repeat simulations
+
+We divide the maximum relative growth rate by two...
+.code80[
+```{r}
+SpParamsMED$RGRcambiummax[SpParamsMED$Name=="Pinus halepensis"] <- 0.0012
+```
+]
+
+--
+
+... rebuild the growth input ...
+.code80[
+```{r}
+x_alepo <- forest2growthInput(x = alepo$forest_snfi3,
+                              soil = alepo$soil,
+                              SpParams = SpParamsMED,
+                              control = defaultControl())
+```
+]
+
+--
+
+... and launch a new simulation:
+.code80[
+```{r, eval = FALSE}
+G_34m <- growth(x = x_alepo, 
+               meteo = alepo$historic_weather,
+               latitude = 41, 
+               elevation = alepo$spt$elevation,
+               slope = alepo$spt$slope,
+               aspect = alepo$spt$aspect)
+```
+]
+
+
+```{r, include = FALSE}
+# saveRDS(G_34m, "Rdata/growth_mod_snfi34.rds")
+G_34m <- readRDS("Rdata/growth_mod_snfi34.rds")
+```
+
+---
+
+## Step 6. Modify maximum growth rate for P. halepensis and repeat simulations
+
+We can inspect the fit of the new results to observed data. Overall, we obtain a better fit in terms of the mean BAI, but the model does not capture all observed interannual variation.
+
+.code80[
+```{r, fig=TRUE, fig.width=10, fig.height=6, echo = FALSE}
+g1<-evaluation_plot(G_34m, alepo$observed_growth, type="BAI",
+                    cohort = "T20_148", temporalResolution = "year")
+g2<-evaluation_plot(G_34m, alepo$observed_growth, type="BAI",
+                 cohort = "T14_148", temporalResolution = "year")
+g3<-evaluation_plot(G_34m, alepo$observed_growth, type="BAI",
+                 cohort = "T25_148", temporalResolution = "year")
+g4<-evaluation_plot(G_34m, alepo$observed_growth, type="BAI",
+                 cohort = "T3_148", temporalResolution = "year")
+plot_grid(g1,g2,g3,g4, ncol = 2, nrow=2)
+```
+]
+
+---
+
+## Step 7. Reduce the number of tree cohorts
+
+In order to speed-up forest dynamic simulations, we can reduce the number of tree cohorts, which is now:
+.code80[
+```{r}
+nrow(alepo$forest_snfi3$treeData)
+```
+]
+
+--
+
+Remembering the `forest_mergeTrees()` function from exercise #1:
+
+.code80[
+```{r}
+forest_red = forest_mergeTrees(alepo$forest_snfi3)
+```
+]
+
+--
+
+The new forest object has `r nrow(forest_red$treeData)` tree cohorts:
+
+.code80[
+```{r}
+forest_red$treeData
+```
+]
+
+--
+
+In the following, we will use `forest_red` to call function `fordyn()`. 
+
+---
+## Step 8. Run forest dynamics simulation
+
+**Remember**: unlike `spwb()` and `growth()`, we do not need to build an intermediate input object for `fordyn()` (i.e., there is no function `forest2fordynInput()`).
+
+--
+
+In our call to `fordyn()`, we supply the historic weather (yrs. 2001-2014), as we did in our call to `growth()`, because we want to compare predicted changes with those observed between SNFI3 and SNFI4.
+
+.code80[
+```{r, eval = FALSE}
+* FD_34 <- fordyn(forest = forest_red,
+                soil = alepo$soil,
+                SpParams = SpParamsMED,
+                control = defaultControl(),
+*               meteo = alepo$historic_weather,
+                latitude = 41, 
+                elevation = alepo$spt$elevation,
+                slope = alepo$spt$slope,
+                aspect = alepo$spt$aspect)
+```
+]
+
+
+```{r, include = FALSE}
+# saveRDS(FD_34, "Rdata/fordyn_snfi34.rds")
+FD_34 <- readRDS("Rdata/fordyn_snfi34.rds")
+```
+
+--
+
+The elements of the output have the following names, which we should be able to understand before moving on (if not, see `?fordyn`).
+.code80[
+```{r}
+names(FD_34)
+```
+]
+
+
+---
+
+## Step 9. Compare final stand metrics with the observed stand in SNFI4
+
+In particular, we can examine the stand metrics of the `forest` object at the end of the simulation...
+
+.code80[
+```{r, highlight.output = c(2,5)}
+summary(FD_34$NextForestObject, SpParamsMED)
+```
+]
+
+--
+
+... and compare them to those obtained in SNFI4 (yr. 2015) for the forest plot:
+
+.code80[
+```{r, highlight.output = c(2,5)}
+summary(alepo$forest_snfi4, SpParamsMED)
+```
+]
+
+--
+
+The model seems to perform fairly well in terms of final tree density and basal area. However, as expected, it yields too much shrub mortality, resulting in a forest with a low understory biomass.
+
+---
+
+## Step 10. Projection of forest dynamics
+
+Argument `forest` of function `fordyn()` can be used to supply the final state of a previous simulation.
+
+--
+
+Hence, we can use this feature to start our projection from the final state of the previous call to `fordyn()` and use the projected daily weather:
+
+.code80[
+```{r, eval = FALSE}
+* FD_proj <- fordyn(forest = FD_34,
+                soil = alepo$soil,
+                SpParams = SpParamsMED,
+                control = defaultControl(),
+*               meteo = alepo$projected_weather,
+                latitude = 41, 
+                elevation = alepo$spt$elevation,
+                slope = alepo$spt$slope,
+                aspect = alepo$spt$aspect)
+```
+]
+
+
+```{r, include = FALSE}
+# saveRDS(FD_proj, "Rdata/fordyn_proj.rds")
+FD_proj <- readRDS("Rdata/fordyn_proj.rds")
+```
+
+--
+
+The predicted final stand basal area is:
+
+.code80[
+```{r}
+stand_basalArea(FD_proj$NextForestObject)
+```
+]
+
+
+---
+
+## Step 11. Management function and management arguments
+
+We will now simulate forest dynamics including forest management. 
+
+--
+
+However, we need first to understand how the default management function works and the meaning of its parameters:
+
+.code80[
+```{r}
+man_args <- defaultManagementArguments()
+names(man_args)
+```
+]
+
+--
+
+Argument `thinningThreshold` specifies the stand basal area value that leads to a thinning event. Since our simulation started at `r round(stand_basalArea(FD_34$NextForestObject))` m2/ha and increased up to `r round(stand_basalArea(FD_proj$NextForestObject))` m2/ha, we set the value of `thinningThreshold` to 30 m2/ha to see some effects during the simulations:
+
+.code80[
+```{r}
+man_args$thinningThreshold <- 30
+```
+]
+
+---
+
+## Step 12. Projection of forest dynamics with management
+
+The call to `fordyn()` is similar to the previous one, except for the specification of the management function and parameters:
+
+.code80[
+```{r, eval = FALSE}
+FD_proj_man <- fordyn(forest = FD_34,
+                soil = alepo$soil,
+                SpParams = SpParamsMED,
+                control = defaultControl(),
+                meteo = alepo$projected_weather,
+                latitude = 41, 
+                elevation = alepo$spt$elevation,
+                slope = alepo$spt$slope,
+                aspect = alepo$spt$aspect,
+*               management_function = defaultManagementFunction,
+*               management_args = man_args^)
+```
+]
+
+```{r, include = FALSE}
+# saveRDS(FD_proj_man, "Rdata/fordyn_proj_man.rds")
+FD_proj_man <- readRDS("Rdata/fordyn_proj_man.rds")
+```
+
+---
+
+## Step 13. Compare forest dynamics with/without management
+
+
+We can produce plots of stand basal area dynamics to compare the two simulations:
+
+.pull-left[
+.code80[
+### No management
+
+```{r, fig = TRUE, fig.height = 4}
+plot(FD_proj, "StandBasalArea")
+```
+]
+]
+.pull-left[
+.code80[
+### Management
+
+```{r, fig = TRUE, fig.height = 4}
+plot(FD_proj_man, "StandBasalArea")
+```
+]
+]
+
+--
+
+Generally speaking, the arguments `thinningThreshold` and `thinningPerc` control the frequency and intensity of thinning interventions.
+
+
+---
+
+## Step 13. Compare forest dynamics with/without management
+
+We can also compare the final tree data frames of the `forest` objects of the two simulations:
+
+.pull-left[
+.code80[
+### No management
+
+```{r, fig = TRUE, fig.height = 4}
+FD_proj$NextForestObject$treeData[,1:4]
+```
+]
+]
+
+.pull-right[
+.code80[
+### Management
+
+```{r, fig = TRUE, fig.height = 4}
+FD_proj_man$NextForestObject$treeData[,1:4]
+```
+]
+]
+
+--
+
+The number of tree cohorts is much lower at the end of the simulation with forest management because by default the thinning is specified to be applied to small trees (i.e. `thinning  = "below"`).
+
+
+---
+
+## Step 13. Compare forest dynamics with/without management
+
+Finally, we can use the annual summaries produced by `fordyn()` to compare the basal area of trees dead or cut during the simulation:
+
+.pull-left[
+.code80[
+### No management
+
+```{r}
+sum(FD_proj$StandSummary$BasalAreaDead)
+```
+
+```{r}
+sum(FD_proj$StandSummary$BasalAreaCut)
+```
+
+]
+]
+
+.pull-right[
+.code80[
+### Management
+
+```{r}
+sum(FD_proj_man$StandSummary$BasalAreaDead)
+```
+
+```{r}
+sum(FD_proj_man$StandSummary$BasalAreaCut)
+```
+
+]
+]
+
+--
+
+The simulation without forest management produced more dead trees than the simulation with management. 
+
+--
+
+This arises because:
+   + Basal mortality rates are multiplied by the current tree density
+   + Drought stress is decreased in simulations with management
+
+
+---
+layout: false
+class: back-slide
+
+
+## M.C. Escher - Concave and convex, 1955
+
+.center[
+<img src="resources/img/Escher_concaveconvex.jpg" width=600>
+]
+
+<img class="logo-title" src="resources/img/emf_logo.svg" width=200>
