@@ -21,6 +21,9 @@ presentation.
 
 ## Course sessions
 
+Code for course sessions is in `*.qmd` files. Printed `*.pdf` files can
+also be found in PDF directory.
+
 1.  Introduction
     - Introduction to process-based forest modelling (theory)
     - Introduction to *medfate* modelling framework (theory)
@@ -46,6 +49,9 @@ presentation.
 
 Three different course editions have been done so far:
 
-- CREAF, Barcelona (June 2022)
-- University of Eastern Finland, Joensuu (December 2022)
-- Universidad de Valladolid, Soria (November 2024)
+- **June 2022**: CREAF (Barcelona, Spain), Miquel De Cáceres & Víctor
+  Granda
+- **December 2022**: University of Eastern Finland (Joensuu, Finland),
+  Miquel De Cáceres & Víctor Granda
+- **November 2024**: Universidad de Valladolid (Soria, Spain), Miquel De
+  Cáceres & Rodrigo Balaguer-Romano
