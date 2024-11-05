@@ -40,6 +40,8 @@ also be found in PDF directory.
 
 ## Ancillary files
 
+These are required to recreate slide presentations from `*.qmd` files.
+
 - `resources/scss` contains style sheets that customize slide
   appearance.
 - `resources/img` contains figures in PNG, SVG or JPG format used in
