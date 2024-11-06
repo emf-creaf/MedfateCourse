@@ -27,7 +27,7 @@ Code for course sessions is in `sessions/*.qmd` files. Printed
 
 1.  Introduction
     - Introduction to process-based forest modelling (theory)
-    - Introduction to *medfate* modelling framework (theory)
+    - Introduction to **medfate** modelling framework (theory)
 2.  Forest water and energy balance
     - Design and formulation of forest water/energy balance (theory)
     - Running forest water energy balance (practice)
@@ -35,7 +35,9 @@ Code for course sessions is in `sessions/*.qmd` files. Printed
     - Design and formulation of forest carbon balance and forest
       dynamics (theory)
     - Running forest growth and forest dynamics (practice)
-4.  Large-scale simulations
+4.  Large-scale features of the modelling framework
+    - Large-scale simulations using package **medfateland**
+    - Species parameter estimation using **traits4models**
 
 ## Ancillary files
 

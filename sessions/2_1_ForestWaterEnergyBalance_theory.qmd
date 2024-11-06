@@ -6,7 +6,7 @@ format:
     smaller: false
     logo: resources/img/emf_logo.svg
     theme: [default, resources/scss/custom.scss]
-editor: visual
+editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
 institute: "Ecosystem Modelling Facility, CREAF"
 toc: false
@@ -147,7 +147,7 @@ When stomata are closed (e.g. pre-down), plant leaf water potential is assumed t
 
 When stomata are open, a larger transpiration flow (*E*) implies (in steady state) a larger drop in water potential along the transpiration pathway [^1]:
 
-[^1]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+[^1]: Venturas et al. (2017) J. Int. Plant Biol., 59, 356-389.
 
 ![](resources/img/waterpotential_drop.png){width="50%"}
 
@@ -159,9 +159,9 @@ When stomata are open, a larger transpiration flow (*E*) implies (in steady stat
 
 The decrease in soil water potential caused by drought has multiple effects on plants [^2], with some processes ceasing to occur and others becoming important or being promoted, depending on the plant response strategy [^3].
 
-[^2]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+[^2]: Choat et al. (2018) Nature, 558, 531-539.
 
-[^3]: Baldocchi D. (1994) Tree Phys., 14, 1069-1079
+[^3]: Fatichi et al. (2016) Wiley Interdisciplinary Reviews: Water, 3, 327-368.
 
 ::::: columns
 ::: {.column width="40%"}
@@ -190,7 +190,7 @@ The water balance models in available in medfate simulate the following vertical
 
 ::: {.column width="50%"}
 | Component           | Symbol       | Description                             |
-|---------------------|--------------|-----------------------------------------|
+|-------------------|-----------------|-------------------------------------|
 | Infiltration        | $If$         | Water entering the soil from above      |
 | Capillarity rise    | $Cr$         | Water entering the soil from below      |
 | Deep drainage       | $Dd$         | Water leaving the soil beyond root zone |
@@ -418,7 +418,7 @@ cowplot::plot_grid(g1, g2, nrow=1, ncol=2)
 . . .
 
 | Process | Source |
-|----|----|
+|------------------------------------|------------------------------------|
 | Soil & canopy energy balance | *Best et al. (2011) Geosci. Mod. Dev. 4, 677-699* |
 | Canopy turbulence | *Katul et al. (2004) Bound. Lay. Met. 113, 81-109* |
 | Sunlit/shade leaf photosynthesis | *De pury & Farquhar (1997) Plant, Cell & Env., 20, 537–557* |
@@ -452,11 +452,11 @@ cowplot::plot_grid(g1, g2, nrow=1, ncol=2)
 :::
 :::::
 
-[^4]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+[^4]: Sperry et al. (1998) Plant, Cell & Environment, 21, 347–359.
 
-[^5]: Baldocchi D. (1994) Tree Phys., 14, 1069-1079
+[^5]: Sperry et al. (2017) Plant, Cell & Environment, 40, 816–830. 
 
-[^6]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+[^6]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626.
 
 ::: footer
 4.  Transpiration and photosynthesis under the advanced model
@@ -470,7 +470,7 @@ The supply function describes the **steady-state** rate of water flow, $E$, as a
 
 The steady-state flow rate $E_i$ through any element $i$ is related to the flow-induced drop in water potential across that element, $\Delta \Psi_i  = \Psi_{down} - \Psi_{up}$, by the integral of the vulnerability curve $k_i(\Psi)$ [^7]:
 
-[^7]: Ruffault et al. (2022) Geosci. Mod. Dev., 15, 5593-5626
+[^7]: Sperry et al. (1998)
 
 $$E_i = \int_{\Psi_{up}}^{\Psi_{down}}{k_i(\Psi) d\Psi}$$
 

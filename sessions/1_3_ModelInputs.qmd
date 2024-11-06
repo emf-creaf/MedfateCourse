@@ -6,7 +6,7 @@ format:
     smaller: true
     logo: resources/img/emf_logo.svg
     theme: [default, resources/scss/custom.scss]
-editor: visual
+editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
 institute: "Ecosystem Modelling Facility, CREAF"
 toc: false
@@ -126,7 +126,7 @@ forest$shrubData
 #### Tree data
 
 | Variable  | Definition                                                    |
-|-----------|---------------------------------------------------------------|
+|---------------|---------------------------------------------------------|
 | `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
 | **`N`**   | Density of trees (in individuals per hectare)                 |
 | **`DBH`** | Tree diameter at breast height (in cm)                        |
@@ -139,7 +139,7 @@ forest$shrubData
 #### Shrub data
 
 | Variable    | Definition                                                    |
-|-------------|---------------------------------------------------------------|
+|----------------|--------------------------------------------------------|
 | `Species`   | Species numerical code (should match `SpIndex` in `SpParams`) |
 | **`Cover`** | Shrub cover (%)                                               |
 | `Height`    | Shrub total height (in cm)                                    |
@@ -325,7 +325,7 @@ shinyplot(forest, SpParamsMED)
 Soil physical attributes are specified using a **data.frame** with soil layers in rows and columns:
 
 | Attribute | Description |
-|----|----|
+|------------------------------------|------------------------------------|
 | `widths` | Layer widths, in mm. |
 | `clay` | Percentage of clay (within volume of soil particles). |
 | `sand` | Percentage of sand (within volume of soil particles). |
@@ -444,7 +444,11 @@ A large number of control parameters exist:
 names(control)
 ```
 
+. . .
+
+::: callout-important
 Control parameters should be left to their **default values** until their effect on simulations is fully understood!
+:::
 
 ::: footer
 5.  Simulation control
@@ -511,7 +515,11 @@ head(examplemeteo, 2)
 
 . . .
 
-Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/).
+::: callout-tip
++ Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/).
++ The package will try to fill missing values of some variables with estimates (e.g. for radiation or relative humidity).
++ Additional variables (atmospheric pressure or CO2 concentration) are optional.
+:::
 
 ::: footer
 7.  Weather forcing

@@ -6,7 +6,7 @@ format:
     smaller: false
     logo: resources/img/emf_logo.svg
     theme: [default, resources/scss/custom.scss]
-editor: visual
+editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
 institute: "Ecosystem Modelling Facility, CREAF"
 toc: false
@@ -71,10 +71,12 @@ and a simulation control list:
 control <- defaultControl(transpirationMode = "Granier", soilDomains = "buckets")
 ```
 
-::: callout-important
-Plant transpiration (`transpirationMode`) should be `"Granier"` (basic), `"Sperry"` (advanced with Sperry) or `"Sureau"` (advanced with Sureau-ECOS).
+. . .
 
-Soil water movement (`soilDomains`) should be `"buckets"` (multi-bucket), `"single"` (single-domain) or `"dual"` (dual-permeability).
+::: callout-important
++ Plant transpiration (`transpirationMode`) should be `"Granier"` (basic), `"Sperry"` (advanced with Sperry) or `"Sureau"` (advanced with Sureau-ECOS).
+
++ Soil water movement (`soilDomains`) should be `"buckets"` (multi-bucket), `"single"` (single-domain) or `"dual"` (dual-permeability).
 :::
 
 . . .
@@ -186,7 +188,7 @@ names(S)
 . . .
 
 | Elements | Information |
-|----|----|
+|------------------------------------|------------------------------------|
 | `latitude`, `topography`, `weather`, `spwbInput` | Copies of the information used in the call to `spwb()` |
 | `spwbOutput` | State variables at the end of the simulation (can be used as input to a subsequent one) |
 | `WaterBalance`, `Soil`, `Snow`, `Stand`, `Plants` | Daily outputs |

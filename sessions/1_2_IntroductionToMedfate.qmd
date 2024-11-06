@@ -136,7 +136,7 @@ Several vignettes, describing creation of model inputs and how to perform simula
 
 ::::: columns
 ::: {.column width="50%"}
-Three main simulation models can be executed in medfate:
+Three main simulation models can be executed in **medfate**:
 
 | Function   | Description                                                  |
 |-------------------|-----------------------------------------------------|
@@ -164,21 +164,6 @@ Functions are included to *extract*, *summarise* and *display* the time series i
 | `summary()`   | Temporal summaries of results.                      |
 | `plot()`      | Display time series of the results.                 |
 | `shinyplot()` | Interactive exploration of results.                 |
-
-::: footer
-4. Overview of medfate package functions
-:::
-
-## Post-processing functions
-
-Some package functions are meant to be used on simulation results (some of them implementing static ancillary models) and produce time series of additional properties.
-
-| Function               | Description                              |
-|------------------------|------------------------------------------|
-| `droughtStress()`      | Plant drought stress indices             |
-| `waterUseEfficiency()` | Water use efficiency metrics             |
-| `resistances()`        | Hydraulic resistances to water transport |
-| `fireHazard()`         | Potential fire behaviour                 |
 
 ::: footer
 4. Overview of medfate package functions
@@ -232,7 +217,7 @@ Sub-model functions are grouped by *subject*:
 
 ::::: columns
 ::: {.column width="60%"}
-Package medfateland allows simulating forest functioning and dynamics on sets forests stands distributed across space, with or without spatial processes:
+Package **medfateland** allows simulating forest functioning and dynamics on sets forests stands distributed across space, with or without spatial processes:
 
 | Function            | Description                                          |
 |-------------------|-----------------------------------------------------|

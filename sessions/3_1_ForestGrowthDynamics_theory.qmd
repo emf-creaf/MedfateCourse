@@ -160,7 +160,7 @@ $$\Delta{S_{labile}} = A_g - (M + G + RE)$$
 
 ## Design of labile carbon processes {.smaller}
 
--   **Phloem transport** is only explicitly modelled when using the **advanced water submodel**, following Hölttä et al. (2017)[^1].
+-   **Phloem transport** is only explicitly modelled when using the **advanced water submodel**.
 
 -   **Sugar/starch dynamics** are meant to keep sugar levels at a prescribed equilibrium value.
 
@@ -168,11 +168,9 @@ $$\Delta{S_{labile}} = A_g - (M + G + RE)$$
 
 -   **Translocation** of labile carbon towards sapwood storage occurs whenever there is senescence in a given tissue (leaves, branches).
 
--   **Root exudation** is not a process competing for metabolic carbon, but a consequence of plant storage capacity being surpassed [^2].
+-   **Root exudation** is not a process competing for metabolic carbon, but a consequence of plant storage capacity being surpassed [^1].
 
-[^1]: Lindner et al (1997). Forest Ecology and Management, 95, 183–195.
-
-[^2]: Prescott et al (2020). Trends in Ecology & Evolution, 35, 1110–1118.
+[^1]: Prescott et al (2020). Trends in Ecology & Evolution, 35, 1110–1118.
 
 ::: footer
 2.  Carbon compartments, pools and carbon balance
@@ -200,11 +198,11 @@ $$\Delta LA = \min( \Delta LA_{alloc}, \Delta LA_{source}, \Delta LA_{sink})$$ $
 ::: {.column width="40%"}
 -   $\Delta LA_{alloc}$ and $\Delta B_{fineroot,alloc}$ are the increments allowed according to the targets set by **allocation rules**.
 -   $\Delta LA_{source}$, $\Delta SA_{source}$ and $\Delta B_{fineroot,source}$ are the maximum increments allowed by current **starch availability**.
--   $\Delta LA_{sink}$, $\Delta SA_{sink}$ and $\Delta B_{fineroot,sink}$ are the increments expected due to **growth rates**, which are affected by temperature and turgor limitations [^3].
+-   $\Delta LA_{sink}$, $\Delta SA_{sink}$ and $\Delta B_{fineroot,sink}$ are the increments expected due to **growth rates**, which are affected by temperature and turgor limitations [^2].
 :::
 :::::
 
-[^3]: Lindner et al (1997). Forest Ecology and Management, 95, 183–195.
+[^2]: Cabon et al (2020). New Phytologist, 226, 1325–1340. 
 
 . . .
 
@@ -275,9 +273,9 @@ $$\Delta DBH = 2 \cdot \sqrt{(DBH/2)^2+({\Delta SA}/\pi)} - DBH$$
 
 . . .
 
-Increments in height are linearly related to increments in diameter through a coefficient depending on light conditions [^4], and are limited by a maximum height.
+Increments in height are linearly related to increments in diameter through a coefficient depending on light conditions [^3], and are limited by a maximum height.
 
-[^4]: Lindner et al (1997). Forest Ecology and Management, 95, 183–195.
+[^3]: Lindner et al (1997). Forest Ecology and Management, 95, 183–195.
 
 . . .
 
