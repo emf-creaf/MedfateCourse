@@ -131,7 +131,7 @@ There are three ways of supplying weather forcing to simulation functions in **m
 
 # 2. Spatially-uncoupled simulations
 
-## Spatially-uncoupled simulations {.smaller}
+## Spatially-uncoupled simulation functions {.smaller}
 
 
 :::: {.columns}
@@ -290,7 +290,7 @@ Function `update_landscape()` will also modify column `soil`.
 
 # 3. Regional management scenarios
 
-## `fordyn_spatial()` *vs* `fordyn_scenario()` {.smaller}
+## Function `fordyn_scenario()` {.smaller}
 
 
 :::: {.columns}
@@ -383,15 +383,15 @@ In this example stands dominated by *Quercus faginea* are not harvested.
 
 **Management scenarios**
 
-Management scenarios are defined using function `create_management_scenario()` [^1].
+Management scenarios are defined using function `create_management_scenario()` [^2].
 
-[^1]: Three different kinds of scenarios are allowed in `create_management_scenario()`, two of them being demand-based.
+[^2]: Three different kinds of scenarios are allowed in `create_management_scenario()`, two of them being demand-based.
 
 . . .
 
-Demand-based management scenarios require specifying the demand in annual volume [^2].
+Demand-based management scenarios require specifying the demand in annual volume [^3].
 
-[^2]: The fact that demand is specified in volume entails that simulations need to be able to estimate timber volume for any given tree. In practice, this requires specifying a **volume_function**. See `?fordyn_scenario` for details.
+[^3]: The fact that demand is specified in volume entails that simulations need to be able to estimate timber volume for any given tree. In practice, this requires specifying a **volume_function**. See `?fordyn_scenario` for details.
 
 ```{r, echo = TRUE}
 scen <- create_management_scenario(units = defaultPrescriptionsBySpecies, 
@@ -450,7 +450,7 @@ We will often set `parallelize = TRUE` to speed-up calculations (`fordyn_scenari
 
 Function `fordyn_scenario()` returns a list whose elements are:
 
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = TRUE}
 names(fs)
 ```
 
@@ -458,7 +458,7 @@ names(fs)
 
 Stand-level results are available in element `result_sf`, whose columns should be easy to interpret if you have experience with `fordyn()`:
 
-```{r, echo = TRUE}
+```{r, echo = TRUE, eval = TRUE}
 fs$result_sf
 ```
 
@@ -469,8 +469,183 @@ fs$result_sf
 
 # 4. Watershed-level simulations
 
-## ss
+## Watershed-level simulation functions {.smaller}
 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+* Package **medfateland** allows conducting simulations of forest function and dynamics on a set of forest stands while including **lateral water transfer processes**. 
+* Similar to other models such as TETIS [^4], three lateral flows are considered between adjacent cells:
+    + Overland surface flows from upper elevation cells.
+    + Lateral saturated soil flows (i.e. interflow) between adjacent cells.
+    + Lateral groundwater flow (i.e. baseflow) between adjacent cells.
+* Following the nested models of **medfate**, **medfateland** offers functions `spwb_land()`, `growth_land()` and `fordyn_land()` for watershed-level simulations [^5].
+* Here we will cover the basics of watershed simulations only.
+
+:::
+::: {.column width="50%"}
+
+![](resources/img/Package_design_medfateland.png)
+
+:::
+::::
+
+
+
+
+. . .
+
+[^4]: Francés et al. (2007) Journal of Hydrology, 332, 226–240.
+[^5]: There exist `spwb_land_day()` and `growth_land_day()` for single-day simulations, paralleling `spwb_spatial_day()` and `growth_spatial_day()`.
+
+
+::: footer
+4. Watershed-level simulations
+:::
+
+## Model inputs (1) {.smaller}
+
+**Spatial structures**
+
+To perform simulations on a gridded landscape we require both an `sf` object: 
+
+```{r, echo = TRUE}
+example_watershed
+```
+
+. . .
+
+and a `SpatRast` topology with the same coordinate reference system:
+
+```{r, echo = TRUE}
+r <-terra::rast(xmin = 401380, ymin = 4671820, xmax = 402880, ymax = 4672620, 
+                nrow = 8, ncol = 15, crs = "epsg:32631")
+r
+```
+
+
+::: footer
+4. Watershed-level simulations
+:::
+
+## Model inputs (2) {.smaller}
+
+**Land cover type**
+
+Simulations over watersheds normally include different land cover types. These are described in column land_cover_type:
+
+```{r, echo = TRUE}
+table(example_watershed$land_cover_type)
+```
+
+. . .
+
+**Aquifer and snowpack**
+
+Columns `aquifer` and `snowpack` are used as state variables to store the water content in the aquifer and snowpack, respectively.
+
+. . .
+
+**Crop factors**
+
+Since the landscape contains agricultural lands, we need to define crop factors, which will determine transpiration flow as a proportion of potential evapotranspiration:
+
+```{r, echo = TRUE}
+example_watershed$crop_factor = NA
+example_watershed$crop_factor[example_watershed$land_cover_type=="agriculture"] = 0.75
+```
+
+. . .
+
+**Watershed control options**
+
+Analogously to local-scale simulations with **medfate**, watershed simulations have overall control parameters. Notably, the user needs to decide which sub-model will be used for lateral water transfer processes (at present, only `"tetis"` is available):
+
+```{r, echo = TRUE}
+ws_control <- default_watershed_control("tetis")
+```
+
+
+::: footer
+4. Watershed-level simulations
+:::
+
+
+## Launching simulations {.smaller}
+
+As with other functions, we may specify a simulation period (subsetting the weather input):
+
+```{r, echo = TRUE}
+dates <- seq(as.Date("2001-01-01"), as.Date("2001-01-31"), by="day")
+```
+
+When calling the simulation function, we must provide the raster topology, the input `sf` object, among other inputs:
+
+```{r, echo = TRUE}
+res_ws <- spwb_land(r, example_watershed, SpParamsMED, examplemeteo, 
+                    dates = dates, 
+                    local_control = local_control,
+                    watershed_control = ws_control, 
+                    progress = FALSE)
+     
+```
+
+. . .
+
+::: {.callout-important}
+Remember, watershed simulations require both control parameters for **local processes** and  control parameter for **watershed processes**.
+:::
+
+::: footer
+4. Watershed-level simulations
+:::
+
+## Simulation output (1) {.smaller}
+
+As usual, the output of `spwb_land()` is a named list.
+```{r, echo = TRUE}
+names(res_ws)
+```
+
+
+. . .
+
+Where `sf` is analogous to those of functions `*_spatial()`, containing final state of cells as well as cell-level summaries:
+
+```{r, echo = TRUE}
+res_ws$sf
+```
+
+::: footer
+4. Watershed-level simulations
+:::
+
+## Simulation output (2) {.smaller}
+
+In addition, element `watershed_balance` contains daily values of the water balance at the watershed level:
+
+```{r, echo = TRUE}
+head(res_ws$watershed_balance)
+```
+
+
+::: footer
+4. Watershed-level simulations
+:::
+
+## Advanced topics {.smaller}
+
+The following table summarises a set of advanced topics for watershed simulations.
+
+| Topic    | Description                                |
+|------------|--------------------------------------------|
+| Burn-in    | Watershed simulations always require burn-in periods where soil and aquifer levels reach equilibrium values. This is facilitated via function  `update_landscape()`. |
+| Calibration | Watershed simulations will normally require calibration of watershed-level control parameters. |
+| Weather resolution | Weather interpolation can have a **coarser resolution** than the watershed grid (see `weather_aggregation_factor` in `?default_watershed_control`). |
+| Parallelization | At present, **parallelization is not recommended** for watershed simulations. |
+| Result cells | Whereas by default only water balance summaries are produced for individual cell, it is possible to specify full **medfate** results on target cells, via a column called `result_cell`. |
+| Local control | Analogously to weather forcing, it is possible to specify spatial variation in the control parameters for local processes (e.g. Sperry or Sureau only in targetted cells), via a column called `local_control`. |
 
 
 ::: footer
