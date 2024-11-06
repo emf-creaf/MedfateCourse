@@ -147,8 +147,8 @@ local_control <- defaultControl()
 We can specify the target simulation period as a vector of `Date` or subset the target plots:
 
 ```{r, echo = TRUE}
-dates <- seq(as.Date("2001-01-01"), as.Date("2001-02-28"), by="day")
-example_ifn_small <- example_ifn[1:10, ]
+dates <- seq(as.Date("2001-01-01"), as.Date("2001-01-31"), by="day")
+example_ifn_small <- example_ifn[1:5, ]
 ```
 
 . . .
@@ -172,12 +172,89 @@ res
 2. Spatially-uncoupled simulations
 :::
 
-## Using summary functions
+## Using summary functions (1) {.smaller}
 
+Simulations with **medfate** can generate a lot of output. This can be reduced using `control` parameter, but simulation output with **medfateland** can require a lot of memory.
+
+. . .
+
+To save memory, it is possible to generate temporal summaries automatically after the simulation of each target forest stand, and avoid storing the full output of the simulation function (using `keep_results = FALSE`).
+
+. . .
+
+The key element here is the **summary function** (and possibly, its parameters), which needs to be defined and supplied.
+
+. . .
+
+In the following call to `spwb_spatial()` we provide the summary function for `spwb` objects available in **medfate**: 
+
+```{r, echo = TRUE}
+res_2 <- spwb_spatial(example_ifn_small, SpParamsMED, examplemeteo, 
+                  dates = dates, local_control = local_control,                  
+                  keep_results = FALSE,
+                  summary_function = summary.spwb, summary_arguments = list(freq="months"))
+res_2
+```
 
 
 ::: footer
 2. Spatially-uncoupled simulations
+:::
+
+## Using summary functions (2) {.smaller}
+
+We can access the simulation summary for the first stand using:
+```{r, echo = TRUE}
+res_2$summary[[1]]
+```
+
+. . .
+
+Summaries can be generated *a posteriori* for a given simulation, using function `simulation_summary()`, e.g.:
+
+```{r, echo = TRUE}
+simulation_summary(res, summary_function = summary.spwb, freq="months")
+```
+
+
+. . .
+
+::: {.callout-tip}
+Learning how to define summary functions is a good investment when using **medfateland**.
+:::
+
+::: footer
+2. Spatially-uncoupled simulations
+:::
+
+## Continuing a previous simulation {.smaller}
+
+The result of a simulation includes an element `state`, which stores the state of soil and stand variables at the end of the simulation. This information can be used to perform a new simulation from the point where the first one ended. 
+
+. . .
+
+In order to do so, we need to update the state variables in spatial object with their values at the end of the simulation, using function `update_landscape()`:
+
+```{r, echo = TRUE}
+example_ifn_mod <- update_landscape(example_ifn_small, res)
+example_ifn_mod
+```
+
+Note that now the `sf` object contains a column `state` with initialized inputs. 
+
+. . .
+
+Finally, we can call again the simulation function for a new consecutive time period:
+
+```{r, echo = TRUE}
+dates <- seq(as.Date("2001-02-01"), as.Date("2001-02-28"), by="day")
+res_3 <- spwb_spatial(example_ifn_mod, SpParamsMED, examplemeteo, 
+                    dates = dates, local_control = local_control)
+```
+
+
+::: {.callout-important}
+Function `update_landscape()` will also modify column `soil`.
 :::
 
 ---
