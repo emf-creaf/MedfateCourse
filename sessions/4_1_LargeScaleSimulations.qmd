@@ -131,11 +131,38 @@ There are three ways of supplying weather forcing to simulation functions in **m
 
 # 2. Spatially-uncoupled simulations
 
+## Spatially-uncoupled simulations {.smaller}
+
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
++ Spatially-uncoupled simulations are those where simulations in different stands are completely independent.
++ This situation is where *parallelization* is more advantageous. 
++ Following the nested models of **medfate**, **medfateland** offers functions `spwb_spatial()`, `growth_spatial()` and `fordyn_spatial()` for uncoupled simulations [^1].
+
+:::
+::: {.column width="50%"}
+
+![](resources/img/Package_design_medfateland.png)
+
+:::
+::::
+
+. . .
+
+[^1]: There exist `spwb_spatial_day()` and `growth_spatial_day()` for single-day simulations, paralleling `spwb_day()` and `growth_day()` in **medfate**.
+
+
+::: footer
+2. Spatially-uncoupled simulations
+:::
 
 ## Running spatially-uncoupled simulations {.smaller}
 
 
-Since it builds on medfate, simulations using medfateland require species parameters and control parameters for local simulations:
+Since it builds on **medfate**, simulations using **medfateland** require *species parameters* and *control parameters* for local simulations:
 
 ```{r, echo = TRUE}
 data("SpParamsMED")
@@ -148,7 +175,7 @@ We can specify the target simulation period as a vector of `Date` or subset the 
 
 ```{r, echo = TRUE}
 dates <- seq(as.Date("2001-01-01"), as.Date("2001-01-31"), by="day")
-example_ifn_small <- example_ifn[1:5, ]
+example_subset <- example_ifn[1:5, ]
 ```
 
 . . .
@@ -156,7 +183,7 @@ example_ifn_small <- example_ifn[1:5, ]
 If we are interested in water (or energy) balance, we can use function `spwb_spatial()` as follows:
 
 ```{r, echo = TRUE}
-res <- spwb_spatial(example_ifn_small, SpParamsMED, examplemeteo, 
+res <- spwb_spatial(example_subset, SpParamsMED, examplemeteo, 
                     dates = dates, local_control = local_control)
 ```
 
@@ -189,7 +216,7 @@ The key element here is the **summary function** (and possibly, its parameters),
 In the following call to `spwb_spatial()` we provide the summary function for `spwb` objects available in **medfate**: 
 
 ```{r, echo = TRUE}
-res_2 <- spwb_spatial(example_ifn_small, SpParamsMED, examplemeteo, 
+res_2 <- spwb_spatial(example_subset, SpParamsMED, examplemeteo, 
                   dates = dates, local_control = local_control,                  
                   keep_results = FALSE,
                   summary_function = summary.spwb, summary_arguments = list(freq="months"))
@@ -236,11 +263,11 @@ The result of a simulation includes an element `state`, which stores the state o
 In order to do so, we need to update the state variables in spatial object with their values at the end of the simulation, using function `update_landscape()`:
 
 ```{r, echo = TRUE}
-example_ifn_mod <- update_landscape(example_ifn_small, res)
-example_ifn_mod
+example_mod <- update_landscape(example_subset, res)
+example_mod
 ```
 
-Note that now the `sf` object contains a column `state` with initialized inputs. 
+Note that `example_mod` contains a new column `state` with initialized inputs. 
 
 . . .
 
@@ -248,13 +275,206 @@ Finally, we can call again the simulation function for a new consecutive time pe
 
 ```{r, echo = TRUE}
 dates <- seq(as.Date("2001-02-01"), as.Date("2001-02-28"), by="day")
-res_3 <- spwb_spatial(example_ifn_mod, SpParamsMED, examplemeteo, 
-                    dates = dates, local_control = local_control)
+res_3 <- spwb_spatial(example_mod, SpParamsMED, examplemeteo, 
+                      dates = dates, local_control = local_control)
 ```
 
 
 ::: {.callout-important}
 Function `update_landscape()` will also modify column `soil`.
+:::
+
+::: footer
+2. Spatially-uncoupled simulations
+:::
+
+# 3. Regional management scenarios
+
+## `fordyn_spatial()` *vs* `fordyn_scenario()` {.smaller}
+
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
++ Function  `fordyn_spatial()` allows running simulations of forest dynamics for a set of forest stands, possibly including forest management and stand-specific silviculture prescriptions.
++ However, in `fordyn_spatial()` simulated stand dynamics are **uncoupled**.
++ Function `fordyn_scenario()` allows simulating forest dynamics on a set of forest stands while evaluating a demand-based **management scenario**. 
++ Considering the management scenario leads to a relationship in the management actions on forest stands, hence **coupling simulations**. 
++ Running management scenarios is a complex task, we will cover all details in this tutorial.
+:::
+::: {.column width="50%"}
+
+![](resources/img/Package_design_medfateland.png)
+
+:::
+::::
+
+
+::: footer
+3. Regional management scenarios
+:::
+
+## Management units and prescriptions (1) {.smaller}
+
+Management scenarios require classifying forest stands into **management units**. Each management unit can be interpreted as a set of stands that are managed following the same prescriptions. 
+
+. . .
+
+Management units can be arbitrarily defined, but here we will define them on the basis of **dominant tree species**. 
+
+. . .
+
+The following code allows determining the dominant tree species in each of the 5 forest stands:
+
+```{r, echo = TRUE}
+example_subset$dominant_tree_species <- sapply(example_subset$forest,
+                                               stand_dominantTreeSpecies, SpParamsMED)
+example_subset$dominant_tree_species
+```
+
+. . .
+
+The package includes a table with **default prescription parameters** for a set of species, whose columns are management parameters:
+
+```{r, echo = TRUE}
+names(defaultPrescriptionsBySpecies)
+```
+
+. . .
+
+whereas the rows correspond to species or species groups, whose names are:
+
+```{r, echo = TRUE}
+head(defaultPrescriptionsBySpecies$Name)
+```
+
+::: footer
+3. Regional management scenarios
+:::
+
+## Management units and prescriptions (2) {.smaller}
+
+To specify the management unit for stands, we first define a column management_unit with missing values:
+```{r, echo = TRUE}
+example_subset$management_unit <- NA
+```
+
+. . .
+
+and then assign the corresponding row number of `defaultPrescriptionsBySpecies` for stands dominated by each species where management is to be conducted:
+
+```{r, echo = TRUE}
+example_subset$management_unit[example_subset$dominant_tree_species=="Pinus sylvestris"] <- 14
+example_subset$management_unit[example_subset$dominant_tree_species=="Quercus ilex"] <- 19
+example_subset$management_unit[example_subset$dominant_tree_species=="Quercus pubescens"] <- 23
+example_subset[,c("id", "dominant_tree_species", "management_unit")]
+```
+
+. . .
+
+In this example stands dominated by *Quercus faginea* are not harvested.
+
+::: footer
+3. Regional management scenarios
+:::
+
+## Management scenarios and represented area {.smaller}
+
+**Management scenarios**
+
+Management scenarios are defined using function `create_management_scenario()` [^1].
+
+[^1]: Three different kinds of scenarios are allowed in `create_management_scenario()`, two of them being demand-based.
+
+. . .
+
+Demand-based management scenarios require specifying the demand in annual volume [^2].
+
+[^2]: The fact that demand is specified in volume entails that simulations need to be able to estimate timber volume for any given tree. In practice, this requires specifying a **volume_function**. See `?fordyn_scenario` for details.
+
+```{r, echo = TRUE}
+scen <- create_management_scenario(units = defaultPrescriptionsBySpecies, 
+                                   annual_demand_by_species = c("Quercus ilex/Quercus pubescens" = 1300,
+                                                                "Pinus sylvestris" = 500))
+```
+
+. . .
+
+Note that in this case the timber obtained from *Q. ilex* or *Q. pubescens* will be subtracted from the same annual demand.
+
+. . .
+
+We can check the kind of management scenario using:
+
+```{r, echo = TRUE}
+scen$scenario_type
+```
+
+. . .
+
+
+**Represented area**
+
+Finally, it is necessary to specify the area (in ha) that each forest stand represents, because all timber volumes are defined at the stand level in units of **m3/ha**, whereas the demand is in units of **m3/yr**.
+
+. . . 
+
+In our example, we will assume a constant area of 100 ha for all stands:
+
+```{r, echo = TRUE}
+example_subset$represented_area_ha <- 100
+```
+
+::: footer
+3. Regional management scenarios
+:::
+
+## Launching simulations {.smaller}
+
+We are now ready to launch the simulation of the management scenario using a call to function `fordyn_scenario()`. 
+
+```{r, echo = TRUE, eval = TRUE}
+fs <- fordyn_scenario(example_subset, SpParamsMED, meteo = examplemeteo, 
+                      management_scenario = scen,
+                      parallelize = TRUE)
+```
+
+. . .
+
+::: {.callout-tip}
+We will often set `parallelize = TRUE` to speed-up calculations (`fordyn_scenario()` makes internall calls to `fordyn_spatial()` for each simulated year). 
+:::
+
+. . .
+
+Function `fordyn_scenario()` returns a list whose elements are:
+
+```{r, echo = TRUE}
+names(fs)
+```
+
+. . .
+
+Stand-level results are available in element `result_sf`, whose columns should be easy to interpret if you have experience with `fordyn()`:
+
+```{r, echo = TRUE}
+fs$result_sf
+```
+
+
+::: footer
+3. Regional management scenarios
+:::
+
+# 4. Watershed-level simulations
+
+## ss
+
+
+
+::: footer
+4. Watershed-level simulations
 :::
 
 ---
