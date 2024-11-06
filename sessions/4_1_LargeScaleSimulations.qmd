@@ -1,0 +1,187 @@
+---
+title: "Landscape- and regional-scale simulations (practice)"
+format:
+  revealjs:
+    incremental: true
+    smaller: false
+    logo: resources/img/emf_logo.svg
+    theme: [default, resources/scss/custom.scss]
+editor: source
+author: "Miquel De Cáceres, Rodrigo Balaguer"
+institute: "Ecosystem Modelling Facility, CREAF"
+toc: false
+toc-depth: 2
+number-sections: false
+slide-number: true
+progress: true
+---
+
+```{r, eval = TRUE, include = FALSE}
+library(medfateland)
+```
+
+## Outline
+
+::::: columns
+::: {.column width="60%"}
+#### 1. Data structures in medfateland
+
+#### 2. Spatially-uncoupled simulations
+
+#### 3. Regional management scenarios
+
+#### 4. Watershed-level simulations
+
+#### 5. Creating spatial inputs I: forest inventory plots
+
+#### 6. Creating spatial inputs II: continuous landscapes
+:::
+
+::: {.column width="40%"}
+M.C. Escher - Belvedere, 1958
+![](resources/img/Escher_belvedere.jpg)
+:::
+:::::
+
+# 1. Data structures in medfateland
+
+## Spatial structures (1) {.smaller}
+
++ Current versions of medfateland (ver. > 2.0.0) extensively use package **sf** (simple features) to represent spatial structures, where rows correspond to spatial units (normally point geometries) and columns include either *model inputs* (topography, forest, soil, weather forcing, etc.) or *model outputs*.
+
++ Essentially, an `sf` object is a data frame with spatial (geometry) information and a coordinate reference system.
+
++ Both `forest` and `soil` objects are nested in the corresponding columns of the `sf` object:
+
+. . .
+
+![](resources/img/data_structures.png){width="70%"}
+
+
+
+::: footer
+1. Data structures in medfateland
+:::
+
+## Spatial structures (2) {.smaller}
+
+If we load the package we can inspect the structure of an example dataset with 100 forest inventory plots:
+
+```{r, echo = TRUE}
+example_ifn
+```
+
+. . .
+
+Accessing a given position of the `sf` object we can inspect `forest` or `soil` objects:
+```{r, echo = TRUE}
+example_ifn$soil[[3]]
+```
+
+
+::: footer
+1. Data structures in medfateland
+:::
+
+## Spatial structures (3) {.smaller}
+
+To perform simulations on a gridded landscape we require both an `sf` object and an object `SpatRaster` from package **terra**, which defines the raster topology. For example, the following `sf` describes 65 cells in a small watershed:
+
+```{r, echo = TRUE}
+example_watershed
+```
+
+. . .
+
+The following code defines a 100-m raster topology with the same CRS as the watershed:
+
+```{r, echo = TRUE}
+r <-terra::rast(xmin = 401380, ymin = 4671820, xmax = 402880, ymax = 4672620, 
+                nrow = 8, ncol = 15, crs = "epsg:32631")
+r
+```
+
+
+::: footer
+1. Data structures in medfateland
+:::
+
+## Weather forcing in medfateland {.smaller}
+
+There are three ways of supplying weather forcing to simulation functions in **medfateland**, each with its own advantages/disadvantages:
+
+| Supply method  | Advantages            | Disadvantages            |
+|----------------|-----------------------|--------------------------|
+| A data frame as parameter `meteo` | Efficient both computationally and memory-wise   | Assumes weather is spatially constant |
+| A column `meteo` in `sf` objects | Allows a different weather forcing for each spatial unit | The resulting `sf` is often huge in memory requirements |
+| An interpolator object of class `stars` (or a list of them) as issued from package **meteoland** | More efficient in terms of memory usage | Weather interpolation is performed during simulations, which entails some computational burden |
+
+. . .
+
+::: {.callout-tip}
++ If a list of interpolator objects is supplied, each of the interpolators should correspond to a different, consecutive, non-overlapping time period (e.g. 5-year periods). 
++ Taken together, the interpolators should cover the simulated target period. 
++ The simulation function will use the correct interpolator for each target date.
+:::
+
+::: footer
+1. Data structures in medfateland
+:::
+
+
+# 2. Spatially-uncoupled simulations
+
+
+## Running spatially-uncoupled simulations {.smaller}
+
+
+Since it builds on medfate, simulations using medfateland require species parameters and control parameters for local simulations:
+
+```{r, echo = TRUE}
+data("SpParamsMED")
+local_control <- defaultControl()
+```
+
+. . .
+
+We can specify the target simulation period as a vector of `Date` or subset the target plots:
+
+```{r, echo = TRUE}
+dates <- seq(as.Date("2001-01-01"), as.Date("2001-02-28"), by="day")
+example_ifn_small <- example_ifn[1:10, ]
+```
+
+. . .
+
+If we are interested in water (or energy) balance, we can use function `spwb_spatial()` as follows:
+
+```{r, echo = TRUE}
+res <- spwb_spatial(example_ifn_small, SpParamsMED, examplemeteo, 
+                    dates = dates, local_control = local_control)
+```
+
+. . .
+
+The output is an `sf` object as well, where column `result` contains the results of calling `spwb()` and column `state` contains the final status of `spwbInput` objects:
+```{r, echo = FALSE}
+res
+```
+
+
+::: footer
+2. Spatially-uncoupled simulations
+:::
+
+## Using summary functions
+
+
+
+::: footer
+2. Spatially-uncoupled simulations
+:::
+
+---
+
+M.C. Escher - Belvedere, 1958
+
+![](resources/img/Escher_belvedere.jpg)
