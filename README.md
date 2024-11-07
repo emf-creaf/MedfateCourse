@@ -66,11 +66,25 @@ A set of additional data sets are required to follow the course:
 
 ## Course editions
 
-Three different course editions have been done so far:
+Three different course editions have been held so far:
 
-- **June 2022**: CREAF (Barcelona, Spain), Miquel De Cáceres, Víctor
-  Granda, Aitor Améztegui
-- **December 2022**: University of Eastern Finland (Joensuu, Finland),
-  Miquel De Cáceres & Víctor Granda
-- **November 2024**: Universidad de Valladolid (Soria, Spain), Miquel De
-  Cáceres & Rodrigo Balaguer-Romano
+#### First edition (June 2022)
+
+- *Dates*: 13-16 June 2022
+- *Location*: CREAF (Barcelona, Spain)
+- *Organizer*: CREAF (Watering Talents program)
+- *Lecturers*: Miquel De Cáceres, Víctor Granda & Aitor Améztegui
+
+#### Second edition (December 2022)
+
+- *Dates*: 30 November, 1-2 December 2022
+- *Location*: University of Eastern Finland (Joensuu, Finland)
+- *Organizer*: Blas Mola (UEF)
+- *Lecturers*: Miquel De Cáceres & Víctor Granda
+
+#### Third edition (November 2024)
+
+- *Dates*: 19-21 November 2024
+- *Location*: Universidad de Valladolid, Campus de Soria (Soria, Spain)
+- *Organizer*: Francisco Mauro (UVa)
+- *Lecturers*: Miquel De Cáceres & Rodrigo Balaguer-Romano
