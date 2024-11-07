@@ -7,12 +7,6 @@ output:
   pdf_document: default
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-
-
 ## Exercise objectives
 
   1. Learn to perform simulations of forest growth and forest dynamics with medfate
@@ -66,50 +60,44 @@ We will use data corresponding to a forest plot of sampled during the third and 
 
 ```
 
-6. Repeat the growth simulation after dividing `RGRcambiummax` for *P. halepensis* by two (btw, manually modifying model parameters to increase fit to observations is called *model tuning*). Did the visual fit to tree ring data improve?
-
-```{r}
-
-```
-
-7. Merge tree cohorts of the same DBH class to increase the speed of subsequent simulations. How many *P. halepensis* cohorts do we have after merging?
+6. Merge tree cohorts of the same DBH class to increase the speed of subsequent simulations. How many *P. halepensis* cohorts do we have after merging?
 
 ```{r}
 
 ```
 
 
-8. Use the merged forest as the input for simulation of forest dynamics using function `fordyn()` and historical weather data (*hint*: remember that `fordyn()` accepts vegetation, soil and control inputs directly). Make sure you understand the elements of the output object before continuing.
+7. Use the merged forest as the input for simulation of forest dynamics using function `fordyn()` and historical weather data (*hint*: remember that `fordyn()` accepts vegetation, soil and control inputs directly). Make sure you understand the elements of the output object before continuing.
  
 ```{r}
 
 ```
  
-9. Compare the stand-level metrics of the final `forest` state with the those derived from SNFI4. Is the final stand density and basal area predicted acceptably? What about shrub cover?
+8. Compare the stand-level metrics of the final `forest` state with the those derived from SNFI4. Is the final stand density and basal area predicted acceptably? What about shrub cover?
  
 ```{r}
 
 ```
  
-10. Predict future forest dynamics using weather projection data. Use the previous run of `fordyn()` as starting point for simulations. What is the predicted basal area at the end of the century?
+9. Predict future forest dynamics using weather projection data. Use the previous run of `fordyn()` as starting point for simulations. What is the predicted basal area at the end of the century?
 
 ```{r}
 
 ```
 
-11. Read the function documentation of `defaultManagementFunction()`. Then, create a list of management arguments using `defaultManagementArguments()` and increase the minimum basal area for thinning intervention from 20 to 30 m2/ha.
+10. Read the function documentation of `defaultManagementFunction()`. Then, create a list of management arguments using `defaultManagementArguments()` and increase the minimum basal area for thinning intervention from 20 to 30 m2/ha.
 
 ```{r}
 
 ```
 
-12. Repeat the projection of forest dynamics including forest management, by telling `fordyn()` to use function `defaultManagementFunction()` and providing the modified management arguments.
+11. Repeat the projection of forest dynamics including forest management, by telling `fordyn()` to use function `defaultManagementFunction()` and providing the modified management arguments.
 
 ```{r}
 
 ```
 
-13. Compare the projections without/with forest management, by plotting the predicted temporal variation in stand basal area. Compare the final tree structures at the end of the simulation. Why does simulation with management have a lower number of tree cohorts? Which simulation produces larger natural mortality?
+12. Compare the projections without/with forest management, by plotting the predicted temporal variation in stand basal area. Compare the final tree structures at the end of the simulation. Why does simulation with management have a lower number of tree cohorts? Which simulation produces larger natural mortality?
 
 ```{r}
 
