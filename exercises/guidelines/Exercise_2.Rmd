@@ -35,14 +35,14 @@ knitr::opts_chunk$set(echo = TRUE)
 + The experimental site, which is dedicated to study forest carbon and water cycles, has an enclosed area of 80×80 m but our target stand is a quadrat of dimensions 25×25 m. 
 + The following observations are available for year 2014:
 
-   + Stand total evapotranspiration estimated using an Eddy-covariance flux tower.
+   + Stand total evapo-transpiration estimated using an Eddy-covariance flux tower.
    + Soil moisture content of the topmost (0-30 cm) layer.
    + Transpiration estimates per leaf area, derived from sapflow measurements for *Q. ilex* and *P. halepensis*.
    + Pre-dawn and midday leaf water potentials for *Q. ilex* and *P. halepensis*.
 
 ## Guidelines by steps
 
-1. Load the file `"fontblanche.rds"`, which contains all the necessary data, and inspect the list elements until you understand them
+1. Load the file `"fb_data.rds"`, which contains all the necessary data, and inspect the list elements until you understand them
 
 ```{r}
 
@@ -54,7 +54,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-3. Build an object `soil` using the physical soil description included in the input data and examine its water holding and extractable water capacity.
+3. Initialize an object `soil` using the physical soil description included in the input data. Examine its water holding and extractable water capacity.
 
 ```{r}
 
@@ -114,7 +114,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-13. Compare the observed vs. simulated soil water content. Why are the two series not scaled? Try repeating the comparison with relativized values (*hint*: use `type = REW`). Calculate evaluation statistics.
+13. Compare the observed vs. simulated soil water content. Why are the two series not scaled? Calculate evaluation statistics.
 
 ```{r}
 
