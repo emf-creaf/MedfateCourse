@@ -3,8 +3,8 @@ title: "Exercise 3 solution"
 author: "Miquel De Cáceres"
 date: '2024-11-07'
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
