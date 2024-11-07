@@ -56,6 +56,7 @@ Exercises are included in a separate folder.
 - `exercises/solutions/Exercise_*_solution.Rmd` are solutions for
   exercises
 - `exercises/StudentRdata/*.rds` are data sets required for exercises
+- `exercises/R/*.R` are files to prepare data for exercises
 
 ## Additional data (not in this repository)
 
