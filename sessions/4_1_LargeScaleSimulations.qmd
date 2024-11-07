@@ -2,6 +2,7 @@
 title: "Landscape- and regional-scale simulations (practice)"
 format:
   revealjs:
+    df-print: default
     incremental: true
     smaller: false
     logo: resources/img/emf_logo.svg
@@ -623,7 +624,7 @@ res_ws$sf
 
 ## Simulation output (2) {.smaller}
 
-In addition, element `watershed_balance` contains daily values of the water balance at the watershed level:
+In addition, element `watershed_balance` contains daily values of the water balance **at the watershed level**:
 
 ```{r, echo = TRUE}
 head(res_ws$watershed_balance)
@@ -651,6 +652,301 @@ The following table summarises a set of advanced topics for watershed simulation
 ::: footer
 4. Watershed-level simulations
 :::
+
+# 5. Creating spatial inputs I: forest inventory plots
+
+
+## Input preparation workflow
+
+
+The functions introduced in this section are meant to be executed sequentially to progressively add spatial information to an initial `sf` object of plot coordinates:
+
+![](resources/img/forest_inventory_init_workflow.png){width="80%"}
+
+... but users are free to use them in the most convenient way.
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+## Target locations: Poblet again! {.smaller}
+
+We begin by defining an `sf` object with the target locations and forest stand identifiers (column id):
+
+```{r, echo = TRUE}
+cc <- rbind(c(1.0215, 41.3432),
+            c(1.0219, 41.3443), 
+            c(1.0219, 41.3443))
+d <- data.frame(lon = cc[,1], lat = cc[,2], 
+                id = c("POBL_CTL", "POBL_THI_BEF", "POBL_THI_AFT"))
+x <- sf::st_as_sf(d, coords = c("lon", "lat"), crs = 4326)
+x
+```
+
+where `POBL_CTL` is the control forest plot, `POBL_THI_BEF` is the managed plot before thinning and `POBL_THI_AFT` is the managed plot after thinning.
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+## Topography {.smaller}
+
+You should have access to a **Digital Elevation Model** (DEM) at a desired resolution. 
+
+. . .
+
+Here we will use a DEM raster for Catalonia at 30 m resolution, which we load using package **terra**:
+```{r, echo = TRUE}
+dataset_path <- "~/OneDrive/EMF_datasets/"
+dem <- terra::rast(paste0(dataset_path,"Topography/Products/Catalunya/MET30m_ETRS89_UTM31_ICGC.tif"))
+dem
+```
+
+. . .
+
+Having these inputs, we can use function add_topography() to add topographic features to our starting `sf`:
+
+```{r, echo = TRUE, eval = TRUE}
+y_1 <- add_topography(x, dem = dem, progress = FALSE)
+```
+
+We can check that there are no missing values in topographic features:
+
+```{r, echo = TRUE, message=TRUE, warning=TRUE}
+check_topography(y_1)
+```
+
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+
+## Forest inventory data (1) {.smaller}
+
+The next step is to define forest objects for our simulations. 
+
+. . .
+
+While at this point you would read your own data from a file or data base, here we simply load the Poblet data from **medfate**:
+
+```{r, echo = TRUE}
+data(poblet_trees)
+head(poblet_trees)
+```
+
+. . .
+
+We learned in the first exercise to use function `forest_mapTreeData()` from package **medfate**. Here we can speed up the process for all plots defining the mapping and calling function `add_forests()`:
+
+```{r, echo = TRUE, warning=TRUE, message=TRUE}
+mapping <- c("id" = "Plot.Code", "Species.name" = "Species", "DBH" = "Diameter.cm")
+y_2 <- add_forests(y_1, tree_table = poblet_trees, tree_mapping = mapping, 
+                   SpParams = SpParamsMED)
+```
+
+. . .
+
+Two warnings were raised, informing us that *Quercus humilis* (downy oak) was not matched to any species name in `SpParamsMED` (that is the reason why we provided it as an input).
+
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+
+## Forest inventory data (2) {.smaller}
+
+We correct the scientific name for downy oak and repeat to avoid losing tree records:
+
+```{r, echo = TRUE, warning=TRUE, message=TRUE}
+poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] <- "Quercus pubescens"
+y_2 <- add_forests(y_1, tree_table = poblet_trees, tree_mapping = mapping, 
+                   SpParams = SpParamsMED)
+```
+
+. . .
+
+We can use function `check_forests()` to verify that there is no missing data:
+
+```{r, echo = TRUE, warning=TRUE, message=TRUE}
+check_forests(y_2)
+```
+
+
+. . .
+
+Like in the first exercise, we should provide plot size and tree height, which we do as follows:
+
+```{r, echo = TRUE, warning=TRUE, message=TRUE}
+poblet_trees$PlotSurface <- 706.86
+poblet_trees$Height.cm <- 100 * 1.806*poblet_trees$Diameter.cm^0.518
+mapping <- c(mapping, "plot.size" = "PlotSurface", "Height" = "Height.cm")
+y_2 <- add_forests(y_1, tree_table = poblet_trees, tree_mapping = mapping, SpParams = SpParamsMED)
+```
+
+
+And check again...
+
+```{r, echo = TRUE, warning=TRUE, message=TRUE}
+check_forests(y_2)
+```
+
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+## Soil data (1) {.smaller}
+
+Soil information is most usually lacking for the target locations. 
+
+. . .
+
+Here we assume regional maps are not available, so that we resort to SoilGrids 2.0, a global product provided at 250 m resolution [^6].
+
+[^6]: Hengl et al. (2017) PLoS ONE 12, e0169748; Poggio et al. (2021) Soil, 7, 217-240.
+
+. . .
+
+Function `add_soilgrids()` can perform queries using the REST API of SoilGrids, but this becomes problematic for multiple sites. 
+
+. . .
+
+Hence, we recommend downloading SoilGrid rasters for the target region and storing them in a particular format, so that function `add_soilgrids()` can read them (check the details of the function documentation). 
+
+. . .
+
+Assuming we have the raster data, parsing soil grids is straightforward:
+
+```{r, echo = TRUE}
+soilgrids_path = paste0(dataset_path,"Soils/Sources/Global/SoilGrids/Spain/")
+y_3 <- add_soilgrids(y_2, soilgrids_path = soilgrids_path, progress = FALSE)
+```
+
+. . .
+
+And the result has an extra column `soil`:
+
+```{r, echo = TRUE}
+y_3
+```
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+## Soil data (2) {.smaller}
+
+We can use function `check_soils()` to detect whether there are missing values:
+
+```{r, echo = TRUE, message=TRUE, warning=TRUE}
+check_soils(y_3)
+```
+
+. . .
+
+::: {.callout-warning}
++ SoilGrids tends to overestimate soil water holding capacity due to the underestimation of rock content
++ Other products exist, and function `modify_soils()` can help using them. See vignette [PreparingInputs](https://emf-creaf.github.io/medfateland/articles/intro/PreparingInputs_I.html)
++ Nevertheless, uncertainty in soil depth and rock content is always high!
+:::
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+## Procedure using package forestables (1) {.smaller}
+
+R package **forestables** allows reading and harmonizing national forest inventory data from the FIA (USA forest inventory), FFI (France forest inventory) and IFN (Spain forest inventory). 
+
+. . .
+
+Using **forestables** simplifies the data preparation for large areas.
+
+. . .
+
+Here we will use a subset of IFN4 data that is provided as example output of **forestables**:
+
+```{r}
+library(forestables)
+ifn4_example <- ifn_output_example |>
+  dplyr::filter(version == "ifn4")
+ifn4_example
+```
+
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+## Procedure using package forestables (2) {.smaller}
+
+Function `parse_forestable()` allows parsing a data frame (or sf) issued from package **forestables** and reshaping it for **medfateland**. 
+
+```{r, echo = TRUE}
+y_1 <- parse_forestable(ifn4_example[1:10,])
+```
+
+. . .
+
+The function parses plot *ids*, *coordinates*, and *topography* (according to IFN data!). Importantly, it defines a new column called `forest` and parses tree and shrub data into it.
+
+```{r, echo = TRUE}
+y_1
+```
+
+. . .
+
+The remaining steps are similar to the general procedure, with calls to `check_forests()`, `add_soilgrids()`, etc.
+
+
+::: footer
+5. Creating spatial inputs I: forest inventory plots
+:::
+
+# 6. Creating spatial inputs II: continuous landscapes
+
+## Input preparation workflow for arbitrary locations {.smaller}
+
+When target locations are not sampled forest inventory plots, as in continuous landscapes, the preparation workflow changes slightly:
+
+![](resources/img/Landscape_init_workflow.png){width="60%"}
+
+. . .
+
+The main difference lies in the need to conduct **imputation** of forest structure and composition.
+
+::: footer
+6. Creating spatial inputs II: continuous landscapes
+:::
+
+## Forest imputation and correction {.smaller}
+
+::: {.callout-warning}
+Forest imputation can be a difficult task!
+:::
+
+. . .
+
+Function `impute_forests()` performs a simple imputation of forest inventory plots on the basis of a **forest map** and **topographic position**.
+
+. . .
+
+Whereas forest composition is provided by the **forest map**, the forest structure resulting from `impute_forests()` should be corrected!
+
+. . .
+
+If one has access to structure mapes (e.g. from LiDAR data), this second step can be done using function `modify_forest_structure()`.
+
+. . .
+
+The whole procedure is illustrated in vignette [PreparationInputs_II](https://emf-creaf.github.io/medfateland/articles/intro/PreparingInputs_II.html).
+
+::: footer
+6. Creating spatial inputs II: continuous landscapes
+:::
+
 
 ---
 

@@ -2,6 +2,7 @@
 title: "Forest water and energy balance (practice)"
 format:
   revealjs:
+    df-print: default
     incremental: true
     smaller: false
     logo: resources/img/emf_logo.svg

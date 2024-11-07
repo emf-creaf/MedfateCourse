@@ -48,6 +48,14 @@ Exercises are included in a separate folder.
 + `exercises/solutions/Exercise_*_solution.Rmd` are solutions for exercises
 + `exercises/StudentRdata/*.rds` are data sets required for exercises
 
+## Additional data (not in this repository)
+
+A set of additional data sets are required to follow the course:
+
++ Digital Elevation Model for Catalonia.
++ SoilGrids layers for the Iberian Peninsula.
+
+
 ## Course editions
 
 Three different course editions have been done so far:
