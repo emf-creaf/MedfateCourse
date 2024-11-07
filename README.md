@@ -26,8 +26,8 @@ Code for course sessions is in `sessions/*.qmd` files. Printed
 `sessions/pdf/*.pdf` files can also be found.
 
 1.  Introduction
-    - Introduction to process-based forest modelling (theory)
-    - Introduction to **medfate** modelling framework (theory)
+    - Introduction to process-based forest modelling
+    - Introduction to **medfate** modelling framework
 2.  Forest water and energy balance
     - Design and formulation of forest water/energy balance (theory)
     - Running forest water energy balance (practice)
@@ -56,6 +56,13 @@ Exercises are included in a separate folder.
 - `exercises/solutions/Exercise_*_solution.Rmd` are solutions for
   exercises
 - `exercises/StudentRdata/*.rds` are data sets required for exercises
+
+## Additional data (not in this repository)
+
+A set of additional data sets are required to follow the course:
+
+- Digital Elevation Model for Catalonia.
+- SoilGrids layers for the Iberian Peninsula.
 
 ## Course editions
 

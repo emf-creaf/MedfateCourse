@@ -1,0 +1,80 @@
+---
+title: "Species parameter estimation using traits4models"
+format:
+  revealjs:
+    df-print: default
+    incremental: true
+    smaller: false
+    logo: resources/img/emf_logo.svg
+    theme: [default, resources/scss/custom.scss]
+editor: source
+author: "Miquel De Cáceres, Rodrigo Balaguer"
+institute: "Ecosystem Modelling Facility, CREAF"
+toc: false
+toc-depth: 2
+number-sections: false
+slide-number: true
+progress: true
+---
+
+```{r, eval = TRUE, include = FALSE}
+library(medfateland)
+```
+
+## Outline
+
+::::: columns
+::: {.column width="60%"}
+#### 1. Why package `traits4models`?
+
+#### 2. Harmonization of plant trait databases
+
+#### 3. Harmonization of allometry databases
+
+#### 4. Populating species parameter tables for medfate
+
+:::
+
+::: {.column width="40%"}
+M.C. Escher - Babel tower, 1928
+![](resources/img/Escher_tower.jpg)
+:::
+:::::
+
+# 1. Why package `traits4models`?
+
+## Purpose
+
+
+
+
+::: footer
+1. Why package `traits4models`?
+:::
+
+# 2. Harmonization of plant trait databases
+
+
+::: footer
+2. Harmonization of plant trait databases
+:::
+
+# 3. Harmonization of allometry databases
+
+
+::: footer
+3. Harmonization of allometry databases
+:::
+
+# 4. Populating species parameter tables for medfate
+
+
+::: footer
+4. Populating species parameter tables for medfate
+:::
+
+---
+
+M.C. Escher - Babel tower, 1928
+
+![](resources/img/Escher_tower.jpg)

@@ -21,8 +21,8 @@ The course slides are made using [Quarto](https://quarto.org/). This publishing 
 Code for course sessions is in `sessions/*.qmd` files. Printed `sessions/pdf/*.pdf` files can also be found.
 
 1. Introduction
-    + Introduction to process-based forest modelling (theory)
-    + Introduction to **medfate** modelling framework (theory)
+    + Introduction to process-based forest modelling
+    + Introduction to **medfate** modelling framework
 2. Forest water and energy balance
     + Design and formulation of forest water/energy balance (theory)
     + Running forest water energy balance (practice)

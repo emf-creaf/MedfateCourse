@@ -1,5 +1,5 @@
 ---
-title: "Landscape- and regional-scale simulations (practice)"
+title: "Landscape- and regional-scale simulations"
 format:
   revealjs:
     df-print: default
