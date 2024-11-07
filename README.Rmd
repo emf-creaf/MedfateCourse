@@ -21,17 +21,17 @@ The course slides are made using [Quarto](https://quarto.org/). This publishing 
 Code for course sessions is in `sessions/*.qmd` files. Printed `sessions/pdf/*.pdf` files can also be found.
 
 1. Introduction
-    + Introduction to process-based forest modelling
-    + Introduction to **medfate** modelling framework
+    + 1.1 Introduction to process-based forest modelling
+    + 1.2 Introduction to **medfate** modelling framework
 2. Forest water and energy balance
-    + Design and formulation of forest water/energy balance (theory)
-    + Running forest water energy balance (practice)
+    + 2.1 Design and formulation of forest water/energy balance (theory)
+    + 2.2 Running forest water energy balance (practice)
 3. Forest carbon balance and forest dynamics
-    + Design and formulation of forest carbon balance and forest dynamics (theory)
-    + Running forest growth and forest dynamics (practice)
+    + 3.1 Design and formulation of forest carbon balance and forest dynamics (theory)
+    + 3.2 Running forest growth and forest dynamics (practice)
 4. Large-scale features of the modelling framework
-    + Large-scale simulations using package **medfateland**
-    + Species parameter estimation using **traits4models**
+    + 4.1 Large-scale simulations using package **medfateland**
+    + 4.2 Species parameter estimation using **traits4models**
 
 ## Ancillary files
 
