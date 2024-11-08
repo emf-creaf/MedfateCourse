@@ -16,27 +16,20 @@ slide-number: true
 progress: true
 ---
 
-## Outline
+# Outline
 
 ::::: columns
 ::: {.column width="50%"}
-#### 1. Preliminary concepts
-
-#### 2. Forest water balance in medfate
-
-#### 3. Transpiration and photosynthesis under the basic model
-
-#### 4. Transpiration and photosynthesis under the advanced model
-
-#### 5. Plant drought stress and cavitation
-
-#### 6. Basic vs. advanced models: a summary of differences
+1. Preliminary concepts
+2. Forest water balance in medfate
+3. Transpiration and photosynthesis under the basic model
+4. Transpiration and photosynthesis under the advanced model
+5. Plant drought stress and cavitation
+6. Basic vs. advanced models: a summary of differences
 :::
 
 ::: {.column width="50%"}
-M.C. Escher - Waterfall, 1961
-
-![](resources/img/Escher_waterfall.png)
+![M.C. Escher - Waterfall, 1961](resources/img/Escher_waterfall.png)
 :::
 :::::
 
@@ -448,7 +441,7 @@ cowplot::plot_grid(g1, g2, nrow=1, ncol=2)
 ![](resources/img/hydraulics_sureau.jpg){width="80%"}
 
 -   Plant hydraulics of **SurEau-ECOS** [^6], including plant water storage.
--   Stomatal regulation based on a Baldocchi-type model.
+-   Stomatal regulation based on a semi-empirical model.
 :::
 :::::
 
@@ -470,7 +463,7 @@ The supply function describes the **steady-state** rate of water flow, $E$, as a
 
 The steady-state flow rate $E_i$ through any element $i$ is related to the flow-induced drop in water potential across that element, $\Delta \Psi_i  = \Psi_{down} - \Psi_{up}$, by the integral of the vulnerability curve $k_i(\Psi)$ [^7]:
 
-[^7]: Sperry et al. (1998)
+[^7]: Sperry et al. (1998) Plant, Cell & Environment, 21, 347–359.
 
 $$E_i = \int_{\Psi_{up}}^{\Psi_{down}}{k_i(\Psi) d\Psi}$$
 
@@ -688,6 +681,4 @@ Effect on the stem vulnerability curve:
 
 ------------------------------------------------------------------------
 
-M.C. Escher - Waterfall, 1961
-
-![](resources/img/Escher_waterfall.png)
+![M.C. Escher - Waterfall, 1961](resources/img/Escher_waterfall.png)

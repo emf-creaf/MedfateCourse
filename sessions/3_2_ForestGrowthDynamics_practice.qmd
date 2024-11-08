@@ -16,25 +16,19 @@ slide-number: true
 progress: true
 ---
 
-## Outline
+# Outline
 
 ::::: columns
 ::: {.column width="50%"}
-#### 1. Forest growth inputs
-
-#### 2. Running forest growth
-
-#### 3. Evaluation of growth predictions
-
-#### 4. Forest dynamics
-
-#### 5. Forest dynamics including management
+1. Forest growth inputs
+2. Running forest growth
+3. Evaluation of growth predictions
+4. Forest dynamics
+5. Forest dynamics including management
 :::
 
 ::: {.column width="40%"}
-M.C. Escher - Up and down, 1947
-
-![](resources/img/Escher_updown.jpg)
+![M.C. Escher - Up and down, 1947](resources/img/Escher_updown.jpg)
 :::
 :::::
 
@@ -501,6 +495,4 @@ Instead of using the in-built management function, you could code your own manag
 
 ------------------------------------------------------------------------
 
-M.C. Escher - Up and down, 1947
-
-![](resources/img/Escher_updown.jpg)
+![M.C. Escher - Up and down, 1947](resources/img/Escher_updown.jpg)

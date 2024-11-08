@@ -16,23 +16,20 @@ slide-number: true
 progress: true
 ---
 
-## Outline
+# Outline
 
 ::::: columns
-::: {.column width="60%"}
-#### 1. Purpose and development context
+::: {.column width="50%"}
 
-#### 2. Set of R packages
-
-#### 3. Package installation and documentation
-
-#### 4. Overview of medfate package functions
-
-#### 5. Overview of medfateland package functions
+1. Purpose and development context
+2. Set of R packages
+3. Package installation and documentation
+4. Overview of medfate package functions
+5. Overview of medfateland package functions
 :::
 
-::: {.column width="40%"}
-M.C. Escher - Reptiles, 1943 ![](resources/img/Escher_reptiles.png)
+::: {.column width="50%"}
+![M.C. Escher - Reptiles, 1943](resources/img/Escher_reptiles.png)
 :::
 :::::
 
@@ -124,7 +121,18 @@ library(medfateland)
 
 ## Documentation
 
-Several vignettes, describing creation of model inputs and how to perform simulations, are available at the web pages of [medfate](https://emf-creaf.github.io/medfate/) and [medfateland](https://emf-creaf.github.io/medfate/).
+A [reference book](https://emf-creaf.github.io/medfatebook/) is available for detailed formulation of processes.
+
+. . .
+
+Several vignettes are available at the web pages of [medfate](https://emf-creaf.github.io/medfate/) and [medfateland](https://emf-creaf.github.io/medfate/), including:
+
+a. How to create model inputs
+b. How to perform simulations
+c. Parameter estimation procedures
+d. Evaluation benchmarks
+e. Estimated computational times
+
 
 ::: footer
 3. Package installation and documentation
@@ -237,6 +245,4 @@ Package **medfateland** allows simulating forest functioning and dynamics on set
 
 ---
 
-M.C. Escher - Reptiles, 1943 
-
-![](resources/img/Escher_reptiles.png)
+![M.C. Escher - Reptiles, 1943](resources/img/Escher_reptiles.png)

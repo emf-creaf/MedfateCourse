@@ -16,27 +16,20 @@ slide-number: true
 progress: true
 ---
 
-## Outline
+# Outline
 
 :::: {.columns}
 ::: {.column width="50%"}
-#### 1. Simulation models and processes
-
-#### 2. Carbon pools and carbon balance
-
-#### 3. Growth and senescence
-
-#### 4. Mortality and recruitment
-
-#### 5. Biomass balance
-
-#### 6. Fire effects
+1. Simulation models and processes
+2. Carbon pools and carbon balance
+3. Growth and senescence
+4. Mortality and recruitment
+5. Biomass balance
+6. Fire effects
 :::
 
 ::: {.column width="40%"}
-M.C. Escher - Three worlds, 1955
-
-![](resources/img/Escher_threeworlds.jpg)
+![M.C. Escher - Three worlds, 1955](resources/img/Escher_threeworlds.jpg)
 :::
 ::::
 
@@ -417,6 +410,4 @@ where $N_{dead}$ is the density of dead individuals and $B_{plant}$ is the initi
 
 ------------------------------------------------------------------------
 
-M.C. Escher - Three worlds, 1955
-
-![](resources/img/Escher_threeworlds.jpg)
+![M.C. Escher - Three worlds, 1955](resources/img/Escher_threeworlds.jpg)

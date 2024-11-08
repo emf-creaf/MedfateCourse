@@ -16,20 +16,17 @@ slide-number: true
 progress: true
 ---
 
-## Outline
+# Outline
 
 ::::: columns
 ::: {.column width="50%"}
-#### 1. Fundamental concepts
-
-#### 2. Modelling cycle
-
-#### 3. Overview of process-based forest models
+1. Fundamental concepts
+2. Modelling cycle
+3. Overview of process-based forest models
 :::
 
 ::: {.column width="45%"}
-M.C. Escher - Ascending and Descending, 1960
-![](resources/img/Escher_ascending_descending.jpg)
+![M.C. Escher - Ascending and Descending, 1960](resources/img/Escher_ascending_descending.jpg)
 :::
 :::::
 
@@ -37,11 +34,11 @@ M.C. Escher - Ascending and Descending, 1960
 
 ## Models: What are they?
 
--   *Model* - A simplification of reality constructed to gain insights into a set of attributes of a physical, biological, economic, or social system.
+-   *Model* - A **simplification of reality** constructed to gain insights into a set of attributes of a physical, biological, economic, or social system.
 -   *Conceptual model* - A **hypothesis** regarding the important factors that govern the behavior of an object or a process of interest.
 -   *Statistical model* - A numerical model **built using observations** within a probabilistic framework.
 -   *Mechanistic (or process-based) model* - A numerical model that explicitly **represents the understanding** of physical, chemical or biological processes.
--   *Simulation model* - A numerical model that represents the development of a solution by incremental steps through the model domain.
+-   *Simulation model* - A numerical model that represents the development of a solution by **incremental steps** through the model domain.
 
 ::: footer
 1. Fundamental concepts
@@ -49,9 +46,9 @@ M.C. Escher - Ascending and Descending, 1960
 
 ## Model components
 
--   *Modules* or *sub-models* - An independent or self-contained component of a model.
--   *State variables* - The dependent variables calculated within a model, which often **change over the simulation**.
--   *Parameters* - Terms in the model that are **fixed during a model run** but can be changed in different runs.
+-   *Modules* or *sub-models* - An independent or self-contained component of a model (e.g. Farquhar's C3 photosynthesis model).
+-   *State variables* - The dependent variables calculated within a model, which often **change over the simulation** (e.g. soil moisture).
+-   *Parameters* - Terms in the model that are **fixed during a model run** but can be changed in different runs (e.g. soil texture).
 -   *Constants* - Terms that are **fixed values under all runs**, representing known physical, biological or ecological activities (e.g. the speed of light).
 
 ::: footer
@@ -60,12 +57,20 @@ M.C. Escher - Ascending and Descending, 1960
 
 ## Model assessment
 
--   *Verification* - Examination of the implementation to ascertain that they truly represents the conceptual model and there are no inherent numerical problems.
+::::: columns
+::: {.column width="70%"}
+-   *Verification* - Examination of the implementation to ascertain that they truly **represents the conceptual model** and there are no inherent numerical problems.
 -   *Qualitative assessment* - Uncertainty in model predictions that **cannot be quantified** (i.e. about the theory underlying the model or the model design).
--   *Uncertainty analysis* - Investigation of the effects of lack of knowledge or potential errors of inputs (e.g. climate forcing) on the model output.
+-   *Uncertainty analysis* - Investigation of the **effects** of lack of knowledge or potential errors of **inputs** (e.g. climate forcing) **on the model output**.
 -   *Robustness* - The capacity of a model to perform well **across the full range of conditions** for which it was designed.
 -   *Sensitivity* - The degree to which the model outputs are **affected by changes in input parameters**.
 -   *Transparency* - The clarity and completeness with which data, assumptions, and methods of analysis are **documented**.
+:::
+::: {.column width="30%"}
+![](resources/img/is-my-model-good-enough.jpg)
+:::
+:::::
+
 
 ::: footer
 1. Fundamental concepts
@@ -73,8 +78,10 @@ M.C. Escher - Ascending and Descending, 1960
 
 # 2. Modelling cycle
 
-## Modelling tasks: Development
+## Modelling tasks: Development (1)
 
+::::: columns
+::: {.column width="60%"}
 1.  *Problem formulation*
 
     -   Definition of objectives
@@ -83,30 +90,35 @@ M.C. Escher - Ascending and Descending, 1960
 2.  *Model design and formulation*
 
     -   Data availability
-    -   Use of existing vs. new model
     -   Conceptual model
-    -   Use of existing modules
+    -   Use of existing vs. new model formulation
+    -   Compatibility with other modules
 
 3.  *Implementation*
 
     -   Algorithmic design
-    -   Model coding (e.g. C++)
+    -   Model coding (e.g. Python, C++)
     -   Profiling and code optimization
+:::
 
-![](resources/img/Schmolke_modelling_cycle.png){.absolute width="400" top="100" right="30"}
-
+::: {.column width="40%"}
+![](resources/img/Schmolke_modelling_cycle.png)
+:::
+:::::
 ::: footer
 2. Modelling cycle
 :::
 
 
-## Modelling tasks: Development
+## Modelling tasks: Development (2)
 
+::::: columns
+::: {.column width="60%"}
 4.  *Parameterization and calibration*
 
     -   Sources for direct parameter estimation
     -   Sources for parameter calibration
-    -   Meta-modelling
+    -   Meta-modelling (estimation from the output of other models)
 
 5.  *Model analysis*
 
@@ -119,8 +131,12 @@ M.C. Escher - Ascending and Descending, 1960
     -   Simulation and documentation
     -   Quantifying uncertainty
     -   Evidence for decision
+:::
 
-![](resources/img/Schmolke_modelling_cycle.png){.absolute width="400" top="100" right="30"}
+::: {.column width="40%"}
+![](resources/img/Schmolke_modelling_cycle.png)
+:::
+:::::
 
 ::: footer
 2. Modelling cycle
@@ -215,6 +231,4 @@ RHESYS, ECH2O, Tethys-Chloris
 
 ---
 
-M.C. Escher - Ascending and Descending, 1960
-
-![](resources/img/Escher_ascending_descending.jpg)
+![M.C. Escher - Ascending and Descending, 1960](resources/img/Escher_ascending_descending.jpg)

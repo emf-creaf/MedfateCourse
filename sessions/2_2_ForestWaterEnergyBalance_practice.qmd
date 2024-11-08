@@ -17,25 +17,19 @@ slide-number: true
 progress: true
 ---
 
-## Outline
+# Outline
 
 ::::: columns
-::: {.column width="50%"}
-#### 1. Water balance input object
-
-#### 2. Basic water balance
-
-#### 3. Evaluating model performance
-
-#### 4. Advanced water/energy balance
-
-#### 5. Modifying model inputs
+::: {.column width="40%"}
+1. Water balance input object
+2. Basic water balance
+3. Evaluating model performance
+4. Advanced water/energy balance
+5. Modifying model inputs
 :::
 
-::: {.column width="50%"}
-M.C. Escher - Night and day, 1938
-
-![](resources/img/Escher_nightday.jpg)
+::: {.column width="60%"}
+![M.C. Escher - Night and day, 1938](resources/img/Escher_nightday.jpg)
 :::
 :::::
 
@@ -431,7 +425,7 @@ By default, a call to `spwb_day()` will modify the input object. This behavior c
 
 As with `spwb()`, there is a plot function for results of `spwb_day()`. For example we can use:
 
-```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=8, fig.height = 3.5}
+```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=8, fig.height = 3.0}
 plot(sd1, type = "LeafTranspiration", bySpecies = TRUE)
 ```
 
@@ -546,6 +540,4 @@ which will display messages describing the parameters that are modified.
 
 ------------------------------------------------------------------------
 
-M.C. Escher - Night and day, 1938
-
-![](resources/img/Escher_nightday.jpg)
+![M.C. Escher - Night and day, 1938](resources/img/Escher_nightday.jpg)

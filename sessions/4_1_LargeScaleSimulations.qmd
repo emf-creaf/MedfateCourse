@@ -21,26 +21,20 @@ progress: true
 library(medfateland)
 ```
 
-## Outline
+# Outline
 
 ::::: columns
-::: {.column width="60%"}
-#### 1. Data structures in medfateland
-
-#### 2. Spatially-uncoupled simulations
-
-#### 3. Regional management scenarios
-
-#### 4. Watershed-level simulations
-
-#### 5. Creating spatial inputs I: forest inventory plots
-
-#### 6. Creating spatial inputs II: continuous landscapes
+::: {.column width="61%"}
+1. Data structures in medfateland
+2. Spatially-uncoupled simulations
+3. Regional management scenarios
+4. Watershed-level simulations
+5. Creating spatial inputs I: forest inventory plots
+6. Creating spatial inputs II: continuous landscapes
 :::
 
-::: {.column width="40%"}
-M.C. Escher - Belvedere, 1958
-![](resources/img/Escher_belvedere.jpg)
+::: {.column width="39%"}
+![M.C. Escher - Belvedere, 1958](resources/img/Escher_belvedere.jpg)
 :::
 :::::
 
@@ -950,6 +944,4 @@ The whole procedure is illustrated in vignette [PreparationInputs_II](https://em
 
 ---
 
-M.C. Escher - Belvedere, 1958
-
-![](resources/img/Escher_belvedere.jpg)
+![M.C. Escher - Belvedere, 1958](resources/img/Escher_belvedere.jpg)
