@@ -1,5 +1,7 @@
 ---
 title: "Forest water and energy balance (practice)"
+title-slide-attributes: 
+  data-background-color: "#672178"
 format:
   revealjs:
     df-print: default
@@ -17,7 +19,7 @@ slide-number: true
 progress: true
 ---
 
-# Outline
+# Outline {background-color="#672178"}
 
 ::::: columns
 ::: {.column width="40%"}
@@ -142,7 +144,7 @@ x$paramsTranspiration
 1.  Water balance input object
 :::
 
-# 2. Basic water balance
+# 2. Basic water balance {background-color="#672178"}
 
 ## Water balance run {.smaller}
 
@@ -278,7 +280,7 @@ shinyplot(S)
 2.  Basic water balance
 :::
 
-# 3. Evaluating model performance
+# 3. Evaluating model performance {background-color="#672178"}
 
 ## Observed data and evaluation metrics {.smaller}
 
@@ -334,7 +336,7 @@ shinyplot(S, exampleobs)
 3.  Evaluating model performance
 :::
 
-# 4. Advanced water/energy balance
+# 4. Advanced water/energy balance {background-color="#672178"}
 
 ## Creating an input object for the advanced model {.smaller}
 
@@ -482,7 +484,7 @@ shinyplot(S_adv)
 4.  Advanced water/energy balance
 :::
 
-# 5. Modifying model inputs
+# 5. Modifying model inputs {background-color="#672178"}
 
 ## Modifying forest input data {.smaller}
 
@@ -538,6 +540,6 @@ which will display messages describing the parameters that are modified.
 5.  Modifying model inputs
 :::
 
-------------------------------------------------------------------------
+#  {background-color="#672178"}
 
 ![M.C. Escher - Night and day, 1938](resources/img/Escher_nightday.jpg)

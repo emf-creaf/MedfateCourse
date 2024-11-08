@@ -1,5 +1,7 @@
 ---
 title: "Model inputs"
+title-slide-attributes: 
+  data-background-color: "#803300"
 format:
   revealjs:
     incremental: true
@@ -16,29 +18,22 @@ slide-number: true
 progress: true
 ---
 
-## Outline
+# Outline {background-color="#803300"}
 
 ::::: columns
 ::: {.column width="50%"}
-#### 1. Species parameters
-
-#### 2. Forest input
-
-#### 3. Vertical profiles
-
-#### 4. Soil input
-
-#### 5. Simulation control
-
-#### 6. Simulation input object
-
-#### 7. Weather forcing
+1. Species parameters
+2. Forest input
+3. Vertical profiles
+4. Soil input
+5. Simulation control
+6. Simulation input object
+7. Weather forcing
 :::
 
 ::: {.column width="50%"}
-M.C. Escher - Dragon, 1952
 
-![](resources/img/Escher_dragon.jpg)
+![M.C. Escher - Dragon, 1952](resources/img/Escher_dragon.jpg)
 :::
 :::::
 
@@ -46,7 +41,7 @@ M.C. Escher - Dragon, 1952
 library(medfate)
 ```
 
-# 1. Species parameters
+# 1. Species parameters {background-color="#803300"}
 
 ## Species parameter table
 
@@ -89,7 +84,7 @@ DT::datatable(SpParamsDefinition,
 1.  Species parameters
 :::
 
-# 2. Forest input
+# 2. Forest input {background-color="#803300"}
 
 ## Forest class
 
@@ -247,7 +242,7 @@ Users will not normally call `forest2aboveground()`, but is important to underst
 2.  Forest input
 :::
 
-# 3. Vertical profiles
+# 3. Vertical profiles {background-color="#803300"}
 
 ## Leaf distribution
 
@@ -318,7 +313,7 @@ shinyplot(forest, SpParamsMED)
 3.  Vertical profiles
 :::
 
-# 4. Soil input
+# 4. Soil input {background-color="#803300"}
 
 ## Soil physical description
 
@@ -422,7 +417,7 @@ soil_retentionCurvePlot(examplesoil, model="both")
 4.  Soil input
 :::
 
-# 5. Simulation control
+# 5. Simulation control {background-color="#803300"}
 
 ## Simulation control list
 
@@ -454,7 +449,7 @@ Control parameters should be left to their **default values** until their effect
 5.  Simulation control
 :::
 
-# 6. Simulation input object
+# 6. Simulation input object {background-color="#803300"}
 
 ## Simulation input object
 
@@ -488,7 +483,7 @@ The following workflow summarises the initialisation for the three functions:
 6.  Simulation input object
 :::
 
-# 7. Weather forcing
+# 7. Weather forcing {background-color="#803300"}
 
 ## Weather data frame
 
@@ -525,8 +520,6 @@ head(examplemeteo, 2)
 7.  Weather forcing
 :::
 
-------------------------------------------------------------------------
+#  {background-color="#803300"}
 
-M.C. Escher - Dragon, 1952
-
-![](resources/img/Escher_dragon.jpg)
+![M.C. Escher - Dragon, 1952](resources/img/Escher_dragon.jpg)

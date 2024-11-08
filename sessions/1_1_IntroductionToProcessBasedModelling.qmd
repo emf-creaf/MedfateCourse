@@ -1,5 +1,7 @@
 ---
 title: "Introduction to process-based forest modelling"
+title-slide-attributes: 
+  data-background-color: "#ABC837"
 format:
   revealjs:
     incremental: true
@@ -16,7 +18,7 @@ slide-number: true
 progress: true
 ---
 
-# Outline
+# Outline {background-color="#ABC837"}
 
 ::::: columns
 ::: {.column width="50%"}
@@ -30,7 +32,7 @@ progress: true
 :::
 :::::
 
-# 1. Fundamental concepts
+# 1. Fundamental concepts {background-color="#ABC837"}
 
 ## Models: What are they?
 
@@ -76,7 +78,7 @@ progress: true
 1. Fundamental concepts
 :::
 
-# 2. Modelling cycle
+# 2. Modelling cycle {background-color="#ABC837"}
 
 ## Modelling tasks: Development (1)
 
@@ -143,7 +145,7 @@ progress: true
 :::
 
 
-# 3. Overview of process-based forest models
+# 3. Overview of process-based forest models {background-color="#ABC837"}
 
 ## A typology of forest processes
 
@@ -229,6 +231,6 @@ RHESYS, ECH2O, Tethys-Chloris
 :::
 
 
----
+#  {background-color="#ABC837"}
 
 ![M.C. Escher - Ascending and Descending, 1960](resources/img/Escher_ascending_descending.jpg)

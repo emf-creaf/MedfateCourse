@@ -1,5 +1,7 @@
 ---
 title: "Introduction to medfate modelling framework"
+title-slide-attributes: 
+  data-background-color: "#D4AA00"
 format:
   revealjs:
     incremental: true
@@ -16,7 +18,7 @@ slide-number: true
 progress: true
 ---
 
-# Outline
+# Outline {background-color="#D4AA00"}
 
 ::::: columns
 ::: {.column width="50%"}
@@ -33,7 +35,7 @@ progress: true
 :::
 :::::
 
-# 1. Purpose and development context
+# 1. Purpose and development context {background-color="#D4AA00"}
 
 ## Model scope
 
@@ -70,7 +72,7 @@ Jordi Martínez-Vilalta (CREAF-UAB, Spain), Maurizio Mencuccini (ICREA, Spain), 
 1. Purpose and development context
 :::
 
-# 2. Set of R packages
+# 2. Set of R packages {background-color="#D4AA00"}
 
 ## Package suite
 
@@ -86,7 +88,7 @@ During the development of **medfate** ancillary functions were originally includ
 2. Set of R packages
 :::
 
-# 3. Package installation and documentation
+# 3. Package installation and documentation {background-color="#D4AA00"}
 
 ## Installation
 
@@ -138,7 +140,7 @@ e. Estimated computational times
 3. Package installation and documentation
 :::
 
-# 4. Overview of medfate package functions
+# 4. Overview of medfate package functions {background-color="#D4AA00"}
 
 ## Simulation functions
 
@@ -219,7 +221,7 @@ Sub-model functions are grouped by *subject*:
 4. Overview of medfate package functions
 :::
 
-# 5. Overview of medfateland package functions
+# 5. Overview of medfateland package functions {background-color="#D4AA00"}
 
 ## Simulation functions
 
@@ -243,6 +245,6 @@ Package **medfateland** allows simulating forest functioning and dynamics on set
 5. Overview of medfateland package functions
 :::
 
----
+#  {background-color="#D4AA00"}
 
 ![M.C. Escher - Reptiles, 1943](resources/img/Escher_reptiles.png)

@@ -1,5 +1,7 @@
 ---
 title: "Landscape- and regional-scale simulations"
+title-slide-attributes: 
+  data-background-color: "#2D5016"
 format:
   revealjs:
     df-print: default
@@ -21,7 +23,7 @@ progress: true
 library(medfateland)
 ```
 
-# Outline
+# Outline {background-color="#2D5016"}
 
 ::::: columns
 ::: {.column width="61%"}
@@ -38,7 +40,7 @@ library(medfateland)
 :::
 :::::
 
-# 1. Data structures in medfateland
+# 1. Data structures in medfateland {background-color="#2D5016"}
 
 ## Spatial structures (1) {.smaller}
 
@@ -124,7 +126,7 @@ There are three ways of supplying weather forcing to simulation functions in **m
 :::
 
 
-# 2. Spatially-uncoupled simulations
+# 2. Spatially-uncoupled simulations {background-color="#2D5016"}
 
 ## Spatially-uncoupled simulation functions {.smaller}
 
@@ -283,7 +285,7 @@ Function `update_landscape()` will also modify column `soil`.
 2. Spatially-uncoupled simulations
 :::
 
-# 3. Regional management scenarios
+# 3. Regional management scenarios {background-color="#2D5016"}
 
 ## Function `fordyn_scenario()` {.smaller}
 
@@ -462,7 +464,7 @@ fs$result_sf
 3. Regional management scenarios
 :::
 
-# 4. Watershed-level simulations
+# 4. Watershed-level simulations {background-color="#2D5016"}
 
 ## Watershed-level simulation functions {.smaller}
 
@@ -647,7 +649,7 @@ The following table summarises a set of advanced topics for watershed simulation
 4. Watershed-level simulations
 :::
 
-# 5. Creating spatial inputs I: forest inventory plots
+# 5. Creating spatial inputs I: forest inventory plots {background-color="#2D5016"}
 
 
 ## Input preparation workflow
@@ -899,7 +901,7 @@ The remaining steps are similar to the general procedure, with calls to `check_f
 5. Creating spatial inputs I: forest inventory plots
 :::
 
-# 6. Creating spatial inputs II: continuous landscapes
+# 6. Creating spatial inputs II: continuous landscapes {background-color="#2D5016"}
 
 ## Input preparation workflow for arbitrary locations {.smaller}
 
@@ -942,6 +944,6 @@ The whole procedure is illustrated in vignette [PreparationInputs_II](https://em
 :::
 
 
----
+#  {background-color="#2D5016"}
 
 ![M.C. Escher - Belvedere, 1958](resources/img/Escher_belvedere.jpg)

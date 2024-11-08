@@ -1,5 +1,7 @@
 ---
 title: "Forest water and energy balance (theory)"
+title-slide-attributes: 
+  data-background-color: "#800033"
 format:
   revealjs:
     incremental: true
@@ -16,12 +18,12 @@ slide-number: true
 progress: true
 ---
 
-# Outline
+# Outline {background-color="#800033"}
 
 ::::: columns
 ::: {.column width="50%"}
 1. Preliminary concepts
-2. Forest water balance in medfate
+2. Forest water balance in `medfate`
 3. Transpiration and photosynthesis under the basic model
 4. Transpiration and photosynthesis under the advanced model
 5. Plant drought stress and cavitation
@@ -170,7 +172,7 @@ The decrease in soil water potential caused by drought has multiple effects on p
 1.  Preliminary concepts
 :::
 
-# 2. Forest water balance in medfate
+# 2. Forest water balance in `medfate` {background-color="#800033"}
 
 ## Water balance components {.smaller}
 
@@ -250,7 +252,7 @@ The three sub-models differ greatly in computational demand.
 2.  Forest water balance in medfate
 :::
 
-# 3. Transpiration and photosynthesis under the basic model
+# 3. Transpiration and photosynthesis under the basic model {background-color="#800033"}
 
 ## Maximum transpiration {.smaller}
 
@@ -367,7 +369,7 @@ which can be intuitively understood as an *average of soil water potential* taki
 3.  Transpiration and photosynthesis under the basic model
 :::
 
-# 4. Transpiration and photosynthesis under the advanced model
+# 4. Transpiration and photosynthesis under the advanced model {background-color="#800033"}
 
 ```{r, echo = FALSE}
 data(examplemeteo)
@@ -567,7 +569,7 @@ Cuticular conductances are not only species-specific but also change with leaf t
 4.  Transpiration and photosynthesis under the advanced model
 :::
 
-# 5. Plant drought stress and cavitation
+# 5. Plant drought stress and cavitation {background-color="#800033"}
 
 ## Daily drought stress {.smaller}
 
@@ -631,7 +633,7 @@ Effect on the stem vulnerability curve:
 5.  Plant drought stress and cavitation
 :::
 
-# 6. Basic vs. advanced models: a summary of differences
+# 6. Basic vs. advanced models: a summary of differences {background-color="#800033"}
 
 ## Process representation {.smaller}
 
@@ -679,6 +681,6 @@ Effect on the stem vulnerability curve:
 6.  Basic vs. advanced models: a summary of differences
 :::
 
-------------------------------------------------------------------------
+#  {background-color="#800033"}
 
 ![M.C. Escher - Waterfall, 1961](resources/img/Escher_waterfall.png)

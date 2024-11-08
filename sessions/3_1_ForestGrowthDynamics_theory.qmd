@@ -1,5 +1,7 @@
 ---
 title: "Forest growth and dynamics (theory)"
+title-slide-attributes: 
+  data-background-color: "#214478"
 format:
   revealjs:
     incremental: true
@@ -16,7 +18,7 @@ slide-number: true
 progress: true
 ---
 
-# Outline
+# Outline {background-color="#214478"}
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -65,7 +67,7 @@ library(ggplot2)
 1.  Simulation models and processes
 :::
 
-# 2. Carbon compartments, pools and carbon balance
+# 2. Carbon compartments, pools and carbon balance {background-color="#214478"}
 
 
 ## Carbon compartments and pools {.smaller}
@@ -169,7 +171,7 @@ $$\Delta{S_{labile}} = A_g - (M + G + RE)$$
 2.  Carbon compartments, pools and carbon balance
 :::
 
-# 3. Growth and senescence
+# 3. Growth and senescence {background-color="#214478"}
 
 ## Drivers of growth and senescence
 
@@ -288,7 +290,7 @@ As for trees, shrub height is limited to a maximum value.
 3.  Growth and senescence
 :::
 
-# 4. Mortality and recruitment
+# 4. Mortality and recruitment {background-color="#214478"}
 
 ## Plant mortality {.smaller}
 
@@ -364,7 +366,7 @@ Unlike mortality, recruitment is simulated *at the end of a simulated year* (onl
 4.  Mortality and recruitment
 :::
 
-# 5. Biomass balance
+# 5. Biomass balance {background-color="#214478"}
 
 ## Biomass balance {.smaller}
 
@@ -398,7 +400,7 @@ where $N_{dead}$ is the density of dead individuals and $B_{plant}$ is the initi
 5.  Biomass balance
 :::
 
-# 6. Fire effects
+# 6. Fire effects {background-color="#214478"}
 
 ## Design of fire effects {.smaller}
 
@@ -408,6 +410,6 @@ where $N_{dead}$ is the density of dead individuals and $B_{plant}$ is the initi
 6.  Fire effects
 :::
 
-------------------------------------------------------------------------
+#  {background-color="#214478"}
 
 ![M.C. Escher - Three worlds, 1955](resources/img/Escher_threeworlds.jpg)

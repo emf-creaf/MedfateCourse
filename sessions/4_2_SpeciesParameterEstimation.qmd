@@ -1,5 +1,7 @@
 ---
 title: "Species parameter estimation using traits4models"
+title-slide-attributes: 
+  data-background-color: "#786721"
 format:
   revealjs:
     df-print: default
@@ -21,7 +23,7 @@ progress: true
 library(medfateland)
 ```
 
-# Outline
+# Outline {background-color="#786721"}
 
 ::::: columns
 ::: {.column width="55%"}
@@ -37,7 +39,7 @@ library(medfateland)
 :::
 :::::
 
-# 1. Why package `traits4models`?
+# 1. Why package `traits4models`? {background-color="#786721"}
 
 ## Purpose {.smaller}
 
@@ -57,7 +59,7 @@ library(medfateland)
 1. Why package `traits4models`?
 :::
 
-# 2. Harmonization of plant trait databases
+# 2. Harmonization of plant trait databases {background-color="#786721"}
 
 ## Why harmonization?
 
@@ -96,7 +98,7 @@ For each trait data source, harmonization needs to be conducted in terms of:
 2. Harmonization of plant trait databases
 :::
 
-# 3. Harmonization of allometry databases
+# 3. Harmonization of allometry databases {background-color="#786721"}
 
 ## Harmonization procedure {.smaller}
 
@@ -122,7 +124,7 @@ For each allometry data source, harmonization needs to be conducted in terms of:
 3. Harmonization of allometry databases
 :::
 
-# 4. Creating species parameter tables for `medfate`
+# 4. Creating species parameter tables for `medfate` {background-color="#786721"}
 
 ## Parameter estimation procedure {.smaller}
 
@@ -186,6 +188,6 @@ Data sets `SpParamsES`, `SpParamsFR` and `SpParamsUS` provided in **traits4model
 :::
 
 
----
+#  {background-color="#786721"}
 
 ![M.C. Escher - Babel tower, 1928](resources/img/Escher_tower.jpg)
