@@ -115,12 +115,12 @@ x_dual <- spwbInput(fb_forest, fb_soil, fb_SpParams,
 
 ## Step 6. Run water balance model while assessing computation times
 
-Computation time can be limiting in some cases. Here we can insert the simulation within a block inside a call to `system.time()`, to estimate computation time:
+Computation time can be limiting in some cases. To estimate computation time, we can insert the simulation call to `spwb()` within a block inside a call to `system.time()`, i.e.:
 
 ```{r, eval=TRUE}
-system.time({fb_buckets <- spwb(x_buckets, fb_meteo, elevation = 420, latitude = 43.24)})
-system.time({fb_single <- spwb(x_single, fb_meteo, elevation = 420, latitude = 43.24)})
-system.time({fb_dual <- spwb(x_dual, fb_meteo, elevation = 420, latitude = 43.24)})
+system.time({fb_buckets <- spwb(x_buckets, fb$meteo, elevation = 420, latitude = 43.24)})
+system.time({fb_single <- spwb(x_single, fb$meteo, elevation = 420, latitude = 43.24)})
+system.time({fb_dual <- spwb(x_dual, fb$meteo, elevation = 420, latitude = 43.24)})
 ```
 
 **Interpretation**: The bucket model is the fastest, followed by the single domain. The dual domain sub-model is the slowest of all three. These differences in computation time arise from the need to solve soil fluxes at fine temporal steps.
@@ -137,135 +137,67 @@ rownames(m) <- c("buckets", "single", "dual")
 m
 ```
 
-**Interpretation**: Rainfall inputs and intercepted water are equal regardless of the sub-model for soil fluxes. The buckets model
+**Interpretation**: Rainfall inputs and intercepted water are equal regardless of the sub-model for soil fluxes.
+
++ The multi-bucket sub-model is the one with highest soil infiltration (hence, lowest infiltration excess), but it also predicts highest saturation excess, so the final runoff values are highest (`r round(sum(fb_buckets$WaterBalance$Runoff))`) and deep drainage values are lowest (`r round(sum(fb_buckets$WaterBalance$DeepDrainage))`).
++ The single-domain sub-model has lower infiltration, but also generates saturation excess, resulting in a moderate runoff (`r round(sum(fb_single$WaterBalance$Runoff))`). Deep drainage is also intermediate (`r round(sum(fb_single$WaterBalance$DeepDrainage))`). In addition, the model presents numerical solution problems which are indicated by non-negligible values of capillarity rise.
++ The dual-permeability sub-model is the one with lowest runoff (`r round(sum(fb_dual$WaterBalance$Runoff))`), because, despite lowest infiltration rates, has also lowest saturation excess. Percolation through macropores in this model creates highest rates of deep drainage (`r round(sum(fb_dual$WaterBalance$DeepDrainage))`). 
 
 ## Step 8. Compare runoff and deep drainage temporal patterns
 
-Surface run-off occurs the same day as precipitation events, whereas deep drainage can last for some days after the event: 
-```{r echo=TRUE, fig.height=9, fig.width=9, fig=TRUE}
-g1<-plot(fb_basic_buckets)+
+We can use function `plot()` to draw precipitation input and, then, the water components contributing to water export under each sub-model (using `type = "Export"`).
+
+```{r echo=TRUE, fig.height=9, fig.width=11, fig=TRUE}
+g0 <- plot(fb_buckets)+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
   theme(legend.position = "none")
-g2<-plot(fb_basic_buckets, "Export")+
+g1 <- plot(fb_buckets, type = "Export")+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
   scale_y_continuous(limits = c(0,60))+
-  labs(title="buckets")+
+  labs(title="multi-bucket")+
   theme(legend.position = "inside", legend.position.inside = c(0.35,0.60))
-g3<-plot(fb_basic_single, "Export")+
+g2 <- plot(fb_single, type = "Export")+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
   scale_y_continuous(limits = c(0,60))+
-  labs(title="single")+
+  labs(title="single domain")+
   theme(legend.position = "none")
-g4<-plot(fb_basic_dual, "Export")+
+g3 <- plot(fb_dual, type = "Export")+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
   scale_y_continuous(limits = c(0,60))+
-  labs(title="dual")+
+  labs(title="dual permeability")+
   theme(legend.position = "none")
-plot_grid(g1,g2, g3, g4, ncol=1, rel_heights = c(0.5,1,1,1))
+plot_grid(g0, g1, g2, g3, ncol=1, rel_heights = c(0.5,1,1,1))
 ```
 
+**Interpretation**: Surface run-off occurs the same day as precipitation events and, as seen in the step before, is highest under the multi-bucket model. Under this model, low values of deep drainage can last for some days after the event. The single domain and dual permeability sub-models generate a more realistic pattern of deep drainage after the event, although values are higher under the dual permeability sub-model. This is because the single-domain sub-model underestimates water flows near saturation (Richards equations are most appropriate for unsaturated soils).
 
-```{r echo=TRUE, fig.height=9, fig.width=9, fig=TRUE}
-g1<-plot(fb_basic_buckets, summary.freq = "months")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  theme(legend.position = "none")
-g2<-plot(fb_basic_buckets, "Export", summary.freq = "months")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  scale_y_continuous(limits = c(0,200))+
-  labs(title="buckets")+
-  theme(legend.position = "inside", legend.position.inside = c(0.35,0.60))
-g3<-plot(fb_basic_single, "Export", summary.freq = "months")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  scale_y_continuous(limits = c(0,200))+
-  labs(title="single")+
-  theme(legend.position = "none")
-g4<-plot(fb_basic_dual, "Export", summary.freq = "months")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  scale_y_continuous(limits = c(0,200))+
-  labs(title="dual")+
-  theme(legend.position = "none")
-plot_grid(g1,g2, g3, g4, ncol=1, rel_heights = c(0.5,1,1,1))
-```
-## Step 8. Examine evapotranspiration flows
+## Step 9. Compare soil water content dynamics against observed data
 
-Precipitation events also generate flows of intercepted water the same day of the event. Evaporation from the bare soil can proceed some days after the event. Transpiration flow is the dominant one in most days, decreasing in summer due to drought.
+As known from exercise 2a, observed soil moisture dynamics is in `fb$measuredData`. We can compare observed versus simulated soil moisture dynamics using function `evaluation_plot`. Here we combine plots of temporal series with scatter plots of observed vs. predicted values:
 
-```{r fig=TRUE, fig.width=9, fig.height = 9}
-g1<-plot(fb_basic_buckets)+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+```{r, warning=FALSE, message=FALSE, fig.width=10, fig.height=10}
+g1a <- evaluation_plot(fb_buckets, fb$measuredData, type = "SWC", plotType="dynamics")+
+  labs(title="multi-bucket")+
   theme(legend.position = "none")
-g2<-plot(fb_basic_buckets, "Evapotranspiration")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  scale_y_continuous(limits = c(0,4))+
-  labs(title="buckets")+
-  theme(legend.position = "inside", legend.position.inside = c(0.14,0.73))
-g3<-plot(fb_basic_single, "Evapotranspiration")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  scale_y_continuous(limits = c(0,4))+
-  labs(title="single")+
+g1b <- evaluation_plot(fb_buckets, fb$measuredData, type = "SWC", plotType="scatter")+
+  labs(title="")
+g1 <- plot_grid(g1a, g1b, ncol = 2, rel_widths = c(1, 0.4))
+
+g2a <- evaluation_plot(fb_single, fb$measuredData, type = "SWC", plotType="dynamics")+
+  labs(title="single domain")+
   theme(legend.position = "none")
-g4<-plot(fb_basic_dual, "Evapotranspiration")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  scale_y_continuous(limits = c(0,4))+
-  labs(title="dual")+
+g2b <- evaluation_plot(fb_single, fb$measuredData, type = "SWC", plotType="scatter")+
+  labs(title="")
+g2 <- plot_grid(g2a, g2b, ncol = 2, rel_widths = c(1, 0.4))
+
+g3a <- evaluation_plot(fb_dual, fb$measuredData, type = "SWC", plotType="dynamics")+
+  labs(title="dual permeability")+
   theme(legend.position = "none")
-plot_grid(g1,g2, g3, g4, ncol=1, rel_heights = c(0.5,1,1,1))
+g3b <- evaluation_plot(fb_dual, fb$measuredData, type = "SWC", plotType="scatter")+
+  labs(title="")
+g3 <- plot_grid(g3a, g3b, ncol = 2, rel_widths = c(1, 0.4))
+
+plot_grid(g1, g2, g3, ncol = 1)
 ```
 
-## Step 9. Soil water potential dynamics
-
-We can display the dynamics of water potential in different soil layers using:
-
-```{r fig=TRUE, fig.width=9, fig.height = 9}
-g1<-plot(fb_basic_buckets)+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  theme(legend.position = "none")
-g2<-plot(fb_basic_buckets, "SoilPsi")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+ 
-  scale_y_continuous("Soil WP (MPa)", lim=c(-4,0))+
-  labs(title="buckets")+
-  theme(legend.position = "inside", legend.position.inside = c(0.14,0.73))
-g3<-plot(fb_basic_single, "SoilPsi")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+ 
-  scale_y_continuous("Soil WP (MPa)", lim=c(-4,0))+
-  labs(title="single")+
-  theme(legend.position = "none")
-g4<-plot(fb_basic_dual, "SoilPsi")+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m")+ 
-  scale_y_continuous("Soil WP (MPa)", lim=c(-4,0))+
-  labs(title="dual")+
-  theme(legend.position = "none")
-plot_grid(g1,g2, g3, g4, 
-          ncol=1, rel_heights = c(0.5,1,1,1))
-```
-
-**Tip**: Normally, we should expect lower layers to have a less dynamic behaviour, but strange results can occur if, for instance, a large proportion of roots is in deeper layers.
-
-
-```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=8}
-fb_observed <- fb$measuredData
-g1 <- evaluation_plot(fb_basic_buckets, fb_observed, type = "SWC", plotType="dynamics")+
-  labs(title="buckets")
-g2 <- evaluation_plot(fb_basic_single, fb_observed, type = "SWC", plotType="dynamics")+
-  labs(title="single")
-g3 <- evaluation_plot(fb_basic_dual, fb_observed, type = "SWC", plotType="dynamics")+
-  labs(title="dual")
-plot_grid(g1,g2, g3, ncol = 1)
-```
-
-```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=8}
-g1 <- evaluation_plot(fb_basic_buckets, fb_observed, type = "SWC", plotType="scatter")+
-  labs(title="buckets")
-g2 <- evaluation_plot(fb_basic_single, fb_observed, type = "SWC", plotType="scatter")+
-  labs(title="single")
-g3 <- evaluation_plot(fb_basic_dual, fb_observed, type = "SWC", plotType="scatter")+
-  labs(title="dual")
-plot_grid(g1,g2, g3, ncol = 2)
-```
-
-```{r}
-evaluation_stats(fb_basic_buckets, fb_observed, typ="SWC")
-evaluation_stats(fb_basic_single, fb_observed, typ="SWC")
-evaluation_stats(fb_basic_dual, fb_observed, typ="SWC")
-```
-
+**Interpretation**: In all cases, the observed series are not scaled with simulated ones, for reasons discussed in exercise 2a. However, here we focus on the behavior of the model near saturation, where bulk soil fluxes are more relevant. Note that the dual permeability model is the one where the shape of post-event decrease in topsoil moisture is more realistic, despite the bias with observed values.

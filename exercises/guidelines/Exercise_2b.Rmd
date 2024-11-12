@@ -14,9 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise objectives
 
-  1. Learn how to run water balance under different alternatives for soil vertical water fluxes.
-  2. Understand the sensitivity of the water balance results to below-ground parameters (root distribution and soil water holding capacity).
-
+Learn how sub-model of bulk soil water movement influences water balance results.
 
 ## Exercise data
 ### Font-Blanche research forest
@@ -71,7 +69,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-7. Compare annual values of water balance components under the three sub-models (*hint*: use the `summary()` function for `spwb` objects):
+7. Compare annual values of water balance components under the three sub-models (*hint*: use the `summary()` function for `spwb` objects). Which sub-model generates highest run-off ? Which one generates highest deep drainage? Why?
 
 ```{r}
 
