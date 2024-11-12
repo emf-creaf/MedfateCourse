@@ -1,8 +1,6 @@
-README
+Course on the medfate modelling framework
 ================
-Miquel De Cáceres
-
-# Course on the medfate modelling framework
+Miquel De Cáceres, Rodrigo Balaguer-Romano
 
 ## Introduction
 
@@ -60,12 +58,15 @@ Exercises are included in a separate folder.
 
 The proposed exercises are the following:
 
-| Exercise | Purpose                                                         |
-|----------|-----------------------------------------------------------------|
-| 1        | Create inputs (forest, soil, weather)                           |
-| 2a       | Run basic and advanced water balance. Learn evaluation.         |
-| 2b       | Sensitivity of water balance results to below ground decisions. |
-| 3        | Run growth and forest dynamics, including management.           |
+| Exercise | Purpose |
+|----|----|
+| 1 | Create inputs (forest, soil, weather) |
+| 2a | Run basic and advanced water balance. Learn evaluation. |
+| 2b | Water balance simulations under different bulk soil water sub-models. |
+| 2c |  |
+| 3 | Run growth and forest dynamics, including management. |
+| 4a |  |
+| 4b | Watershed-level hydrological simulations |
 
 ## Additional data (not in this repository)
 
