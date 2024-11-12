@@ -53,13 +53,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-3. Initialize an object `soil` using the physical soil description included in the input data. Examine its water holding and extractable water capacity.
+3. Initialize an object `soil` using the physical soil description included in the input data.
 
 ```{r}
 
 ```
 
-4. Inspect the data frame `customParams` and modify the default species parameter table provided in medfate (*hint*: use function `modifySpParams()`) 
+4. Inspect the data frame `customParams` and modify the default species parameter table provided in medfate (*hint*: use function `modifySpParams()`).
 
 ```{r}
 

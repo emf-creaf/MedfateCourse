@@ -3,7 +3,6 @@ title: "Exercise 1 solution"
 author: "Miquel De Cáceres"
 date: '2022-06-13'
 output:
-  pdf_document: default
   html_document: default
 ---
 
@@ -278,19 +277,22 @@ coords_sf <- sf::st_sf(geometry = sf::st_sfc(sf::st_point(cc), crs = 4326))
 
 This object can be used to query SoilGrids using `add_soilgrids()`:
 
-```{r, eval = FALSE}
-pobl_soil_props <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
+```{r, eval = TRUE}
+pobl_soil_sf <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
 ```
 
-```{r, include=FALSE}
-pobl_soil_props = readRDS("pobl_soil_props.rds")
-```
-
-This function returns a data frame of soil properties:
+This function returns an `sf` object with soil properties for each coordinate:
 
 ```{r}
+pobl_soil_sf
+```
+
+Since we only have one coordinate, we can access its soil using:
+```{r}
+pobl_soil_props <- pobl_soil_sf$soil[[1]]
 pobl_soil_props
 ```
+
 
 ## Steps 14-15. Building the initialized soil object
 

@@ -47,8 +47,7 @@ library(cowplot)
 We are given all the necessary data, bundled in a single list:
 
 ```{r}
-fb <- readRDS("exercises/StudentRdata/fb_data.rds")
-names(fb)
+fb <- readRDS("exercises/StudentRdata/fontblanche.rds")
 ```
 
 ## Step 2. Build forest object
@@ -60,17 +59,9 @@ fb_forest <- emptyforest()
 fb_forest$treeData <- fb$treeData
 ```
 
-Note, incidentally, that LAI estimates come from the sum of column `LAI`, without any use of allometric relationships.
-
 ## Step 3. Initialize soil object
 
-A data frame with soil physical attributes are defined in:
-
-```{r}
-fb$soilData
-```
-
-We need, however, to initialize a `soil` object to complete the hydraulic parameters:
+A data frame with soil physical attributes are defined in `fb$soilData` but initialize a `soil` object to complete the hydraulic parameters:
 
 ```{r}
 fb_soil <- soil(fb$soilData)
@@ -95,15 +86,9 @@ The same information can also be found in the output of `summary()`.
 summary(fb_soil)
 ```
 
-
 ## Step 4. Species parameters
 
-We will normally take `SpParamsMED` as starting point for species parameters:
-```{r}
-data("SpParamsMED")
-```
-
-However, sometimes one may wish to override species defaults with custom values. In the case of FontBlanche there is a table of preferred values for some parameters:
+In the case of FontBlanche there is a table of preferred values for some parameters:
 
 ```{r}
 fb$customParams
@@ -115,41 +100,43 @@ We can use function `modifySpParams()` to replace the values of parameters for t
 fb_SpParams <- modifySpParams(SpParamsMED, fb$customParams)
 ```
 
+## Step 5. Initialize water balance inputs under different sub-models of vertical soil water fluxes
 
-## Steps 5-6. Basic water balance
-
-Since we are about to run a basic water balance simulation, we initialize a simulation control parameter list with `transpirationMode = "Granier"`, i.e.:
-
-```{r}
-fb_control_buckets <- defaultControl(transpirationMode = "Granier", soilDomains = "buckets")
-fb_control_single <- defaultControl(transpirationMode = "Granier", soilDomains = "single")
-fb_control_dual <- defaultControl(transpirationMode = "Granier", soilDomains = "dual")
-```
-
-and we assemble our inputs into a `spwbInput` object, using:
+Since we are about to run a basic water balance simulation, we initialize `spwbInput` while using `transpirationMode = "Granier"` in the control parameters. However, in this case we also specify the option `soilDomains`, for which we have three different alternatives:
 
 ```{r}
-x_buckets <- spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control_buckets)
-x_single <- spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control_single)
-x_dual <- spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control_dual)
+x_buckets <- spwbInput(fb_forest, fb_soil, fb_SpParams, 
+                       control = defaultControl(transpirationMode = "Granier", soilDomains = "buckets"))
+x_single <- spwbInput(fb_forest, fb_soil, fb_SpParams, 
+                      control = defaultControl(transpirationMode = "Granier", soilDomains = "single"))
+x_dual <- spwbInput(fb_forest, fb_soil, fb_SpParams, 
+                    control = defaultControl(transpirationMode = "Granier", soilDomains = "dual"))
 ```
 
-The daily weather data comprises one year:
-```{r}
-fb_meteo <- fb$meteoData
-nrow(fb_meteo)
-```
+## Step 6. Run water balance model while assessing computation times
 
-Now, we are ready to launch the simulation:
+Computation time can be limiting in some cases. Here we can insert the simulation within a block inside a call to `system.time()`, to estimate computation time:
 
 ```{r, eval=TRUE}
-fb_basic_buckets <- spwb(x_buckets, fb_meteo,  elevation = 420, latitude = 43.24083)
-fb_basic_single <- spwb(x_single, fb_meteo,  elevation = 420, latitude = 43.24083)
-fb_basic_dual <- spwb(x_dual, fb_meteo,  elevation = 420, latitude = 43.24083)
+system.time({fb_buckets <- spwb(x_buckets, fb_meteo, elevation = 420, latitude = 43.24)})
+system.time({fb_single <- spwb(x_single, fb_meteo, elevation = 420, latitude = 43.24)})
+system.time({fb_dual <- spwb(x_dual, fb_meteo, elevation = 420, latitude = 43.24)})
+```
+
+**Interpretation**: The bucket model is the fastest, followed by the single domain. The dual domain sub-model is the slowest of all three. These differences in computation time arise from the need to solve soil fluxes at fine temporal steps.
+
+## Step 7. Compare water balance components
+
+```{r}
+m <- rbind(summary(fb_buckets),
+           summary(fb_single),
+           summary(fb_dual))
+rownames(m) <- c("buckets", "single", "dual")
+m
 ```
 
 
-## Step 7. Examine precipitation events, runoff and deep drainage
+## Step 8. Compare runoff and deep drainage
 
 Surface run-off occurs the same day as precipitation events, whereas deep drainage can last for some days after the event: 
 ```{r echo=TRUE, fig.height=9, fig.width=9, fig=TRUE}

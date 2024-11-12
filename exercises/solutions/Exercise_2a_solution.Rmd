@@ -103,28 +103,10 @@ We need, however, to initialize a `soil` object to complete the hydraulic parame
 fb_soil <- soil(fb$soilData)
 ```
 
-
-From which we can estimate the water holding capacity and extractable water capacity for each layer (in mm) using functions `soil_waterFC()` and `soil_waterExtractable()`:
-```{r}
-soil_waterFC(fb_soil)
-soil_waterExtractable(fb_soil)
-```
-
-So the sums would be:
-```{r}
-sum(soil_waterFC(fb_soil))
-sum(soil_waterExtractable(fb_soil))
-```
-
-The same information can also be found in the output of `summary()` for `soil` objects.
-
-```{r}
-summary(fb_soil)
-```
-
 ## Step 4. Species parameters
 
-We will normally take `SpParamsMED` as starting point for species parameters:
+One will normally take `SpParamsMED` as starting point for species parameters:
+
 ```{r}
 data("SpParamsMED")
 ```
