@@ -1,0 +1,427 @@
+---
+title: "Exercise 2 solution"
+author: "Miquel De Cáceres"
+date: '2024-11-07'
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Exercise setting
+
+## Overall goal
+
+Learn how to use *medfate* for forest water balance simulations.
+
+## Specific objectives
+
+  1. Perform a basic water balance run on a real-case data and inspect the results
+  2. Evaluate the performance of the water balance model with observed data
+  3. Perform an advanced water balance run on the same data and inspect the results
+  4. Compare the results and performance between the two models
+  
+## Exercise material
+
++ `fontblanche.rds`
+
+## Font-Blanche research forest
+
+ + The Font-Blanche research forest is located in southeastern France (43º14'27'' N 5°40'45'' E) at 420 m elevation)
+ + The stand is composed of a top strata of *Pinus halepensis* (Aleppo pine) reaching about 12 m, a lower strata of *Quercus ilex* (holm oak), reaching about 6 m, and an understorey strata dominated by *Quercus coccifera* and *Phillyrea latifolia* (here omitted). 
+ + Soils are shallow and rocky, have a low retention capacity and are of Jurassic limestone origin. 
+ + The climate is Mediterranean, with a water stress period in summer, cold or mild winters and most precipitation occurring between September and May. 
+
+## Target stand
+
++ The experimental site, which is dedicated to study forest carbon and water cycles, has an enclosed area of 80×80 m but our target stand is a quadrat of dimensions 25×25 m. 
++ The following observations are available for year 2014:
+
+   + Canopy-level evapotranspiration estimated using an Eddy-covariance flux tower.
+   + Soil water content (SWC) of the topmost (0-30 cm) layer.
+   + Transpiration (E) estimates per leaf area, derived from sapflow measurements for *Q. ilex* and *P. halepensis*.
+   + Pre-dawn (PD) and midday (MD) leaf water potentials for *Q. ilex* and *P. halepensis*.
+
+# Exercise solution
+
+## Step 1. Load Font-Blanche data
+
+```{r, include=FALSE}
+library(medfate)
+library(ggplot2)
+library(cowplot)
+```
+
+We are given all the necessary data, bundled in a single list:
+
+```{r}
+fb <- readRDS("exercises/StudentRdata/fontblanche.rds")
+names(fb)
+```
+
+The following table describes the content
+
+|    Data element     |   Description                                  |
+|---------------------|------------------------------------------------|
+|    `siteData`       |   Site description                             |
+|    `treeData`       |   Data frame of tree data                      |
+|    `customParams`   |   Data frame of custom species parameters      |
+|    `measuredData`   |   Data frame with observations (measurements)  |
+|    `meteoData`      |   Weather input data frame                     |
+|    `soilData`       |   Physical soil parameters                     |
+|    `terrainData`    |   Latitude and topographic features            |
+
+## Step 2. Build forest object
+
+Element `fb$treeData` is already in the appropriate format for `forest` objects. Therefore, we can easily plug the tree data into a forest object:
+
+```{r}
+fb_forest <- emptyforest() 
+fb_forest$treeData <- fb$treeData
+```
+
+and examine its characteristics using function `summary()` for `forest` objects:
+
+```{r}
+summary(fb_forest, SpParamsMED)
+```
+
+**Note**: Leaf area index is 2.7, and comes from the sum of column `LAI`, without any use of allometric relationships.
+
+## Step 3. Initialize soil object
+
+A data frame with soil physical attributes are defined in:
+
+```{r}
+fb$soilData
+```
+
+We need, however, to initialize a `soil` object to complete the hydraulic parameters:
+```{r}
+fb_soil <- soil(fb$soilData)
+```
+
+
+From which we can estimate the water holding capacity and extractable water capacity for each layer (in mm) using functions `soil_waterFC()` and `soil_waterExtractable()`:
+```{r}
+soil_waterFC(fb_soil)
+soil_waterExtractable(fb_soil)
+```
+
+So the sums would be:
+```{r}
+sum(soil_waterFC(fb_soil))
+sum(soil_waterExtractable(fb_soil))
+```
+
+The same information can also be found in the output of `summary()` for `soil` objects.
+
+```{r}
+summary(fb_soil)
+```
+
+## Step 4. Species parameters
+
+We will normally take `SpParamsMED` as starting point for species parameters:
+```{r}
+data("SpParamsMED")
+```
+
+However, sometimes one may wish to override species defaults with custom values. In the case of Font-Blanche there is a table of preferred values for some parameters:
+
+```{r}
+fb$customParams
+```
+
+We can use function `modifySpParams()` to replace the values of parameters for the desired traits, leaving the rest unaltered:
+
+```{r}
+fb_SpParams <- modifySpParams(SpParamsMED, fb$customParams)
+```
+
+
+## Steps 5-6. Basic water balance
+
+Since we are about to run a basic water balance simulation, we initialize a simulation control parameter list with `transpirationMode = "Granier"`, i.e.:
+
+```{r}
+fb_control <- defaultControl("Granier")
+```
+
+and we assemble our inputs into a `spwbInput` object, using:
+
+```{r}
+fb_x1 <- spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
+```
+
+The daily weather data comprises one year:
+```{r}
+fb_meteo <- fb$meteoData
+nrow(fb_meteo)
+```
+
+Now, we are ready to launch the simulation:
+
+```{r, eval=TRUE}
+fb_basic <- spwb(fb_x1, fb_meteo,  elevation = 420, latitude = 43.24083)
+```
+
+The console output checks water balance estimates from changes in water storage versus estimated water fluxes. It then shows the different components of water balance fluxes for the overall simulated period.
+
+
+## Step 7. Examine precipitation events, runoff and deep drainage
+
+We can examine precipitation events with the default `plot()` (i.e. `type = "PET_Precipitation"`), and the water export fluxes by specifying `type = "Export"`: 
+
+```{r fig=TRUE, fig.width=10, fig.height = 4.5}
+g0<-plot(fb_basic)+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  theme(legend.position = "none") # This plot will be reused later
+g1<-plot(fb_basic, type = "Export")+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  theme(legend.position = "inside", legend.position.inside = c(0.35,0.60))
+plot_grid(g0, g1, ncol=1, rel_heights = c(0.5,1))
+```
+
+**Interpretation**: Surface run-off occurs the same day as precipitation events, whereas deep drainage can last for some days after the event. 
+
+**Tip**: Deep drainage is simulated very simplistically when `soilDomains = "buckets"` (see exercise 2b).
+
+## Step 8. Examine evapotranspiration fluxes
+
+We can plot evapotranspiration fluxes by specifying `type = "Evapotranspiration"` in the call to `plot()`:
+
+```{r fig=TRUE, fig.width=10, fig.height = 5}
+g1<-plot(fb_basic, type = "Evapotranspiration")+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  theme(legend.position = "inside", legend.position.inside = c(0.13,0.73))
+plot_grid(g0, g1, ncol=1, rel_heights = c(0.5,1))
+```
+
+**Interpretation**: Precipitation events also generate flows of intercepted water the same day of the event. Evaporation from the bare soil can proceed some days after the event. Transpiration flow is the dominant one in most days, decreasing in summer due to drought.
+
+
+## Step 9. Soil water potential dynamics
+
+We can display the dynamics of water potential in different soil layers using `type = "SoilPsi"`:
+
+```{r fig=TRUE, fig.width=10, fig.height = 5}
+g1 <- plot(fb_basic, type = "SoilPsi")+
+  theme(legend.position = "inside", legend.position.inside = c(0.2,0.3))
+plot_grid(g0, g1, ncol=1, rel_heights = c(0.5,1))
+```
+
+**Interpretation**: Normally, we should expect lower layers to have a less dynamic behaviour, but strange results can occur if, for instance, a large proportion of roots is in deeper layers.
+
+## Steps 10-11. Evaluation of stand evapotranspiration
+
+Observations are in element `measuredData` of the list:
+
+```{r}
+fb_observed <- fb$measuredData
+```
+
+We can compare the observed vs modelled total evapotranspiration by plotting the two time series:
+
+```{r fig=TRUE, fig.width=10, fig.height = 3.5, warning=FALSE}
+evaluation_plot(fb_basic, fb_observed, type = "ETR", plotType="dynamics")+
+  theme(legend.position = "inside", legend.position.inside = c(0.8,0.85))
+```
+
+or a scatter plot:
+
+```{r, fig=TRUE, fig.align="center", fig.width=5, fig.height = 3.5, warning=FALSE, message=FALSE}
+evaluation_plot(fb_basic, fb_observed, 
+                type = "ETR", plotType="scatter")
+```
+
+Function `evaluation_stats()` allows us to generate evaluation statistics:
+
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_basic, fb_observed, type = "ETR")
+```
+
+**Interpretation**:  We see a reasonably good relationship. However, it is easy to see that in rainy days the predicted evapotranspiration is much higher than that of the observed data. 
+
+**Tip**: One can exclude intercepted water from the comparison using `type = "SE+TR"`.
+
+
+## Step 12. Evaluation of soil moisture content
+
+We can now compare the soil moisture content dynamics using:
+
+```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=3}
+evaluation_plot(fb_basic, fb_observed, type = "SWC", plotType="dynamics")
+```
+
+As before, we can calculate evaluation statistics using:
+
+```{r, warning=FALSE, message=FALSE}
+evaluation_stats(fb_basic, fb_observed, type = "SWC")
+```
+
+**Interpretation**: The two series have similar shape but not absolute values. This may be an indication that the parameters of the soil water retention curve do not match the data produced by the moisture sensor. Note that, despite the bias, the correlation is rather high.
+
+## Step 13. Advanced water/energy balance
+
+Since we are about to run a advanced water balance simulation, we initialize a simulation control parameter list with `transpirationMode = "Sperry"`, i.e.:
+
+```{r}
+fb_control <- defaultControl("Sperry")
+```
+
+and assemble our inputs into a `spwbInput` object, using:
+
+```{r}
+fb_x2 <- spwbInput(fb_forest, fb_soil, fb_SpParams, fb_control)
+```
+
+Finally, we launch the simulation (takes ~ 8 seconds):
+
+```{r, eval=TRUE}
+fb_adv <- spwb(fb_x2, fb_meteo,  elevation = 420, latitude = 43.24083)
+```
+
+
+## Step 14. Comparing the performance of the two models
+
+To compare the performance of the two models with respect to observed data we can calculate the evaluation statistics for soil moisture:
+
+```{r, warning=FALSE, message=FALSE}
+rbind(basic = evaluation_stats(fb_basic, fb_observed, type = "SWC"),
+      advanced = evaluation_stats(fb_adv, fb_observed, type = "SWC"))
+```
+
+... and for canopy-level evapotranspiration:
+
+```{r, warning=FALSE, message=FALSE}
+rbind(basic = evaluation_stats(fb_basic, fb_observed, type = "SE+TR"),
+      advanced = evaluation_stats(fb_adv, fb_observed, type = "SE+TR"))
+```
+
+Results are more or less similar with the two sub-models in this case.
+
+## Step 15. Comparing soil moisture dynamics
+
+We can compare soil layer moisture dynamics by drawing soil water potentials:
+
+```{r fig=TRUE, fig.width=10, fig.height = 8.0}
+g1<-plot(fb_basic, "SoilPsi", ylim= c(-5,0))+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  labs(title="basic")+
+  theme(legend.position = "none")
+g2<-plot(fb_adv, "SoilPsi", ylim= c(-5,0))+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  labs(title="advanced (Sperry)")+
+  theme(legend.position = "inside", legend.position.inside =  c(0.1,0.47))
+plot_grid(g0, g1, g2, ncol=1, rel_heights = c(0.5, 1, 1))
+```
+
+**Interpretation**: The basic model dries the upper soil layers more than the advanced model. The latter model produces a stronger coupling between soil layers because of hydraulic redistribution (hydraulic redistribution is also estimated in the basic model, but much more simply).
+
+
+## Step 16. Understanding extraction and hydraulic redistribution in the advanced model
+
+The following shows the daily root water uptake (or release) from different soil layers, and the daily amount of water entering soil layers due to hydraulic redistribution:
+
+```{r, fig.width=10, fig.height = 8}
+g0<-plot(fb_basic)+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  theme(legend.position = "none")
+g1<-plot(fb_adv, type = "PlantExtraction")+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  labs(title="Extraction")+
+  theme(legend.position = "none")
+g2<-plot(fb_adv, type = "HydraulicRedistribution")+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  labs(title="Redistribution input")+
+  theme(legend.position = "inside", legend.position.inside =  c(0.08,0.5))
+plot_grid(g0, g1, g2, rel_heights = c(0.5, 1,1), ncol=1)
+```
+
+**Interpretation**: After rain events, extraction is concentrated in the topmost layer, whereas during dry period water is progressively extracted from lower layers. Water input from hydraulic redistribution occurs in different layers depending on where water was extracted previously. After a rain event, water is sometimes redistributed downwards (release instead of extraction). 
+
+## Step 17. Comparing leaf-level transpiration dynamics
+
+We can display the transpiration per leaf area unit basis under the two models using `"TranspirationPerLeaf"`. 
+
+```{r fig=TRUE, fig.width=10, fig.height = 8}
+g1<-plot(fb_basic, "TranspirationPerLeaf", bySpecies = TRUE, ylim = c(0,1.7))+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  labs(title="basic")+
+  theme(legend.position = "none")
+g2<-plot(fb_adv, "TranspirationPerLeaf", bySpecies = TRUE, ylim = c(0,1.7))+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  labs(title="advanced (Sperry)")+
+  theme(legend.position = "inside", legend.position.inside =  c(0.1,0.7))
+plot_grid(g0, g1, g2, rel_heights = c(0.5, 1,1), ncol=1)
+```
+
+**Interpretation**: Both models behave similarly in this case. Surprisingly, both models predict higher transpiration for pines, perhaps due to their dominant position in the canopy.
+
+## Step 18. Evaluation of tree transpiration
+
+The following displays the observed and predicted transpiration for *Pinus halepensis* ...
+
+```{r fig.width = 9, fig.height=3.8, warning=FALSE, message=FALSE}
+evaluation_plot(fb_adv, fb_observed, cohort = "T2_148", type="E", plotType = "dynamics")+
+  theme(legend.position = "inside", legend.position.inside = c(0.85,0.83))
+```
+
+and for *Quercus ilex*:
+
+```{r fig.width = 9, fig.height=3.8, warning=FALSE, message=FALSE}
+evaluation_plot(fb_adv, fb_observed, cohort = "T3_168", type="E", plotType = "dynamics")+
+  theme(legend.position = "inside", legend.position.inside = c(0.85,0.83))
+```
+
+**Interpretation**: The model seems to grossly overestimate pine transpiration, compared to sapflow measurements. 
+In the case of holm oak the fit to observations is much better.
+
+## Step 19. Examining leaf water potentials
+
+The following plots show leaf water potential ranges for all three species:
+
+```{r, fig.width = 10, fig.height=8, warning=FALSE, message=FALSE}
+g1<-plot(fb_adv, type = "LeafPsiRange", bySpecies = TRUE)+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  theme(legend.position = "inside", legend.position.inside = c(0.1,0.25)) + 
+  ylab("Leaf water potential (MPa)")
+plot_grid(g0, g1, ncol=1, rel_heights = c(0.5,1))
+```
+
+**Interpretation**: The model simulates a tighter stomatal control for *Pinus halepensis*. This is due, in the model, to a higher hydraulic vulnerability of xylem tissues.
+
+## Step 20. Comparing leaf water potentials with observations
+
+If we compare leaf water potentials against observations (`type = "WP"` in `evaluation_plot()`) 
+
+```{r, fig.width = 10, fig.height=6, warning=FALSE, message=FALSE}
+g1<-evaluation_plot(fb_adv, fb_observed, cohort = "T2_148", type="WP", plotType = "dynamics")
+g2<-evaluation_plot(fb_adv, fb_observed, cohort = "T3_168", type="WP", plotType = "dynamics")
+plot_grid(g1, g2, ncol=1)
+```
+
+**Interpretation**: We obtain a rather good performance for *Q. ilex*, but midday water potentials are less well approximated for *P. halepensis*. Apparently, both pre-dawn and midday leaf water potentials should be more negative at the start of the summer season.
+
+## Step 21. Drought stress and PLC
+
+We can use `type = "PlantStress"` and `type = "StemPLC"` to display plant drought stress and loss of hydraulic conductance in the stem:
+
+```{r fig=TRUE, fig.width=10, fig.height = 7}
+g1<-plot(fb_basic, "PlantStress", bySpecies = TRUE)+
+  theme(legend.position = "none")
+g2<-plot(fb_basic, "StemPLC", bySpecies = TRUE)+
+  scale_y_continuous(limits=c(0,25))+
+  theme(legend.position = "inside", legend.position.inside = c(0.2,0.45))
+g3<-plot(fb_adv, "PlantStress", bySpecies = TRUE)+
+  theme(legend.position = "none")
+g4<-plot(fb_adv, "StemPLC", bySpecies = TRUE)+
+  scale_y_continuous(limits=c(0,25))+
+  theme(legend.position = "none")
+plot_grid(g1, g2, g3, g4, ncol=2)
+```
+
+**Interpretation**:  The basic model produces higher values of PLC for *Pinus halepensis*, compared to the advanced model.  This could arise from a difference in the parameters determining PLC or differences in the water potential simulated by both models. 
