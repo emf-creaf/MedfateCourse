@@ -3,7 +3,6 @@ title: "Exercise 1 guidelines"
 author: "Miquel De Cáceres"
 date: '2022-06-13'
 output:
-  pdf_document: default
   html_document: default
 ---
 

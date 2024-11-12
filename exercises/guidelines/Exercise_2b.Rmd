@@ -1,0 +1,91 @@
+---
+title: "Exercise 2b guidelines"
+author: "Miquel De Cáceres"
+date: '2022-06-14'
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Exercise objectives
+
+  1. Learn how to run water balance under different alternatives for soil vertical water fluxes.
+  2. Understand the sensitivity of the water balance results to below-ground parameters (root distribution and soil water holding capacity).
+
+
+## Exercise data
+### Font-Blanche research forest
+
+ + The Font-Blanche research forest is located in southeastern France (43º14'27'' N 5°40'45'' E) at 420 m elevation)
+ + The stand is composed of a top strata of *Pinus halepensis* (Aleppo pine) reaching about 12 m, a lower strata of *Quercus ilex* (holm oak), reaching about 6 m, and an understorey strata dominated by *Quercus coccifera* and *Phillyrea latifolia*. 
+ + Soils are shallow and rocky, have a low retention capacity and are of Jurassic limestone origin. 
+ + The climate is Mediterranean, with a water stress period in summer, cold or mild winters and most precipitation occurring between September and May. 
+
+
+### Target stand
+
++ The experimental site, which is dedicated to study forest carbon and water cycles, has an enclosed area of 80×80 m but our target stand is a quadrat of dimensions 25×25 m. 
++ The following observations are available for year 2014:
+   + Soil water content (SWC) of the topmost (0-30 cm) layer.
+
+## Guidelines by steps
+
+1. Load the file `"fontblanche.rds"`, which contains all the necessary data.
+
+```{r}
+
+```
+
+2. Build a `forest` object including the three tree cohorts given in the input data.
+
+```{r}
+
+```
+
+3. Initialize an object `soil` using the physical soil description included in the input data. Examine its water holding and extractable water capacity.
+
+```{r}
+
+```
+
+4. Modify the default species parameter table provided in medfate using `customParams` (*hint*: use function `modifySpParams()`).
+
+```{r}
+
+```
+
+5. Assemble three water balance input objects under the basic water balance model, each time using a different sub-model for vertical soil water fluxes (*hint*: check option `soilDomains` in `defaultControl()`).
+
+```{r}
+
+```
+
+6. Run the basic water balance simulation under each case soil sub-model, while examining the computational time (*hint*: use `system.time()`):
+
+```{r}
+
+```
+
+7. Compare annual values of water balance components under the three sub-models (*hint*: use the `summary()` function for `spwb` objects):
+
+```{r}
+
+```
+
+8. Compare daily temporal patterns of water exported under the three sub-models (*hint*: use function `plot()` with `type = "Export"`):
+
+```{r}
+
+```
+
+9. Compare the observed vs. simulated soil water content under the three sub-models. Which sub-model do you think better fits the measured soil water content dynamics? Why? (*hint*: use function `evaluation_plot()`)
+
+```{r}
+
+```
+

@@ -58,6 +58,15 @@ Exercises are included in a separate folder.
 - `exercises/StudentRdata/*.rds` are data sets required for exercises
 - `exercises/R/*.R` are files to prepare data for exercises
 
+The proposed exercises are the following:
+
+| Exercise | Purpose                                                         |
+|----------|-----------------------------------------------------------------|
+| 1        | Create inputs (forest, soil, weather)                           |
+| 2a       | Run basic and advanced water balance. Learn evaluation.         |
+| 2b       | Sensitivity of water balance results to below ground decisions. |
+| 3        | Run growth and forest dynamics, including management.           |
+
 ## Additional data (not in this repository)
 
 A set of additional data sets are required to follow the course:

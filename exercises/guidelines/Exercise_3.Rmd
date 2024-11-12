@@ -4,7 +4,6 @@ author: "Miquel De Cáceres"
 date: '2022-06-15'
 output:
   html_document: default
-  pdf_document: default
 ---
 
 ## Exercise objectives

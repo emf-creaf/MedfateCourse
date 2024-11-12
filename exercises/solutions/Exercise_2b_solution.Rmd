@@ -127,6 +127,8 @@ system.time({fb_dual <- spwb(x_dual, fb_meteo, elevation = 420, latitude = 43.24
 
 ## Step 7. Compare water balance components
 
+We can use the `summary()` function for `spwb` objects to see the annual-level values of water balance components. Since only one year is simulated, we bind the three vectors corresponding to the different sub-models as rows:
+
 ```{r}
 m <- rbind(summary(fb_buckets),
            summary(fb_single),
@@ -135,8 +137,9 @@ rownames(m) <- c("buckets", "single", "dual")
 m
 ```
 
+**Interpretation**: Rainfall inputs and intercepted water are equal regardless of the sub-model for soil fluxes. The buckets model
 
-## Step 8. Compare runoff and deep drainage
+## Step 8. Compare runoff and deep drainage temporal patterns
 
 Surface run-off occurs the same day as precipitation events, whereas deep drainage can last for some days after the event: 
 ```{r echo=TRUE, fig.height=9, fig.width=9, fig=TRUE}
