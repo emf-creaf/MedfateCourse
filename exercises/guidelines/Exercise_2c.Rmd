@@ -13,73 +13,84 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise objectives
 
-  1. Perform an advanced water balance run on a real-case data and inspect LFMC results
-  2. Evaluate the performance of the water balance model with observed data
-  3. Correct soil rock fragment content values, perform a second water balance run and inspect the results
-  4. Compare LFMC dynamics with annual fire hazard values
+  1. Perform an advanced water balance run on a real-case data and inspect live fuel moisture content (LFMC) results.
+  2. Evaluate the performance of the water balance model with observed data.
+  3. Compare LFMC dynamics with annual fire hazard values.
 
 ## Exercise data
-### Tevissa study plot 
+### Tivissa study plot 
 
- + Tivissa study plot is located in south Tarragona mountains (41°03'10.8" N 0°47'57.2" E) at 555 m elevation)
- + The climate is Mediterranean, with a water stress period in summer
- + The study plot is dedicated to measure LFMC dynamics, which is the moisture content of live plant tissues, a variable used to predict wildfire danger.
+ + Tivissa study plot is located in southern Tarragona mountains (41°03'10.8" N; 0°47'57.2" E) at 555 m elevation.
+ + The climate is Mediterranean, with a water stress period in summer.
+ + The study plot is dedicated to measure live fuel moisture content (LFMC) dynamics, which is the moisture content of live plant tissues, a variable used to predict wildfire danger.
 
 ### Target stand
- + The stand is dominated by shrublands covered with *Quercus coccifera* (30%) and *Rosmarinus officinalis* (50%)
- + The LFMC observations are available for year 2014
+ + The stand is dominated by shrublands covered with *Quercus coccifera* (30%) and *Rosmarinus officinalis* (50%).
+ + The LFMC observations are available for year 2014.
 
 ## Guidelines by steps
 
-1. Load the file `"tevissa.rds"`, which contains all the necessary data.
+1. Load the file `"tivissa.rds"`, which contains all the necessary data.
 
 ```{r}
 
 ```
 
-2. Build a `forest` object including the two shrub cohorts given in the input data. 
+2. Build a `forest` object including the two shrub cohorts given in the input data (*hint*: `forest` object can contain both, tree and shrub data).
 
 ```{r}
 
 ```
 
-3. Initialize an object `soil` using the physical soil description included in the input data. Examine its water holding and extractable water capacity.
+3. Initialize an object `soil` using the physical soil description included in the input data.
 
 ```{r}
 
 ```
 
-4. Modify the default species parameter table provided in medfate using `customParams` (*hint*: use function `modifySpParams()`).
+4. Load the default species parameter table provided in medfate.
 
 ```{r}
 
 ```
 
-5. Assemble three water balance input objects under the basic water balance model, each time using a different sub-model for vertical soil water fluxes (*hint*: check option `soilDomains` in `defaultControl()`).
+5. Initialize simulation control parameters to run an advanced water balance simulation applying `Sureau` model. Then modify default values to display Fire Hazard results in the simulation output (*hint*: set `fireHazardResults <- TRUE`). Finally, set a standard wind speed (m/s) value for the entire simulation in order to control the effect of this variable over Fire Hazard results (*hint*: set `fireHazardStandardWind <- 5`).
 
 ```{r}
 
 ```
 
-6. Run the basic water balance simulation under each case soil sub-model, while examining the computational time (*hint*: use `system.time()`):
+6. Try to initialize water balance input. Why is returning an error?
 
 ```{r}
 
 ```
 
-7. Compare annual values of water balance components under the three sub-models (*hint*: use the `summary()` function for `spwb` objects). Which sub-model generates highest run-off ? Which one generates highest deep drainage? Why?
+7. Correct the species names in `shrubData` and repeat the water balance input initialization (*hint*: `Rosmarinus officinalis` = `Salvia rosmarinus`).
 
 ```{r}
 
 ```
 
-8. Compare daily temporal patterns of water exported under the three sub-models (*hint*: use function `plot()` with `type = "Export"`):
+8. Extract meteorological and topographic data from the input file and run the advanced water balance simulation.
 
 ```{r}
 
 ```
 
-9. Compare the observed vs. simulated soil water content under the three sub-models. Which sub-model do you think better fits the measured soil water content dynamics? Why? (*hint*: use function `evaluation_plot()`)
+9. Visualize and compare both species LFMC dynamics (*hint*: use `plot()` function with `type = "LFMC"`). What could be driving the differences among both species LFMC annual patterns?
+
+```{r}
+
+```
+
+10. Compare the observed vs. modeled LFMC values and describe both species performance (*hint*: `evaluation_plot()` function does not work with `LFMC`, instead we can use `summary()` function for `spwb` objects and `ggplot()`).
+
+```{r}
+
+```
+
+11. Extract daily fire hazard values from the `spwb` object. Do you recognize any fire behavior variable represented in the columns? Compare precipitation, LFMC and surface fire line intensity. Which relations did you observe? (*hint*: use `summary()` function to obtain `FireHazard` results. Surface fire line intensity is named as `I_b_surface`). 
 
 ```{r}
 
