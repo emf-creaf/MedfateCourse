@@ -1,0 +1,202 @@
+---
+title: "Exercise 4b solution"
+author: "Miquel De Cáceres"
+date: "2024-11-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Exercise setting
+
+
+##  Objectives
+
+  1. Learn to conduct watershed simulations using **medfateland**.
+  2. Learn the importance of soil water fluxes sub-model in watershed simulations.
+  3. Compare watershed outflow in static vs. dynamic watershed landscapes.
+
+## Data
+
+Due to the long computation times of watershed simulations, this exercise uses the example
+watershed data included in the **medfateland** package. The watershed is a small catchment of 66 ha (0.66 km2) 
+in Catalonia.
+
+# Exercise solution
+
+## Step 1. Load medfateland and example watershed data
+
+```{r}
+library(medfateland)
+library(ggplot2)
+```
+
+```{r}
+data("example_watershed")
+data("examplemeteo")
+data("SpParamsMED")
+example_watershed$crop_factor <- NA
+example_watershed$crop_factor[example_watershed$land_cover_type=="agriculture"] <- 0.75
+b <- sf::st_bbox(example_watershed)
+r <-terra::rast(xmin = 401380, ymin = 4671820, xmax = 402880, ymax = 4672620, 
+                nrow = 8, ncol = 15, crs = "epsg:32631")
+```
+
+
+## Step 2. Initialize watershed using a multi-bucket soil model
+
+```{r}
+spwb_init_buckets <- initialize_landscape(example_watershed, SpParams = SpParamsMED,
+                                          model = "spwb",
+                                          local_control = defaultControl(soilDomains = "buckets"),
+                                          simplify = TRUE)
+```
+
+## Step 3. Run watershed water balance simulation 
+
+```{r}
+ws_control <- default_watershed_control("tetis")
+ws_control$tetis_parameters$num_daily_substeps <- 4
+ws_control$tetis_parameters$R_baseflow <- 1
+ws_control$tetis_parameters$n_baseflow <- 0.7
+ws_control$tetis_parameters$R_interflow <- 1
+ws_control$tetis_parameters$n_interflow <- 0.5
+ws_control$tetis_parameters$R_localflow <- 1
+```
+
+
+```{r}
+res_buckets_1y <- spwb_land(r, spwb_init_buckets, SpParamsMED, 
+                            meteo = examplemeteo, 
+                            watershed_control = ws_control)
+plot(res_buckets_1y$watershed_balance$WatershedExport, type="l")
+```
+
+
+## Step 4. Update landscape and run another year of simulation 
+
+```{r}
+spwb_burnin_buckets <- update_landscape(spwb_init_buckets, res_buckets_1y)
+```
+
+```{r}
+res_buckets_2y <- spwb_land(r, spwb_burnin_buckets, SpParamsMED, 
+                            examplemeteo, 
+                            watershed_control = ws_control)
+plot(res_buckets_2y$watershed_balance$WatershedExport, type="l")
+```
+
+## Step 5. Run yet another year and check that watershed export does not change
+```{r}
+spwb_burnin_buckets <- update_landscape(spwb_init_buckets, res_buckets_2y)
+```
+
+```{r}
+res_buckets_3y <- spwb_land(r, spwb_burnin_buckets, SpParamsMED, examplemeteo, 
+                            watershed_control = ws_control)
+plot(res_buckets_3y$watershed_balance$WatershedExport, type="l")
+```
+
+
+## Step 6. Reinitialize watershed using single-domain soil fluxes and compare watershed outflow
+
+```{r}
+spwb_init_single <- initialize_landscape(example_watershed, SpParams = SpParamsMED,
+                                          model = "spwb",
+                                          local_control = defaultControl(soilDomains = "single"),
+                                          simplify = TRUE)
+```
+
+```{r}
+res_single_1y <- spwb_land(r, spwb_init_single, SpParamsMED, examplemeteo, 
+                           watershed_control = ws_control)
+```
+
+```{r}
+wsb_buckets_1y <- res_buckets_1y$watershed_balance
+wsb_buckets_1y[["soilDomain"]] <- "buckets"
+wsb_single_1y <- res_single_1y$watershed_balance
+wsb_single_1y[["soilDomain"]] <- "single"
+wsb_all <- rbind(wsb_buckets_1y, wsb_single_1y)
+```
+
+```{r}
+ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=WatershedExport, col=soilDomain))+
+  theme_bw()
+```
+
+```{r}
+ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=Transpiration, col=soilDomain))+
+  theme_bw()
+```
+
+```{r}
+ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=DeepDrainage, col=soilDomain))+
+  theme_bw()
+```
+
+```{r}
+ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=CellRunoff, col=soilDomain))+
+  theme_bw()
+```
+
+## Step 7. Run 6 years of watershed simulation by repeating example weather data
+```{r}
+meteo_4y <- rbind(examplemeteo, examplemeteo, examplemeteo, examplemeteo)
+meteo_4y$dates = seq(as.Date("2001-01-01"), 
+                  as.Date("2004-12-30"), by="day")
+```
+
+```{r}
+res_spwb_4y <- spwb_land(r, spwb_init_buckets, SpParamsMED, 
+                         meteo = meteo_4y, 
+                         watershed_control = ws_control)
+```
+
+## Step 8. Run 6 year of simulations with model growth, after reinitializing for this model
+```{r}
+growth_init_buckets <- initialize_landscape(example_watershed, SpParams = SpParamsMED,
+                                            model = "growth",
+                                            local_control = defaultControl(soilDomains = "buckets"),
+                                            simplify = TRUE)
+```
+
+```{r}
+res_growth_4y <- growth_land(r, growth_init_buckets, SpParamsMED, 
+                             meteo = meteo_4y, 
+                             watershed_control = ws_control)
+```
+
+
+## Step 9. Compare results
+
+```{r}
+wsb_spwb_4y <- res_spwb_4y$watershed_balance
+wsb_spwb_4y[["model"]] <- "spwb"
+wsb_growth_4y <- res_growth_4y$watershed_balance
+wsb_growth_4y[["model"]] <- "growth"
+wsb_all <- rbind(wsb_spwb_4y, wsb_growth_4y)
+```
+
+```{r}
+ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=WatershedExport, col=model))+
+  theme_bw()
+```
+
+
+```{r}
+ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=Transpiration, col=model))+
+  theme_bw()
+```
+
+
+

@@ -359,7 +359,7 @@ control$subdailyResults <- TRUE
 We can build our input object for function `spwb()` using the same function as before:
 
 ```{r, echo = TRUE}
-x_adv <- forest2spwbInput(exampleforest, examplesoil, SpParamsMED, control)
+x_adv <- spwbInput(exampleforest, examplesoil, SpParamsMED, control)
 ```
 
 . . .
