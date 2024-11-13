@@ -1,0 +1,233 @@
+---
+title: "Exercise 2c solution"
+author: "Rodrigo Balaguer"
+date: '2024-11-13'
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Exercise setting
+
+## Overall goal
+
+  1. Perform an advanced water balance run on a real-case data and inspect live fuel moisture content (LFMC) results.
+  2. Evaluate the performance of the water balance model with observed data.
+  3. Compare LFMC dynamics with annual fire hazard values.
+
+## Exercise material
+
++ Exercise_2c.Rmd
++ tivissa.rds
+
+## Tivissa study plot 
+
+ + Tivissa study plot is located in southern Tarragona mountains (41°03'10.8" N; 0°47'57.2" E) at 555 m elevation.
+ + The climate is Mediterranean, with a water stress period in summer.
+ + The study plot is dedicated to measure live fuel moisture content (LFMC) dynamics, which is the moisture content of live plant tissues, a variable used to predict wildfire danger.
+
+## Target stand
+
+ + The stand is dominated by shrublands covered with *Quercus coccifera* (30%) and *Rosmarinus officinalis* (50%).
+ + The LFMC observations are available for year 2014.
+
+# Exercise solution
+
+## Step 1. Load Tivissa data
+
+```{r, include=FALSE}
+library(medfate)
+library(medfateland)
+library(meteoland)
+library(cowplot)
+library(ggplot2)
+```
+
+We are given all the necessary data, bundled in a single list:
+
+```{r}
+tv <- readRDS("exercises/StudentRdata/tivissa.rds")
+```
+
+## Step 2. Build forest object
+
+Element `tv$shrubData` is already in the appropriate format for `forest` objects. Therefore, we can easily plug the tree data into a forest object. Note that in this exercise we are using shrub height and cover data to create the `forest` objects:
+
+```{r}
+tv_forest <- emptyforest() 
+tv_forest$shrubData <- tv$shrubData
+```
+
+## Step 3. Initialize soil object
+
+A data frame with soil physical attributes are defined in `tv$soilData` but it is needed to initialize a `soil` object to complete the hydraulic parameters:
+
+```{r}
+tv_soil <- soil(tv$soilData)
+```
+
+## Step 4. Species parameters
+
+Default species parameter table is provided in medfate:
+
+```{r}
+data("SpParamsMED")
+```
+
+## Step 5. Simulation control parameters
+
+Since we are about to run an advanced water balance simulation, we initialize the control parameters as `transpirationMode = "Sureau"`. Then, we modify the option `tv_control$fireHazardResults`, to display Fire Hazard metrics in the simulation output. Finally, we set a standard wind speed value of 5m/s through all the simulation in order to control the effect of this variable over Fire Hazard results:
+
+```{r}
+tv_control <- defaultControl(transpirationMode = "Sureau")
+tv_control$fireHazardResults <- TRUE
+tv_control$fireHazardStandardWind <- 5
+```
+
+## Steps 6-7. Initialize water balance input
+
+The error indicate that the rosemery scientific name used (Rosmarinus officinalis) is not found in SpParams. Thus, after check SpParams and replace it with its accepted name (Salvia rosmarinus) we can now initialize the water balance input
+
+```{r}
+tv_forest$shrubData$Species[tv_forest$shrubData$Species=="Rosmarinus officinalis"] <- "Salvia rosmarinus"
+tv_x1 <- spwbInput(tv_forest, tv_soil, SpParamsMED, tv_control)
+```
+
+## Step 8. Run the advanced water balance simulation
+
+We first extract `meteorological` and `topographic` data from the input file:
+
+```{r, eval=TRUE}
+tv_meteo <- tv$meteoData
+tv$terrainData
+```
+To finally run the advanced water balance simulation
+
+```{r, eval=TRUE}
+tv_spwb1 <- spwb(tv_x1, tv_meteo, elevation = 555, latitude = 41.053)
+```
+
+## Step 9. Visualize and compare both species LFMC dynamics
+
+We can use function `plot()` to draw live fuel moisture content dynamics (LFMC) of both species using `type = "LFMC"`:
+
+```{r echo=TRUE, fig.height=9, fig.width=11, fig=TRUE}
+g1 <- plot(tv_spwb1, type = "LFMC", bySpecies = T) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  theme(legend.position = "inside", legend.position.inside =  c(0.8,0.8))
+g1
+```
+
+**Interpretation**: Both species show LFMC declines during summer months due to the drier and warmer conditions of this period. However S.rosmarinus show higher seasonal variation than Q.coccifera as a  result of differences in physiological and anatomical characteristics controlling LFMC such as stomatal control, the degree of sclerophylly, or rooting depth. In this case, the deeper rooting system of Q.coccifera could be buffering against short term fluctuations in shallow water levels and, consequently, display a lower LFMC variation during the year.
+
+
+## Step 10. Compare the observed vs. modeled LFMC values of each specie
+
+First, we can extract observed LFMC values from input object:
+
+```{r}
+tv_observed <- tv$measuredData
+tv_observed$dates <- as.Date(tv_observed$dates)
+```
+
+Next, we can extract modeled LFMC values by species using `summary()`function for `spwb` objects and extract the `date` column from row names:
+
+```{r}
+tv_modeled <- as.data.frame(summary(tv_spwb1, freq="days",FUN=mean, output="LFMC", bySpecies = T))
+tv_modeled <- tibble::rownames_to_column(tv_modeled, "dates")
+tv_modeled$dates<-as.Date(tv_modeled$dates)
+```
+
+Then we can compare observed versus modeled LFMC dynamics using function `ggplot()`. Here we combine plots of temporal series with scatter plots of observed vs. predicted values. Note that we need to create dataframes for the scatter plots:
+
+```{r, warning=FALSE, message=FALSE, fig.width=11, fig.height=9}
+#Dynamic plot Quercus
+g2.1<-ggplot(tv_observed, aes(x=dates, y=`Quercus coccifera`, fill  = "black"))+
+  geom_point()+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  geom_line(data=tv_modeled, aes(y=`Quercus coccifera`), colour = "#F8766D")+
+  ylab("LFMC")+
+  xlab("")+
+  ggtitle("Quercus coccifera")+
+  theme_bw()+
+  theme(legend.position = "none")
+#Scatter plot data Quercus
+scatter_quercus <- data.frame(
+  observed = tv_observed$`Quercus coccifera`,
+  modeled = tv_modeled$`Quercus coccifera`
+)
+scatter_quercus <- dplyr::filter(scatter_quercus, !is.na(tv_observed$`Quercus coccifera`))
+#Scatter plot Quercus
+g2.2<- ggplot(scatter_quercus, aes(x=modeled, y=observed)) +
+  geom_point() +
+  geom_smooth(method=lm , color="grey", se=FALSE, linetype = "dashed") +
+  geom_abline()+
+  theme_bw()
+#Arrange
+g2 <- plot_grid(g2.1, g2.2, ncol = 2, rel_widths = c(1, 0.4))
+#Dynamic plot Salvia
+g3.1<-ggplot(tv_observed, aes(x=dates, y=`Salvia rosmarinus`, fill = "black"))+
+  geom_point()+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  geom_line(data=tv_modeled, aes(y=`Salvia rosmarinus`), color = "#00BFC4")+
+  ylab("LFMC")+
+  xlab("")+
+  ggtitle("Salvia rosmarinus")+
+  theme_bw()+
+  theme(legend.position = "none")
+#Scatter plot data Salvia
+scatter_salvia <- data.frame(
+  observed = tv_observed$`Salvia rosmarinus`,
+  modeled = tv_modeled$`Salvia rosmarinus`
+)
+scatter_salvia <- dplyr::filter(scatter_salvia, !is.na(tv_observed$`Salvia rosmarinus`))
+#Sactter plot salvia
+g3.2<- ggplot(scatter_salvia, aes(x=modeled, y=observed)) +
+  geom_point() +
+  geom_smooth(method=lm , color="grey", se=FALSE, linetype = "dashed") +
+  geom_abline()+
+  theme_bw()
+#Arrange
+g3 <- plot_grid(g3.1, g3.2, ncol = 2, rel_widths = c(1, 0.4))
+#Arrange both species plots
+plot_grid(g2, g3, ncol=1)
+```
+
+**Interpretation**: We can observe that Salvia rosmarinus LFMC simulation performed a better agreement between modeled and field observed data than Quercus coccifera simulation. 
+
+
+## Step 11. Fire hazard results extraction and visualization
+
+We can extract daily fire hazard values using `summary()` function for `spwb` objects (again you should extract the `date` column from rownames):
+
+```{r}
+FireHazard<-as.data.frame(summary(tv_spwb1, freq="days",FUN=mean, output="FireHazard"))
+FireHazard <- tibble::rownames_to_column(FireHazard, "dates")
+FireHazard$dates<-as.Date(FireHazard$dates)
+```
+
+
+Then we can combine temporal series plots of annual precipitation, LFMC dynamics and Fireline Intensity:
+
+```{r, warning=FALSE, message=FALSE, fig.width=11, fig.height=9}
+#Ppt plot
+g0<-plot(tv_spwb1)+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  theme(legend.position = "none")
+#LFMC plot was previously created
+#g1
+#Fire plot
+g2<-ggplot(FireHazard, aes(x=dates, y=I_b_surface, colour = "darkred"))+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m")+
+  geom_line()+
+  ylab("Fireline intensity (kW/m)")+
+  theme_bw()+
+  theme(legend.position = "none")
+#Arrange  
+plot_grid(g0, g1, g2, ncol = 1)
+```
+
+**Interpretation**: Despite the coincidence of Min LFMC values with maximum fire line intensity values, we can observe that fire hazard is also affected by other factors such as weather conditions. 
