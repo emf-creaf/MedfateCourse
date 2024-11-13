@@ -1,0 +1,57 @@
+---
+title: "Exercise 4b guidelines"
+author: "Miquel De Cáceres"
+date: '2024-11-13'
+output:
+  html_document: default
+---
+
+# Exercise setting
+
+
+##  Objectives
+
+  1. Learn to conduct watershed simulations using **medfateland**.
+  2. Learn the importance of soil water fluxes sub-model in watershed simulations.
+  3. Compare watershed outflow in static vs. dynamic watershed landscapes.
+
+## Data
+
+Due to the long computation times of watershed simulations, this exercise uses the example
+watershed data included in the **medfateland** package. The watershed is a small catchment of 66 ha (0.66 km2) 
+in Catalonia. Example weather dataset of **medfate** is taken as climate forcing for simplicity.
+
+## Guidelines
+
+1. Load package **medfateland** and the example watershed provided in the package (i.e. `watershed_example`). Indicate crop evapotranspiration factor for `agriculture` cells and create the raster definition that includes one stand per cell (**hint**: see help of `?spwb_land`).
+
+```{r}
+
+```
+
+2. Initialize inputs for soil plant water balance simulations on the watershed (**hint**: use function `initialize_landscape()`). For the initialization, you should: (a) specify that local soil water fluxes will be simulated using a multi-bucket model; and (b) force a simplification of the landscape to simulate only dominant species (**hint**: see option `simplify`). 
+
+```{r}
+
+```
+
+3. Initialize watershed control parameters for TETIS (the only functional model). Specify the following parameter values (you can check their meaning in the medfatebook):
+
+| Parameter                 | Value    |
+|---------------------------|----------|
+| `R_baseflow`              |    1     |
+| `n_baseflow`              |    0.7     |
+| `R_interflow`              |    1     |
+| `n_baseflow`              |    0.5     |
+| `R_localflow`              |    1     |
+
+```{r}
+
+```
+
+4. Run a water balance simulation over the watershed for one year, using the `examplemeteo` weather data provided in package **medfate**. Examine the predicted daily watershed outflow.
+
+```{r}
+
+```
+

@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Due to the long computation times of watershed simulations, this exercise uses the example
 watershed data included in the **medfateland** package. The watershed is a small catchment of 66 ha (0.66 km2) 
-in Catalonia.
+in Catalonia. Example weather dataset of **medfate** is taken as climate forcing for simplicity.
 
 # Exercise solution
 
@@ -55,11 +55,10 @@ spwb_init_buckets <- initialize_landscape(example_watershed, SpParams = SpParams
                                           simplify = TRUE)
 ```
 
-## Step 3. Run watershed water balance simulation 
+## Step 3. Define watershed control parameters
 
 ```{r}
 ws_control <- default_watershed_control("tetis")
-ws_control$tetis_parameters$num_daily_substeps <- 4
 ws_control$tetis_parameters$R_baseflow <- 1
 ws_control$tetis_parameters$n_baseflow <- 0.7
 ws_control$tetis_parameters$R_interflow <- 1
@@ -67,6 +66,7 @@ ws_control$tetis_parameters$n_interflow <- 0.5
 ws_control$tetis_parameters$R_localflow <- 1
 ```
 
+## Step 4. Run watershed water balance simulation 
 
 ```{r}
 res_buckets_1y <- spwb_land(r, spwb_init_buckets, SpParamsMED, 
@@ -76,7 +76,7 @@ plot(res_buckets_1y$watershed_balance$WatershedExport, type="l")
 ```
 
 
-## Step 4. Update landscape and run another year of simulation 
+## Step 5. Update landscape and run another year of simulation 
 
 ```{r}
 spwb_burnin_buckets <- update_landscape(spwb_init_buckets, res_buckets_1y)
@@ -89,7 +89,7 @@ res_buckets_2y <- spwb_land(r, spwb_burnin_buckets, SpParamsMED,
 plot(res_buckets_2y$watershed_balance$WatershedExport, type="l")
 ```
 
-## Step 5. Run yet another year and check that watershed export does not change
+ Run yet another year and check that watershed export does not change
 ```{r}
 spwb_burnin_buckets <- update_landscape(spwb_init_buckets, res_buckets_2y)
 ```
