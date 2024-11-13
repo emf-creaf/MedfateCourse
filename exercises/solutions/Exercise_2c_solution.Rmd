@@ -220,10 +220,10 @@ g0<-plot(tv_spwb1)+
 #LFMC plot was previously created
 #g1
 #Fire plot
-g2<-ggplot(FireHazard, aes(x=dates, y=I_b_surface, colour = "darkred"))+
+g2<-ggplot(FireHazard, aes(x=dates, y=I_b_surface))+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
-  geom_line()+
-  ylab("Fireline intensity (kW/m)")+
+  geom_line(color="red")+
+  ylab("Fire Line Intensity (kW/m)")+
   theme_bw()+
   theme(legend.position = "none")
 #Arrange  
