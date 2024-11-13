@@ -54,7 +54,7 @@ The proposed exercises are the following:
 | 1         | Create inputs (forest, soil, weather)                   |
 | 2a        | Run basic and advanced water balance. Learn evaluation. |
 | 2b        | Water balance simulations under different bulk soil water sub-models. |
-| 2c        |                                                          |
+| 2c        | Live fuel moisture content and fire hazard simulation.  |
 | 3         | Run growth and forest dynamics, including management.    |
 | 4a        |                                                          |
 | 4b        | Watershed-level hydrological simulations                 |
