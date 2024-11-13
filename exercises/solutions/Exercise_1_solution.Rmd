@@ -125,13 +125,19 @@ pobl_ctl$treeData <- poblet_trees |>
 
 We run again the summary and check whether stand's basal area and LAI make more sense:
 
-```{r, eval = TRUE, highlight.output= c(1,2,4)}
+```{r, eval = TRUE}
 summary(pobl_ctl, SpParamsMED)
 ```
 
 ## Step 6. Adding tree heights
 
-Another issue that we see is the `summary()` concerns percentage of PAR and SWR that reaches the ground, which have missing values. This indicates that light extinction cannot be calculated, in our case because tree heights are missing.
+Leaf area density profiles describe the vertical variation of leaf area density across the canopy. In **medfate** they can be estimated using function `vprofile_leafAreaDensity()`:
+
+```{r, eval = FALSE}
+vprofile_leafAreaDensity(pobl_ctl, SpParamsMED)
+```
+
+If you try the above code it will produce an error. This is because tree heights are missing.
 
 We should somehow estimate tree heights (in cm), for example using an allometric relationship:
 
@@ -153,6 +159,12 @@ pobl_ctl$treeData <- poblet_trees |>
   dplyr::filter(Plot.Code=="POBL_CTL") |>
   forest_mapTreeTable(mapping_x = mapping, SpParams = SpParamsMED,
                       plot_size_x = sampled_area)
+```
+
+We can now safely evaluate the leaf area density profile:
+
+```{r, eval = TRUE}
+vprofile_leafAreaDensity(pobl_ctl, SpParamsMED)
 ```
 
 ## Step 7. Mapping trees from the managed stand

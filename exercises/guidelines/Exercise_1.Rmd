@@ -62,7 +62,7 @@ The management involved a reduction of the number of stems per individual (*suck
 
 ```
 
-6. Why is the amount of light reaching the ground missing in the forest summary? What tree measurements are needed to estimate light extinction through the canopy? Try to complete the information in `"poblet_trees"` using an allometric relationship (*hint*: you can draw allometries from 'AllometrApp' in *Laboratory Forestal Català*) and repeat the tree mapping. Check that the light reaching the ground can now be estimated.
+6. Try drawing a vertical profile of leaf area density (*hint*: use function `vprofile_leafAreaDensity()`)? Why is it failing? What tree measurements are needed to estimate light extinction through the canopy? Try to complete the information in `"poblet_trees"` using an allometric relationship (*hint*: you can draw allometries from 'AllometrApp' in *Laboratory Forestal Català*) and repeat the tree mapping. Check that the leaf area density profile can now be estimated.
 
 ```{r}
 

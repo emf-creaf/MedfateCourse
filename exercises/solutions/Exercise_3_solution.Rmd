@@ -3,7 +3,6 @@ title: "Exercise 3 solution"
 author: "Miquel De Cáceres"
 date: '2024-11-07'
 output:
-  pdf_document: default
   html_document: default
 ---
 
@@ -46,7 +45,7 @@ library(cowplot)
 We are given all the necessary data, bundled in a single list:
 
 ```{r}
-alepo <- readRDS("../StudentRdata/alepo.rds")
+alepo <- readRDS("exercises/StudentRdata/alepo.rds")
 ```
 
 whose elements are...
