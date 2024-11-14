@@ -17,13 +17,13 @@ output:
 
 ## Data
 
-Due to the long computation times of watershed simulations, this exercise uses the example
-watershed data included in the **medfateland** package. The watershed is a small catchment of 66 ha (0.66 km2) 
-in Catalonia. Example weather dataset of **medfate** is taken as climate forcing for simplicity.
+Due to the long computation times of watershed simulations, this exercise employs the example
+watershed data included in the **medfateland** package. This watershed is a small catchment of 66 ha (0.66 km2) 
+in Catalonia. Most (72%) of its surface  corresponds to forests, whereas 25% corresponds to agricultural areas. Example weather dataset of **medfate** is taken as climate forcing for simplicity.
 
 ## Guidelines
 
-1. Load package **medfateland** and the example watershed provided in the package (i.e. `watershed_example`). Indicate crop evapotranspiration factor for `agriculture` cells and create the raster definition that includes one stand per cell (**hint**: see help of `?spwb_land`).
+1. Load package **medfateland** and the example watershed provided in the package (i.e. `watershed_example`). Indicate crop evapotranspiration factor for `agriculture` cells and create the raster definition that includes one stand per cell (**hint**: see documentation and examples in `?spwb_land`).
 
 ```{r}
 
@@ -35,7 +35,7 @@ in Catalonia. Example weather dataset of **medfate** is taken as climate forcing
 
 ```
 
-3. Initialize watershed control parameters for TETIS (the only functional model). Specify the following parameter values (you can check their meaning in the medfatebook):
+3. Initialize watershed control parameters for TETIS (the only functional model). Specify the following parameter values regulating sub-surface fluxes (you can check their meaning in the [watershed hydrology ](https://emf-creaf.github.io/medfatebook/watershedhydrology.html#watershedbalancescheduling) section of the medfatebook):
 
 | Parameter                 | Value    |
 |---------------------------|----------|
@@ -49,7 +49,13 @@ in Catalonia. Example weather dataset of **medfate** is taken as climate forcing
 
 ```
 
-4. Run a water balance simulation over the watershed for one year, using the `examplemeteo` weather data provided in package **medfate**. Examine the predicted daily watershed outflow.
+4. Run a water balance simulation over the watershed for one year, using the `examplemeteo` weather data provided in package **medfate**. Examine the predicted daily watershed outflow. Can you identify a warming-up period?
+
+```{r}
+
+```
+
+5. Update the watershed input object with the state at the end of the 1-yr simulation. Perform another simulation of one year (with the same weather input) and compare the predicted watershed outflow to the first simulation. Is a third year of warm-up needed?
 
 ```{r}
 

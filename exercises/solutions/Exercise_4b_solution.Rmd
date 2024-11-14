@@ -21,44 +21,74 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Data
 
-Due to the long computation times of watershed simulations, this exercise uses the example
-watershed data included in the **medfateland** package. The watershed is a small catchment of 66 ha (0.66 km2) 
-in Catalonia. Example weather dataset of **medfate** is taken as climate forcing for simplicity.
+Due to the long computation times of watershed simulations, this exercise employs the example
+watershed data included in the **medfateland** package. This watershed is a small catchment of 66 ha (0.66 km2) 
+in Catalonia. Most (72%) of its surface  corresponds to forests, whereas 25% corresponds to agricultural areas. Example weather dataset of **medfate** is taken as climate forcing for simplicity.
 
 # Exercise solution
 
-## Step 1. Load medfateland and example watershed data
+## Step 1. Load medfateland and prepare example watershed data
 
+We begin by loading the package and the watershed sf object `example_watershed` provided:
 ```{r}
 library(medfateland)
-library(ggplot2)
+data("example_watershed")
+example_watershed
+```
+We can check the land cover of different grid cells using:
+```{r}
+table(example_watershed$land_cover_type)
 ```
 
+For agricultural areas, we need to specify a crop evapotranspiration factor, which will be used to estimate actual evapotranspiration from potential evapotranspiration. Here we simply copy the example in `?spwb_land`:
 ```{r}
-data("example_watershed")
-data("examplemeteo")
-data("SpParamsMED")
 example_watershed$crop_factor <- NA
 example_watershed$crop_factor[example_watershed$land_cover_type=="agriculture"] <- 0.75
+```
+
+Watershed simulations require a raster topology. In this case, we can use the boundary box of the watershed to specify the raster limits:
+```{r}
 b <- sf::st_bbox(example_watershed)
+b
+```
+And we can check coordinate spacing using:
+```{r}
+head(sf::st_coordinates(example_watershed))
+```
+
+Knowing the limits and that spacing between cells is 100 m, we specify the raster with function `rast()`:
+```{r}
 r <-terra::rast(xmin = 401380, ymin = 4671820, xmax = 402880, ymax = 4672620, 
                 nrow = 8, ncol = 15, crs = "epsg:32631")
 ```
 
+This is the same as shown in the example section of `?spwb_land`.
 
 ## Step 2. Initialize watershed using a multi-bucket soil model
+
+Function `initialize_landscape()` allows initializing inputs for simulations in **medfateland**, analogously to functions `spwbInput()` or `growthInput()` from **medfate**. We learned from a previous exercise that there are three sub-models for soil water fluxes, and we are asked to use the simpler (and faster) sub-model `"buckets"`. Function `initialize_landscape()` includes the parameter `simplify` to force reducing forests to the dominant tree species and dominant shrub species, while keeping overall leaf area values. The call to `initialize_landscape()` should therefore be:
 
 ```{r}
 spwb_init_buckets <- initialize_landscape(example_watershed, SpParams = SpParamsMED,
                                           model = "spwb",
                                           local_control = defaultControl(soilDomains = "buckets"),
                                           simplify = TRUE)
+spwb_init_buckets
 ```
+
+which adds a column `state` to our data, containing objects of class `spwbInput` or `aspwbInput` (the latter in case of agricultural cells).
 
 ## Step 3. Define watershed control parameters
 
+Watershed control parameters are initialized using function `default_watershed_control()` (analogous to `defaultControl()` in **medfate**). TETIS is the only option for lateral water fluxes at the moment. 
+
 ```{r}
 ws_control <- default_watershed_control("tetis")
+```
+
+Once initialized, we can manually change the parameters regulating subsurface flows (multipliers of base conductivity values and exponents regulating responsiveness of conductivity to moisture content).
+
+```{r}
 ws_control$tetis_parameters$R_baseflow <- 1
 ws_control$tetis_parameters$n_baseflow <- 0.7
 ws_control$tetis_parameters$R_interflow <- 1
@@ -68,38 +98,61 @@ ws_control$tetis_parameters$R_localflow <- 1
 
 ## Step 4. Run watershed water balance simulation 
 
+Here we take the example weather data set in **medfate** to run a 1-yr simulation with function `spwb_land()`. We also need to supply a species parameter table in case some (or all cells) have not been initialized previously:
+
 ```{r}
 res_buckets_1y <- spwb_land(r, spwb_init_buckets, SpParamsMED, 
                             meteo = examplemeteo, 
                             watershed_control = ws_control)
-plot(res_buckets_1y$watershed_balance$WatershedExport, type="l")
 ```
 
+We can display the watershed outflow (in mm) using **ggplot2**:
+
+```{r, fig=TRUE, fig.width=10, fig.height=4}
+library(ggplot2)
+ggplot(res_buckets_1y$watershed_balance)+
+  geom_line(aes(x = dates, y = WatershedExport))+
+  scale_y_continuous("Watershed outflow (mm/day)")+
+  theme_bw()
+```
+
+**Interpretation**: The first months of the simulation generate very little outflow (only runoff). Aquifer exfiltration starts later on. Generally speaking, the larger the watershed, the longer the warm-up period necessary. It will also depend on the specific value of parameters regulating sub-surface fluxes.
 
 ## Step 5. Update landscape and run another year of simulation 
+
+Function `update_landscape()` allows updating an input object with the final state of a previous simulation:
 
 ```{r}
 spwb_burnin_buckets <- update_landscape(spwb_init_buckets, res_buckets_1y)
 ```
 
+This updates the `state` column, as well as others. In particular, we can compare the effect of the update by inspecting aquifer water content:
+```{r}
+summary(spwb_init_buckets$aquifer)
+summary(spwb_burnin_buckets$aquifer)
+```
+
+
 ```{r}
 res_buckets_2y <- spwb_land(r, spwb_burnin_buckets, SpParamsMED, 
                             examplemeteo, 
                             watershed_control = ws_control)
-plot(res_buckets_2y$watershed_balance$WatershedExport, type="l")
-```
-
- Run yet another year and check that watershed export does not change
-```{r}
-spwb_burnin_buckets <- update_landscape(spwb_init_buckets, res_buckets_2y)
 ```
 
 ```{r}
-res_buckets_3y <- spwb_land(r, spwb_burnin_buckets, SpParamsMED, examplemeteo, 
-                            watershed_control = ws_control)
-plot(res_buckets_3y$watershed_balance$WatershedExport, type="l")
+wsb_1y <- res_buckets_1y$watershed_balance
+wsb_1y[["simulation"]] <- "First year"
+wsb_2y <- res_buckets_2y$watershed_balance
+wsb_2y[["simulation"]] <- "Second year"
+wsb_all <- rbind(wsb_1y, wsb_2y)
 ```
 
+```{r, fig=TRUE, fig.width=10, fig.height=4}
+ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=WatershedExport, col=simulation))+
+  scale_y_continuous("Watershed outflow (mm/day)")+
+  theme_bw()
+```
 
 ## Step 6. Reinitialize watershed using single-domain soil fluxes and compare watershed outflow
 
@@ -123,27 +176,31 @@ wsb_single_1y[["soilDomain"]] <- "single"
 wsb_all <- rbind(wsb_buckets_1y, wsb_single_1y)
 ```
 
-```{r}
+```{r, fig=TRUE, fig.width=10, fig.height=4}
 ggplot(wsb_all)+
   geom_line(aes(x=dates, y=WatershedExport, col=soilDomain))+
+  scale_y_continuous("Watershed outflow (mm/day)")+
   theme_bw()
 ```
 
-```{r}
+```{r, fig=TRUE, fig.width=10, fig.height=4}
 ggplot(wsb_all)+
   geom_line(aes(x=dates, y=Transpiration, col=soilDomain))+
+  scale_y_continuous("Plant (woody) transpiration cell-average (mm/day)")+
   theme_bw()
 ```
 
-```{r}
+```{r, fig=TRUE, fig.width=10, fig.height=4}
 ggplot(wsb_all)+
   geom_line(aes(x=dates, y=DeepDrainage, col=soilDomain))+
+  scale_y_continuous("Deep drainage cell-average (mm/day)")+
   theme_bw()
 ```
 
-```{r}
+```{r, fig.width=10, fig.height=4}
 ggplot(wsb_all)+
   geom_line(aes(x=dates, y=CellRunoff, col=soilDomain))+
+  scale_y_continuous("Runoff cell-average (mm/day)")+
   theme_bw()
 ```
 
