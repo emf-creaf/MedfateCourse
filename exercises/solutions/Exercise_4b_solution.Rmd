@@ -132,12 +132,14 @@ summary(spwb_init_buckets$aquifer)
 summary(spwb_burnin_buckets$aquifer)
 ```
 
+We now perform a second year of simulation using again a call to `spwb_land()` but with the updated state of the first simulation:
 
 ```{r}
 res_buckets_2y <- spwb_land(r, spwb_burnin_buckets, SpParamsMED, 
                             examplemeteo, 
                             watershed_control = ws_control)
 ```
+We now compare the watershed outflow of the two simulations by first assembling the results in a single data frame:
 
 ```{r}
 wsb_1y <- res_buckets_1y$watershed_balance
@@ -147,15 +149,20 @@ wsb_2y[["simulation"]] <- "Second year"
 wsb_all <- rbind(wsb_1y, wsb_2y)
 ```
 
+and then displaying the outflows together:
+
 ```{r, fig=TRUE, fig.width=10, fig.height=4}
 ggplot(wsb_all)+
   geom_line(aes(x=dates, y=WatershedExport, col=simulation))+
   scale_y_continuous("Watershed outflow (mm/day)")+
   theme_bw()
 ```
+**Interpretation**: As expected, in the first part of the year the results are very different. However, by the end of the year the two simulations produce the same outflow. This is an indication that we have achieved a constancy in behavior. As indicated, larger watersheds will require longer warm-up periods.
+
 
 ## Step 6. Reinitialize watershed using single-domain soil fluxes and compare watershed outflow
 
+In order to show the importance of local sub-model of bulk soil water fluxes, we re-initialize the watershed inputs, but this time specifying `soilDomains = "single"` in our local control parameters:
 ```{r}
 spwb_init_single <- initialize_landscape(example_watershed, SpParams = SpParamsMED,
                                           model = "spwb",
@@ -163,10 +170,13 @@ spwb_init_single <- initialize_landscape(example_watershed, SpParams = SpParamsM
                                           simplify = TRUE)
 ```
 
+An perform a simulation analogous to step #4:
 ```{r}
 res_single_1y <- spwb_land(r, spwb_init_single, SpParamsMED, examplemeteo, 
                            watershed_control = ws_control)
 ```
+
+To compare the results of the two simulations, we first assemble a single data frame:
 
 ```{r}
 wsb_buckets_1y <- res_buckets_1y$watershed_balance
@@ -176,6 +186,8 @@ wsb_single_1y[["soilDomain"]] <- "single"
 wsb_all <- rbind(wsb_buckets_1y, wsb_single_1y)
 ```
 
+and plot the watershed outflow together:
+
 ```{r, fig=TRUE, fig.width=10, fig.height=4}
 ggplot(wsb_all)+
   geom_line(aes(x=dates, y=WatershedExport, col=soilDomain))+
@@ -183,33 +195,40 @@ ggplot(wsb_all)+
   theme_bw()
 ```
 
-```{r, fig=TRUE, fig.width=10, fig.height=4}
-ggplot(wsb_all)+
+we can also compare the dynamics of other watershed-level average flows, such as plant transpiration, run-off and deep drainage:
+
+```{r, fig=TRUE, fig.width=10, fig.height=11}
+g1 <- ggplot(wsb_all)+
   geom_line(aes(x=dates, y=Transpiration, col=soilDomain))+
   scale_y_continuous("Plant (woody) transpiration cell-average (mm/day)")+
+  ggtitle("Transpiration")+
   theme_bw()
-```
-
-```{r, fig=TRUE, fig.width=10, fig.height=4}
-ggplot(wsb_all)+
+g2 <- ggplot(wsb_all)+
   geom_line(aes(x=dates, y=DeepDrainage, col=soilDomain))+
   scale_y_continuous("Deep drainage cell-average (mm/day)")+
+  ggtitle("Deep drainage")+
   theme_bw()
-```
-
-```{r, fig.width=10, fig.height=4}
-ggplot(wsb_all)+
+g3 <- ggplot(wsb_all)+
   geom_line(aes(x=dates, y=CellRunoff, col=soilDomain))+
   scale_y_continuous("Runoff cell-average (mm/day)")+
+  ggtitle("Runoff")+
   theme_bw()
+cowplot::plot_grid(g1, g2, g3, nrow =3)
 ```
 
-## Step 7. Run 6 years of watershed simulation by repeating example weather data
+**Interpretation**: The outflow hydrological response at the watershed level is strikingly different, highlighting the importance of the choice of the local sub-model for soil water fluxes. However, the two simulations do not differ much in terms of plant transpiration, which suggests that the choice is not critical when the focus is on vegetation stress and dynamics. As expected, watershed-average of cell runoff and deep drainage also differs between local sub-models.
+
+## Step 7. Run 4 years of watershed simulation by repeating example weather data
+
+In this last part of the exercise, the idea is to compare watershed simulations assuming a static vegetation vs. simulations where growth and mortality processes can occur. To do so, we start by simulating 4 years of watershed simulations with the `spwb_land()` function, which involves assuming a static vegetation. As weather data, we simply repeat four times the 1-year weather data, while setting the appropriate dates:
+
 ```{r}
 meteo_4y <- rbind(examplemeteo, examplemeteo, examplemeteo, examplemeteo)
 meteo_4y$dates = seq(as.Date("2001-01-01"), 
                   as.Date("2004-12-30"), by="day")
 ```
+
+Then we call the simulation (this will take a few minutes):
 
 ```{r}
 res_spwb_4y <- spwb_land(r, spwb_init_buckets, SpParamsMED, 
@@ -217,7 +236,10 @@ res_spwb_4y <- spwb_land(r, spwb_init_buckets, SpParamsMED,
                          watershed_control = ws_control)
 ```
 
-## Step 8. Run 6 year of simulations with model growth, after reinitializing for this model
+## Step 8. Run 4 years of simulations with model growth, after initializing inputs for this model
+
+Next, we want to run similar simulation but allowing growth and mortality to occur. We first, initialize the watershed for model `"growth"` in a call to `initialize_landscape()` where we also specify `"buckets"` as the soil water flux sub-model:
+
 ```{r}
 growth_init_buckets <- initialize_landscape(example_watershed, SpParams = SpParamsMED,
                                             model = "growth",
@@ -225,14 +247,21 @@ growth_init_buckets <- initialize_landscape(example_watershed, SpParams = SpPara
                                             simplify = TRUE)
 ```
 
+The call to `growth_land()` is analogous to `spwb_land()`:
+
 ```{r}
 res_growth_4y <- growth_land(r, growth_init_buckets, SpParamsMED, 
                              meteo = meteo_4y, 
                              watershed_control = ws_control)
 ```
 
+Note that the fact that we simplified vegetation into dominant cohorts make our growth dynamics less realistic, but we did so to speed up calculations.
 
-## Step 9. Compare results
+
+
+## Step 9. Compare the results of the previous two steps
+
+To compare the watershed outflow between `spwb` and `growth` models we assemble a data frame with all the results:
 
 ```{r}
 wsb_spwb_4y <- res_spwb_4y$watershed_balance
@@ -242,18 +271,35 @@ wsb_growth_4y[["model"]] <- "growth"
 wsb_all <- rbind(wsb_spwb_4y, wsb_growth_4y)
 ```
 
-```{r}
+and then draw the outflow dynamics using:
+
+```{r, fig=TRUE, fig.width=10, fig.height=4}
 ggplot(wsb_all)+
   geom_line(aes(x=dates, y=WatershedExport, col=model))+
+  scale_y_continuous("Watershed outflow (mm/day)")+
   theme_bw()
 ```
 
+It is clear that the two simulations diverge progressively. Before interpreting the result, we can plot other water balance components, like watershed-averages of transpiration, runoff and deep drainage:
 
-```{r}
-ggplot(wsb_all)+
+```{r, fig=TRUE, fig.width=10, fig.height=11}
+g1 <- ggplot(wsb_all)+
   geom_line(aes(x=dates, y=Transpiration, col=model))+
+  scale_y_continuous("Plant (woody) transpiration cell-average (mm/day)")+
+  ggtitle("Transpiration")+
   theme_bw()
+g2 <- ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=DeepDrainage, col=model))+
+  scale_y_continuous("Deep drainage cell-average (mm/day)")+
+  ggtitle("Deep drainage")+
+  theme_bw()
+g3 <- ggplot(wsb_all)+
+  geom_line(aes(x=dates, y=CellRunoff, col=model))+
+  scale_y_continuous("Runoff cell-average (mm/day)")+
+  ggtitle("Runoff")+
+  theme_bw()
+cowplot::plot_grid(g1, g2, g3, nrow =3)
 ```
 
-
+**Interpretation**: The simulation with growth seems to have led to a decrease in leaf area index across the watershed during the first two years, as a result of either mortality or defoliation processes. This is clear after inspecting the decrease in transpiration, which leads to higher soil moisture levels and, therefore, higher deep drainage. After the initial two years, the vegetation in the watershed seems to be at equilibrium with the climatic input and differences are simply maintained.
 

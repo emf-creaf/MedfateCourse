@@ -61,3 +61,26 @@ in Catalonia. Most (72%) of its surface  corresponds to forests, whereas 25% cor
 
 ```
 
+6. Re-initialize inputs for soil plant water balance simulations on the watershed (**hint**: use function `initialize_landscape()`), specifying that local soil water fluxes will be simulated using a single-domain Richards model. Run 1-year watershed water balance again and compare the results with Step #4 in terms of watershed outflow as well as watershed-averages of cell transpiration, deep drainage and runoff. Where do the differences lie?
+
+```{r}
+
+```
+
+7. Go back to the watershed initialized with the multi-bucket soil model and perform 4 years of `spwb_land()` simulations by repeating the 1-yr weather series in `examplemeteo`.
+
+```{r}
+
+```
+
+8. Now initialize the watershed for model `"growth"`, using also a multi-bucket soil model and perform 4 years of `growth_land()` simulations with the same weather as step #7. 
+
+```{r}
+
+```
+
+9. Draw the watershed output of simulations in Step #7 and Step #8. Interpret the comparison with the help of other water balance components.
+
+```{r}
+
+```
