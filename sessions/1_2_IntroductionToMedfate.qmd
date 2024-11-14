@@ -26,8 +26,8 @@ progress: true
 1. Purpose and development context
 2. Set of R packages
 3. Package installation and documentation
-4. Overview of medfate package functions
-5. Overview of medfateland package functions
+4. Overview of `medfate` package functions
+5. Overview of `medfateland` package functions
 :::
 
 ::: {.column width="50%"}
@@ -65,8 +65,17 @@ Developments were also supported by CTFC (until March 2021) and CREAF, where I c
 
 A large number of people has contributed with *ideas*, *data* or *code* to the project:
 
-Jordi Martínez-Vilalta (CREAF-UAB, Spain), Maurizio Mencuccini (ICREA, Spain), Juli G. Pausas (CIDE-CSIC, Spain), Pilar Llorens (CSIC, Spain), Rafa Poyatos (CREAF, Spain), Lluís Brotons (CREAF-CSIC, Spain), Antoine Cabon (WSL, Switzerland), Roberto Molowny (EMF-CREAF, Spain), Victor Granda (EMF-CREAF, Spain), Adriana Tovar (EMF-CREAF, Spain) Alicia Forner (MNCN-CSIC, Spain), Lluís Coll (UdL, Spain), Pere Casals (CTFC, Spain), Mario Beltrán (CTFC, Spain), Aitor Améztegui (UdL, Spain), Nicolas Martin-StPaul (INRA, France), Shengli Huang (USDA, USA), Enric Batllori (UB-CREAF, Spain), Santi Sabaté (UB-CREAF, Spain), Daniel Nadal-Sala (UB, Spain), María González (UPV, Spain)
+Jordi Martínez-Vilalta (CREAF-UAB, Spain), Maurizio Mencuccini (ICREA, Spain), Juli G. Pausas (CIDE-CSIC, Spain), Pilar Llorens (CSIC, Spain), Rafa Poyatos (CREAF, Spain), Lluís Brotons (CREAF-CSIC, Spain), Antoine Cabon (WSL, Switzerland), Roberto Molowny (EMF-CREAF, Spain), Victor Granda (EMF-CREAF, Spain), Adriana Tovar (EMF-CREAF, Spain) Alicia Forner (MNCN-CSIC, Spain), Lluís Coll (UdL, Spain), Pere Casals (CTFC, Spain), Mario Beltrán (CTFC, Spain), Aitor Améztegui (UdL, Spain), Nicolas Martin-StPaul (INRA, France), Shengli Huang (USDA, USA), Enric Batllori (UB-CREAF, Spain), Santi Sabaté (UB-CREAF, Spain), Daniel Nadal-Sala (UB, Spain), María González (UPV, Spain), Núria Aquilué (CTFC, Spain), Mario Morales (UniZar, Spain), Léa Veuillen (INRAE, France), ...
 
+. . .
+
+**Institutions**
+
+The framework is the joint effort of different institutions:
+
+::: center
+![](resources/img/logos.png){width="30%"}
+::: 
 
 ::: footer
 1. Purpose and development context
@@ -135,12 +144,15 @@ c. Parameter estimation procedures
 d. Evaluation benchmarks
 e. Estimated computational times
 
+. . .
+
+This course can be found at the [training](https://emf.creaf.cat/training/) section of the *Ecosystem Modelling Facility* website.
 
 ::: footer
 3. Package installation and documentation
 :::
 
-# 4. Overview of medfate package functions {background-color="#D4AA00"}
+# 4. Overview of `medfate` package functions {background-color="#D4AA00"}
 
 ## Simulation functions
 
@@ -221,7 +233,7 @@ Sub-model functions are grouped by *subject*:
 4. Overview of medfate package functions
 :::
 
-# 5. Overview of medfateland package functions {background-color="#D4AA00"}
+# 5. Overview of `medfateland` package functions {background-color="#D4AA00"}
 
 ## Simulation functions
 

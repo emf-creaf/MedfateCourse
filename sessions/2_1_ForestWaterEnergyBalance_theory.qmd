@@ -22,7 +22,7 @@ progress: true
 
 ::::: columns
 ::: {.column width="50%"}
-1. Preliminary concepts
+1. Preliminary concepts: hydraulics and drought effects
 2. Forest water balance in `medfate`
 3. Transpiration and photosynthesis under the basic model
 4. Transpiration and photosynthesis under the advanced model
@@ -41,11 +41,11 @@ library(sp)
 library(ggplot2)
 ```
 
-# 1. Preliminary concepts
+# 1. Preliminary concepts: hydraulics and drought effects
 
 ## Water potential {.smaller}
 
-The water potential, $\Psi$, is the potential energy of water relative to pure water under reference conditions. It quantifies the tendency of water to move from one area to another.
+The water potential ($\Psi$) is the *potential energy of water*, relative to pure water under reference conditions. It quantifies the tendency of water to move from one area to another.
 
 . . .
 
@@ -98,13 +98,55 @@ Parameters of the water retention curves can be calibrated empirically but are n
 1.  Preliminary concepts
 :::
 
+## Plant pressure volume curves {.smaller}
+
+The *pressure volume curve* of a plant tissue or organ is the relationship between relative water content ($RWC$, in $kg \, H_2O / kg \,  \, H_2O$ at saturation) and the corresponding water potential ( $\Psi$, in MPa).
+
+. . .
+
+::::: columns
+::: {.column width="50%"}
+The relationship between $\Psi$ and $RWC$ is formulating by separating $\Psi$ into osmotic (solute) potential ($\Psi_{S}$) and the turgor pressure potential ($\Psi_{P}$):
+
+$$\Psi = \Psi_{S} + \Psi_{P}$$
+where
+$$\Psi_{P} = -\pi_0 -\epsilon\cdot (1.0 - RWC)$$
+and
+$$ \Psi_{S} = \frac{-\pi_0}{RWC}$$ 
+
+where $\pi_0$ (MPa) is the osmotic potential at full turgor (i.e. when $RWC = 1$) and $\epsilon$ is the modulus of elasticity (i.e. the slope of the relationship). 
+:::
+
+::: {.column width="50%"}
+
+```{r, fig.width=4, fig.height=4, echo=FALSE}
+psi = seq(-10,0, by=0.1)
+rwc_s = rep(NA, length(psi))
+for(i in 1:length(psi)) rwc_s[i] =moisture_symplasticRWC(psi[i],-3,12)
+tlp <- medfate::moisture_turgorLossPoint(-3,12)
+df <- data.frame(psi = psi, rwc = rwc_s)
+ggplot(df)+
+  geom_line(aes(x=psi, y=rwc*100))+
+  geom_vline(xintercept = tlp, linetype="dashed", col="gray")+
+  scale_x_continuous("Water potential (MPa)")+
+  scale_y_continuous("Relative water content (%)")+
+  theme_bw()
+```
+:::
+:::::
+
+. . .
+
+When $\Psi \leq \Psi_{tlp}$, the water potential at turgor loss point, then $\Psi_{P} = 0$ and $\Psi = \Psi_{S}$. If $\Psi > \Psi_{tlp}$ then the two components are needed.
+
+
 ## Hydraulic conductance and vulnerability curves {.smaller}
 
--   **Hydraulic conductance** $k$ is used to measure how much flow exists along a pathway segment (e.g. soil, stem, leaves, ... ) for a given difference in water potential.
+-   **Hydraulic conductance** $k$ measures how much flux exists along a pathway segment (e.g. soil, stem, leaves, ... ) for a given difference in water potential.
 
--   Hydraulic conductance decreases when **air replaces water** in any segment.
+-   Hydraulic conductance decreases when **air replaces water** in any segment of the pathway.
 
--   **Vulnerability curve** specifies the relationship between water potential, $\Psi$, and hydraulic conductance, $k$, of a given segment.
+-  The **vulnerability curve** specifies the relationship between water potential ($\Psi$) and hydraulic conductance ($k$) of a given segment.
 
 . . .
 
@@ -136,11 +178,11 @@ $$k(\Psi) = \frac{k_{max}}{1 + e^{(slope/25) \cdot (\Psi - \Psi_{50})}}$$ ![](re
 
 ## Water potential drop in plants {.smaller}
 
-When stomata are closed (e.g. pre-down), plant leaf water potential is assumed to be in equilibrium with the water potential in the rhizosphere (neglecting gravity effects).
+When stomata are **closed** (e.g. during night), plant leaf water potential is assumed to be in *equilibrium* with the water potential in the rhizosphere (neglecting gravity effects).
 
 . . .
 
-When stomata are open, a larger transpiration flow (*E*) implies (in steady state) a larger drop in water potential along the transpiration pathway [^1]:
+When stomata are **open**, a larger transpiration flow ($E$) implies a larger *drop in water potential* along the transpiration pathway due to the negative pressure (suction) that arises [^1]:
 
 [^1]: Venturas et al. (2017) J. Int. Plant Biol., 59, 356-389.
 
@@ -179,16 +221,16 @@ The decrease in soil water potential caused by drought has multiple effects on p
 The water balance models in available in medfate simulate the following vertical water flows in a given forest stand.
 
 ::::: columns
-::: {.column width="50%"}
+::: {.column width="57%"}
 ![](resources/img/waterbalance.jpg)
 :::
 
-::: {.column width="50%"}
+::: {.column width="43%"}
 | Component           | Symbol       | Description                             |
 |-------------------|-----------------|-------------------------------------|
 | Infiltration        | $If$         | Water entering the soil from above      |
-| Capillarity rise    | $Cr$         | Water entering the soil from below      |
-| Deep drainage       | $Dd$         | Water leaving the soil beyond root zone |
+| Capillarity rise    | $Cr$         | Water entering the soil via capillarity from a lower saturated layer   |
+| Deep drainage       | $Dd$         | Water percolating beyond the root zone |
 | Saturation excess   | $Se$         | Excess of water in the soil             |
 | Soil evaporation    | $Es$         | Evaporation from soil surface           |
 | Woody transpiration | $Tr_{woody}$ | Woody plant transpiration               |
@@ -208,7 +250,7 @@ Variations in soil water content can be summarized as: $$\Delta{V_{soil}} = (If 
 
 If rainfall occurs during a given day, three processes are simulated to update the water content in soil layers:
 
-![](resources/img/wb_inputs.png){width="70%"}
+![Sub-models involved in water inputs](resources/img/wb_inputs.png){width="65%"}
 
 ::: footer
 2.  Forest water balance in medfate
@@ -218,7 +260,7 @@ If rainfall occurs during a given day, three processes are simulated to update t
 
 Regardless of precipitation, soil moisture can be modified due to the following processes:
 
-![](resources/img/wb_outputs.png)
+![Sub-models involved in water outputs](resources/img/wb_outputs.png)
 
 . . .
 
@@ -230,22 +272,22 @@ Soil water uptake by plants, hydraulic redistribution and transpiration are mode
 2.  Forest water balance in medfate
 :::
 
-## Flows in the soil {.smaller}
+## Soil water fluxes {.smaller}
 
 Three submodels are available to simulate water movement *into*, *out of* and *within* the soil:
 
 A. **Multi-bucket model**: Water inputs and drainage during a rainy day (and may be the next if over field capacity).
 
-B. **Single-domain model**: Vertical water movement any day following gravitational and matric potentials (Richards equation).
+B. **Single-domain model**: Vertical water movement any day following gravitational and matric potentials (Richards equation). Assumes an homogeneous porous media.
 
-C. **Dual permeability model**: Flows in the soil matrix following the previous model. Flows in the macropore domain following gravitational forces. Saturation excess possible.
+C. **Dual permeability model**: Flows in the soil matrix following the previous model. Flows in the macropore domain following gravitational forces. The two domains exchange water.
 
-![](resources/img/soil_flow_design.png){width="85%"}
+![Sub-models of fluxes in the soil](resources/img/soil_flow_design.png){width="85%"}
 
 . . .
 
 ::: callout-warning
-The three sub-models differ greatly in computational demand.
+The three sub-models differ greatly in computational demand (see Exercise 2b).
 :::
 
 ::: footer
@@ -254,13 +296,15 @@ The three sub-models differ greatly in computational demand.
 
 # 3. Transpiration and photosynthesis under the basic model {background-color="#800033"}
 
-## Maximum transpiration {.smaller}
-
-### Maximum canopy transpiration
+## Maximum canopy transpiration {.smaller}
 
 ::::: columns
 ::: {.column width="60%"}
-Maximum canopy transpiration $Tr_{\max}$ depends on potential evapotranspiration, $PET$, and the amount of transpirating surface, i.e. the stand leaf area index, thanks to: $$\frac{Tr_{\max}}{PET}= -0.006\cdot (LAI^{\phi}_{stand})^2+0.134\cdot LAI^{\phi}_{stand}$$
+Maximum canopy transpiration $Tr_{\max}$ depends on potential evapotranspiration, $PET$, and the amount of transpirating surface, i.e. the stand leaf area index, thanks to an empirical relationship by Granier [^1]: 
+
+$$\frac{Tr_{\max}}{PET}= -0.006\cdot (LAI^{\phi}_{stand})^2+0.134\cdot LAI^{\phi}_{stand}$$
+
+[^1]: Granier et al. (1999). Ecol. Model., 116, 269-283.
 
 and therefore:
 
@@ -268,16 +312,14 @@ $$Tr_{\max} = PET \cdot \left( -0.006\cdot (LAI^{\phi}_{stand})^2+0.134\cdot LAI
 :::
 
 ::: {.column width="40%"}
-![](resources/img/granier_model.png){width="70%"}
-
-*Granier et al. (1999). Ecol. Model., 116, 269-283.*
+![](resources/img/granier_model.png){width="80%"}
 :::
 :::::
 
 Maximum canopy transpiration is divided among plant cohorts according to the amount of light absorbed by each one.
 
 ::: callout-note
-Granier's equation is actually species-specific in medfate.
+Granier's equation is actually species-specific in **medfate**.
 :::
 
 ::: footer
@@ -292,9 +334,9 @@ Actual plant transpiration depends on soil moisture and is calculated for each s
 
 ::::: columns
 ::: {.column width="\"50%"}
-A *relative whole-plant water conductance*, $K$ is defined for any given soil layer $s$ using:
+A *relative whole-plant water conductance*, $k_{rel}$ is defined for any given soil layer $s$ using:
 
-$$K(\Psi_s) = \exp \left \{\ln{(0.5)}\cdot \left[ \frac{\Psi_{s}}{\Psi_{extract}}\right] ^r \right \}$$
+$$k_{rel}(\Psi_s) = \exp \left \{\ln{(0.5)}\cdot \left[ \frac{\Psi_{s}}{\Psi_{extract}}\right] ^r \right \}$$
 
 where $\Psi_{extract}$ is the water potential at which transpiration is 50% of maximum, and $\Psi_s$, the water potential in layer $s$.
 :::
@@ -303,7 +345,7 @@ where $\Psi_{extract}$ is the water potential at which transpiration is 50% of m
 ```{r, fig.width=4, fig.height=3.0, fig.align="center", echo=FALSE}
 par(mar=c(4,4,1,1))
 x = seq(-10, 0, by=0.01)
-plot(-x ,unlist(lapply(x,hydraulics_psi2K,-2.0,3.0)), type="l", ylab="K (relative conductance)", xlim=c(0,10), ylim=c(0,1),xlab="Soil water potential (-MPa)", frame=FALSE)
+plot(-x ,unlist(lapply(x,hydraulics_psi2K,-2.0,3.0)), type="l", ylab="k (relative conductance)", xlim=c(0,10), ylim=c(0,1),xlab="Soil water potential (-MPa)", frame=FALSE)
 lines(-x, unlist(lapply(x,hydraulics_psi2K,-3.0,3.0)), lty=2)
 lines(-x, unlist(lapply(x,hydraulics_psi2K,-4.0,3.0)), lty=3)
 lines(-x, unlist(lapply(x,hydraulics_psi2K,-5.0,3.0)), lty=4)
@@ -318,7 +360,7 @@ abline(h=50, col="gray", lwd=2)
 
 The water extracted by a plant cohort from soil layer $s$ and transpired, $Tr_{s}$, is the product:
 
-$$Tr_{s} =  Tr_{\max} \cdot K(\Psi_{s}) \cdot FRP_{s}$$ where $FRP_{s}$ is the proportion of plant fine roots in layer $s$.
+$$Tr_{s} =  Tr_{\max} \cdot k_{rel}(\Psi_{s}) \cdot FRP_{s}$$ where $FRP_{s}$ is the proportion of plant fine roots in layer $s$.
 
 . . .
 
@@ -338,9 +380,9 @@ $$A_{g} = Tr \cdot WUE_{\max} \cdot (L^{PAR})^{WUE_{PAR}} \cdot (1 - e^{WUE_{CO2
 
 where:
 
--   $WUE_{\max}$ is the maximum water use efficiency of the cohort under maximum light availability, $VPD = 1kPa$ and no CO2 limitations.
--   $L^{PAR}$ is the proportion of PAR available and $WUE_{PAR}$ is an exponent.
--   $C_{air}$ is the carbon dioxide concentration in the air and $WUE_{CO2}$ is a regulating coefficient.
+-   $WUE_{\max}$ is the maximum water use efficiency of the cohort under maximum light availability, $VPD = 1kPa$ and no $CO_2$ limitations.
+-   $L^{PAR}$ is the proportion of photosynthetically active radiation available and $WUE_{PAR}$ is an exponent.
+-   $C_{air}$ is the air $CO_2$ concentration and $WUE_{CO2}$ is a regulating coefficient.
 -   $VPD$ is vapour pressure deficit and $WUE_{VPD}$ is a regulating coefficient.
 
 . . .
@@ -361,7 +403,7 @@ The basic water balance model **does not** estimate the water potential drop fro
 
 Despite its simplicity, a gross surrogate of **'plant' water potential**, $\Psi_{plant}$, may be obtained using:
 
-$$\Psi_{plant}= K^{-1}\left(\sum_{s}{K(\Psi_s)\cdot FRP_{s}}\right)$$
+$$\Psi_{plant}= k_{rel}^{-1} \cdot \left(\sum_{s}{k_{rel}(\Psi_s)\cdot FRP_{s}}\right)$$
 
 which can be intuitively understood as an *average of soil water potential* taking into account fine root distribution.
 
@@ -579,9 +621,9 @@ Daily drought stress, $DDS$, is defined using $\phi$, the phenological status, a
 ::: {.column width="50%"}
 **Basic model**
 
-Since $K$ is defined as a relative whole-plant conductance:
+Since $k_{rel}$ is already defined as a relative whole-plant conductance:
 
-$$DDS=\phi \cdot (1-K(\Psi_{plant}))$$
+$$DDS=\phi \cdot (1-k_{rel}(\Psi_{plant}))$$
 :::
 
 ::: {.column width="50%"}
@@ -599,7 +641,7 @@ $$DDS=\phi \cdot \left[ 1 - \frac{dE / d\Psi_{leaf}}{k_{max,plant}} \right]$$
 
 ## Cavitation {.smaller}
 
-If cavitation has occurred in previous steps then the capacity of the plant to transport water is impaired via the estimation of percent loss conductance (PLC).
+If cavitation has occurred in previous steps then the capacity of the plant to transport water is impaired via the estimation of **percent loss conductance** (PLC).
 
 . . .
 
@@ -613,7 +655,7 @@ $$PLC_{stem} = 1 - \exp \left \{ \ln{(0.5)}\cdot \left[ \frac{\Psi_{plant}}{\Psi
 
 Effect on plant transpiration:
 
-$$K^{PLC}_{s} = \min \{K_{s}, 1.0 - PLC_{stem} \}$$
+$$k_{rel}^{PLC}(\Psi_{s}) = \min \{k_{rel}(\Psi_{s}), 1.0 - PLC_{stem} \}$$
 :::
 
 ::: {.column width="50%"}

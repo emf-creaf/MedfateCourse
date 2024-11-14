@@ -110,6 +110,13 @@ and `shrubData` (for shrubs):
 forest$shrubData
 ```
 
+. . .
+
+::: callout-important
+The distinction between *shrubs* and *trees* is made on the basis of the measured dimensions in forest inventory data (cover vs. density and DBH), disregarding the species growth form.
+:::
+
+
 ::: footer
 2.  Forest input
 :::
@@ -165,9 +172,9 @@ Building `forest` objects from inventory data will always require some data wran
 
 | Function                  | Description                     |
 |---------------------------|---------------------------------|
-| `forest_mapShrubTable()`  | Helps filling `shrubData` table |
 | `forest_mapTreeTable()`   | Helps filling `treeData` table  |
-| `forest_mapWoodyTables()` | Helps filling a `forest` object |
+| `forest_mapShrubTable()`  | Helps filling `shrubData` table |
+| `forest_mapWoodyTables()` | Helps filling both `treeData` and `shrubData` tables |
 
 ::: footer
 2.  Forest input
@@ -293,7 +300,7 @@ vprofile_SWRExtinction(forest, SpParamsMED)
 
 Users can visually inspect the distribution of fine roots of `forest` objects by calling function `vprofile_rootDistribution()`:
 
-```{r, fig = TRUE, fig.width= 6, fig.height=4, echo=TRUE}
+```{r, fig = TRUE, fig.width= 4, fig.height=4, echo=TRUE}
 vprofile_rootDistribution(forest, SpParamsMED)
 ```
 
@@ -335,7 +342,7 @@ They can be initialized to default values using function `defaultSoilParams()`:
 
 ```{r, echo = TRUE}
 spar <- defaultSoilParams(2)
-print(spar)
+spar
 ```
 
 ... and then you should modify default values according to available soil information.
@@ -387,7 +394,7 @@ class(examplesoil)
 
 . . .
 
-The initialised soil data frame contains additional columns with soil hydraulic parameters and state variables for moisture (`W`) and temperature (`Temp`):
+The initialised soil data frame contains additional columns with  *hydraulic parameters* (e.g. `Ksat`) and *state variables* for moisture (`W`) and temperature (`Temp`):
 
 ```{r, echo = TRUE}
 examplesoil
@@ -403,15 +410,21 @@ We can skip calling function `soil()` in our scripts to run simulations, but aga
 
 ## Water retention curves
 
-The **water retention curve** is used to represent the relationship between soil water content ( $\theta$ ; %) and soil water potential ( $\Psi$ ; MPa).
+The **water retention curve** is used to represent the relationship between soil water content ( $\theta$ ; %) and water potential ( $\Psi$ ; MPa).
 
 . . .
 
-The following code calls function `soil_retentionCurvePlot()` to illustrate the difference between two (Saxton and Van Genuchten) water retention models in this soil:
+The following code calls function `soil_retentionCurvePlot()` to illustrate two water retention curves in this soil:
 
 ```{r, fig = TRUE, fig.width= 6, fig.height=4, echo=TRUE}
 soil_retentionCurvePlot(examplesoil, model="both")
 ```
+
+. . .
+
+::: callout-important
+Van Genuchten's model is the default for simulations (see `soilFunctions` in `?defaultControl`), but its parameters may be difficult to estimate correctly.
+:::
 
 ::: footer
 4.  Soil input
@@ -477,7 +490,7 @@ Function `fordyn()` is different from the other two models: the user enters fore
 
 The following workflow summarises the initialisation for the three functions:
 
-![](resources/img/input_workflow.png){width="500"}
+![](resources/img/input_workflow.png){width="600"}
 
 ::: footer
 6.  Simulation input object
