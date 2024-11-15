@@ -4,6 +4,7 @@ title-slide-attributes:
   data-background-color: "#2D5016"
 format:
   revealjs:
+    embed-resources: true
     df-print: default
     incremental: true
     smaller: false
@@ -27,7 +28,7 @@ library(medfateland)
 
 ::::: columns
 ::: {.column width="61%"}
-1. Data structures in medfateland
+1. Data structures in `medfateland`
 2. Spatially-uncoupled simulations
 3. Regional management scenarios
 4. Watershed-level simulations
@@ -40,7 +41,7 @@ library(medfateland)
 :::
 :::::
 
-# 1. Data structures in medfateland {background-color="#2D5016"}
+# 1. Data structures in `medfateland` {background-color="#2D5016"}
 
 ## Spatial structures (1) {.smaller}
 
@@ -637,12 +638,12 @@ The following table summarises a set of advanced topics for watershed simulation
 
 | Topic    | Description                                |
 |------------|--------------------------------------------|
-| Burn-in    | Watershed simulations always require burn-in periods where soil and aquifer levels reach equilibrium values. This is facilitated via function  `update_landscape()`. |
-| Calibration | Watershed simulations will normally require calibration of watershed-level control parameters. |
+| Burn-in    | Watershed simulations always require **burn-in** periods where soil and aquifer levels reach equilibrium values. This is facilitated via function  `update_landscape()`. |
+| Calibration | Watershed simulations will normally require **calibration** of watershed-level control parameters. |
 | Weather resolution | Weather interpolation can have a **coarser resolution** than the watershed grid (see `weather_aggregation_factor` in `?default_watershed_control`). |
 | Parallelization | At present, **parallelization is not recommended** for watershed simulations. |
 | Result cells | Whereas by default only water balance summaries are produced for individual cell, it is possible to specify full **medfate** results on target cells, via a column called `result_cell`. |
-| Local control | Analogously to weather forcing, it is possible to specify spatial variation in the control parameters for local processes (e.g. Sperry or Sureau only in targetted cells), via a column called `local_control`. |
+| Local control | Analogously to weather forcing, it is possible to specify **spatial variation in the control parameters** for local processes (e.g. Sperry or Sureau only in targetted cells), via a column called `local_control`. |
 
 
 ::: footer
@@ -854,17 +855,24 @@ check_soils(y_3)
 
 ## Procedure using package forestables (1) {.smaller}
 
+::::: columns
+::: {.column width="90%"}
 R package **forestables** allows reading and harmonizing national forest inventory data from the FIA (USA forest inventory), FFI (France forest inventory) and IFN (Spain forest inventory). 
 
-. . .
-
 Using **forestables** simplifies the data preparation for large areas.
+
+:::
+
+::: {.column width="10%"}
+![](resources/img/logo_forestables.png)
+:::
+:::::
 
 . . .
 
 Here we will use a subset of IFN4 data that is provided as example output of **forestables**:
 
-```{r}
+```{r, echo = TRUE}
 library(forestables)
 ifn4_example <- ifn_output_example |>
   dplyr::filter(version == "ifn4")
@@ -937,7 +945,7 @@ If one has access to structure mapes (e.g. from LiDAR data), this second step ca
 
 . . .
 
-The whole procedure is illustrated in vignette [PreparationInputs_II](https://emf-creaf.github.io/medfateland/articles/intro/PreparingInputs_II.html).
+The whole procedure is illustrated in vignette [PreparationInputs_II](https://emf-creaf.github.io/medfateland/articles/intro/PreparingInputs_II.html) (see also Exercise 4a).
 
 ::: footer
 6. Creating spatial inputs II: continuous landscapes

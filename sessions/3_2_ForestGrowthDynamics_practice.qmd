@@ -4,6 +4,7 @@ title-slide-attributes:
   data-background-color: "#53536C"
 format:
   revealjs:
+    embed-resources: true
     incremental: true
     smaller: false
     logo: resources/img/emf_logo.svg
@@ -23,9 +24,9 @@ progress: true
 ::::: columns
 ::: {.column width="50%"}
 1. Forest growth inputs
-2. Running forest growth
+2. Forest growth simulations
 3. Evaluation of growth predictions
-4. Forest dynamics
+4. Forest dynamics simulations
 5. Forest dynamics including management
 :::
 
@@ -78,7 +79,7 @@ control <- defaultControl("Granier")
 With these four elements we can build our input object for function `growth()`:
 
 ```{r, echo = TRUE}
-x <- forest2growthInput(exampleforest, examplesoil, SpParamsMED, control)
+x <- growthInput(exampleforest, examplesoil, SpParamsMED, control)
 ```
 
 ::: footer
@@ -125,7 +126,7 @@ x$internalCarbon
 1.  Forest growth inputs
 :::
 
-# 2. Forest growth {background-color="#53536C"}
+# 2. Forest growth simulations {background-color="#53536C"}
 
 ## Forest growth run {.smaller}
 
@@ -255,7 +256,7 @@ evaluation_stats(G, exampleobs, "BAI", cohort = "T1_148", temporalResolution = "
 3.  Evaluation of growth predictions
 :::
 
-# 4. Forest dynamics {background-color="#53536C"}
+# 4. Forest dynamics simulations {background-color="#53536C"}
 
 ## Forest dynamics run {.smaller}
 
@@ -488,7 +489,7 @@ The same list includes *state variables* for management (these are modified duri
 . . .
 
 ::: callout-tip
-Instead of using the in-built management function, you could code your own management function and specify its own set of parameters!
+Instead of using the in-built management function, you could code *your own management function* and specify its *own set of parameters*!
 :::
 
 ::: footer

@@ -4,6 +4,7 @@ title-slide-attributes:
   data-background-color: "#ABC837"
 format:
   revealjs:
+    embed-resources: true
     incremental: true
     smaller: false
     logo: resources/img/emf_logo.svg

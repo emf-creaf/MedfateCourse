@@ -4,6 +4,7 @@ title-slide-attributes:
   data-background-color: "#672178"
 format:
   revealjs:
+    embed-resources: true
     df-print: default
     incremental: true
     smaller: false
