@@ -57,7 +57,8 @@ The proposed exercises are the following:
 | 2c        | Live fuel moisture content and fire hazard simulation.  |
 | 3         | Run growth and forest dynamics, including management.    |
 | 4a        |                                                          |
-| 4b        | Watershed-level hydrological simulations                 |
+| 4b        |                                                          |
+| 4c        | Watershed-level hydrological simulations                 |
 
 ## Additional data (not in this repository)
 

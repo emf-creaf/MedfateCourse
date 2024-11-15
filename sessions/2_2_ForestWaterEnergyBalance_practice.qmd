@@ -270,7 +270,7 @@ The help page of `?plot.spwb` lists all the possible plots...
 
 . . .
 
-... but instead of typing all plots, we can call the interactive plot function and explore them all:
+... but instead of typing all plots, we can explore them all by calling the interactive function `shinyplot()`:
 
 ```{r, eval = FALSE, include = TRUE, echo = TRUE}
 shinyplot(S)
@@ -318,7 +318,7 @@ evaluation_stats(S, exampleobs, type = "SWC")
 
 ## Evaluation plots and interactive evaluation {.smaller}
 
-Evaluation functions also allow visualizing the comparison as time series or scatter plots:
+Evaluation functions also allow visualizing the comparison as *time series* or *scatter* plots:
 
 ```{r, echo = TRUE, fig=TRUE, fig.align="center", fig.width=9, fig.height = 3}
 evaluation_plot(S, exampleobs, type = "SWC", plotType = "dynamics")

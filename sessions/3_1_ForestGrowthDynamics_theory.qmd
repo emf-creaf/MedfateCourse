@@ -26,8 +26,8 @@ progress: true
 2. Carbon pools and carbon balance
 3. Growth and senescence
 4. Mortality and recruitment
-5. Biomass balance
-6. Fire effects
+5. Fire effects
+6. Biomass balance
 :::
 
 ::: {.column width="40%"}
@@ -49,13 +49,15 @@ library(ggplot2)
 1.  Simulation functions in **medfate** have been designed and implemented in a **nested** manner.
 2.  The two water balance models (basic and advanced) are available for simulations with `growth()` and `fordyn()`.
 3.  The `growth()` model implements several **daily** processes:
-    i)  Carbon balance processes resulting from the interplay of sources (photosynthesis) and sinks (maintenance respiration, growth respiration, root exudation, etc.).
-    ii) Growth and senescence processes that modulate changes in *leaf area*, *sapwood area* and *fine root area* of woody plant cohorts.
-    iii) Structural changes (diameter and height for trees; cover and height for shrubs) derived from growth and senescence processes.
-    iv) Tree mortality, which reduces cohort density.
+    i)  **Carbon balance** processes resulting from the interplay of sources (photosynthesis) and sinks (maintenance respiration, growth respiration, root exudation, etc.).
+    ii) **Growth** and **senescence** processes that modulate **changes** in *leaf area*, *sapwood area* and *fine root area* of woody plant cohorts.
+    iii) **Structural changes** (diameter and height for trees; cover and height for shrubs) derived from growth and senescence processes.
+    iv) **Background and drought-related mortality**, which reduces tree cohort density or shrub cover.
+    v) **Fire** severity effects, including foliage burning and mortality.
+
 4.  For applications spanning more than a few years, users will use the `growth()` model indirectly, via calls to `fordyn()`, which includes other processes implemented at **annual** steps:
-    i)  Natural regeneration (recruitment)
-    ii) The effect of disturbances (at present, only forest management and fire effects).
+    i) The impact of **forest management**
+    ii) Natural **regeneration**: *recruitment* or *resprouting*.
 :::
 
 ::: {.column width="30%"}
@@ -366,7 +368,17 @@ Unlike mortality, recruitment is simulated *at the end of a simulated year* (onl
 4.  Mortality and recruitment
 :::
 
-# 5. Biomass balance {background-color="#214478"}
+# 5. Fire effects {background-color="#214478"}
+
+## Design of fire effects {.smaller}
+
+![](resources/img/FireSeverity.drawio.png)
+
+::: footer
+5.  Fire effects
+:::
+
+# 6. Biomass balance {background-color="#214478"}
 
 ## Biomass balance {.smaller}
 
@@ -397,18 +409,10 @@ $$B_{mortality} = (B_{plant} + \Delta{B_{plant}}) \cdot N_{dead}$$
 where $N_{dead}$ is the density of dead individuals and $B_{plant}$ is the initial plant biomass.
 
 ::: footer
-5.  Biomass balance
+6.  Biomass balance
 :::
 
-# 6. Fire effects {background-color="#214478"}
 
-## Design of fire effects {.smaller}
-
-![](resources/img/FireSeverity.drawio.png)
-
-::: footer
-6.  Fire effects
-:::
 
 #  {background-color="#214478"}
 

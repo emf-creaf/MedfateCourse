@@ -161,7 +161,7 @@ names(G)
 |---------------------|---------------------------------------------------|
 | `latitude`, `topography`, `weather`, `growthInput` | Copies of the information used in the call to `growth()` |
 | `growthOutput` | State variables at the end of the simulation (can be used as input to a subsequent one) |
-| `WaterBalance`, `Soil`, `Snow`, `Stand`, `Plants` | \[same as `spwb` ...\] |
+| `WaterBalance`, `Soil`, `Snow`, `Stand`, `Plants` | \[same as for function `spwb()` ...\] |
 | `CarbonBalance` | Stand-level carbon blance |
 | `LabileCarbonBalance` | Components of the individual-level labile carbon balance |
 | `PlantBiomassBalance` | Components of indvidual- and cohort-level biomass balance |
