@@ -65,7 +65,7 @@ The proposed exercises are the following:
 | 2b | Water balance simulations under different bulk soil water sub-models. |
 | 2c | Live fuel moisture content and fire hazard simulation. |
 | 3 | Run growth and forest dynamics, including management. |
-| 4a |  |
+| 4a | Landscape initialization with medfateland |
 | 4b |  |
 | 4c | Watershed-level hydrological simulations |
 

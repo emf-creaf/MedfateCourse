@@ -1,0 +1,243 @@
+---
+title: "Exercise 4a solution"
+author: "Rodrigo Balaguer"
+date: "2024-11-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Exercise setting
+
+
+##  Objectives
+
+Learn to initialized a landscape (creation of spatial inputs) to be used in **medfateland** model simulations.
+
+## Data
+
+The target area to be initialized corresponds to Barcelona county. It contains large areas covered by urban land-uses, some sparse agricultural zones and a northern belt of wildland area mostly dominated by P.halepensis stands. 
+
+# Exercise solution
+
+## Step 1. Load packages and target area borders
+
+We begin by loading the packages and target area shape file:
+
+```{r, message=FALSE, warning=FALSE}
+library(medfateland)
+library(terra)
+library(sf)
+#
+bcn <- terra::vect("exercises/StudentRdata/bcn/shape/bcn.shp")
+```
+We can visualize it using:
+
+```{r, fig=TRUE, fig.width=5, fig.height=3}
+plot(bcn)
+```
+
+
+## Step 2. Ratserize target area and create sf object 
+
+We should start defining the pixels resolution. Then we rasterize the study area and intersetct it with the boundaries of the shape file to keep target locations:
+
+```{r}
+res <- 500
+r <- terra::rast(terra::ext(bcn), resolution = c(res,res), crs = "epsg:25831")
+v <- terra::intersect(terra::as.points(r), bcn)
+```
+
+Then, we create a `sf object` in which each line represents each target area pixel:
+
+```{r}
+x <- sf::st_as_sf(v)[,"geometry", drop = FALSE]
+x
+```
+
+## Step 3. Add topography
+
+We need to load a Digital Elevation Model (DEM) raster map. Then we calculate and extract elevation, slope and aspect data for each pixel using:
+
+```{r}
+dem <- terra::rast("exercises/StudentRdata/bcn/dem.tif")
+bcn_0 <- add_topography(x, dem = dem)
+```
+
+Next we should check if there are missing values and filter them:
+
+```{r}
+check_topography(bcn_0)
+bcn_0 <- dplyr::filter(bcn_0, !is.na(bcn_0$slope))
+```
+
+Now we have added three columns in the `sf object` containing topographic data of each pixel:
+
+```{r}
+bcn_0
+```
+
+We can visualize any of the `sf object` variables using:
+
+```{r, fig=TRUE, fig.width=5, fig.height=3}
+plot_variable(bcn_0, "elevation", r = r)
+```
+
+
+## Step 4. Add land cover type
+
+We need to load a Land-use/Land-cover raster map. Then we classify land cover elements in to the five land cover types used in **medfateland** and extract the data into the `sf object`:
+
+```{r}
+cob <- terra::rast("exercises/StudentRdata/bcn/cob.tif")
+bcn_1 <- add_land_cover(bcn_0, 
+                      land_cover_map = cob, 
+                      wildland = c(7:17,20), 
+                      agriculture = 1:6, 
+                      rock = 18:19, 
+                      artificial = 21:35, 
+                      water = 36:41, 
+                      progress = T)
+```
+
+Check for missing values: 
+
+```{r}
+check_land_cover(bcn_1)
+```
+
+Now we have added a column in the `sf object` containing the land cover type of each pixel:
+
+```{r}
+bcn_1
+```
+
+We can visualize the land cover map using:
+
+```{r, fig=TRUE, fig.width=5, fig.height=3}
+plot_variable(bcn_1, "land_cover_type", r = r)
+```
+
+
+## Step 5. Add forest objects
+
+The next step is to define forest objects for our simulations. Our task here will be to perform imputations of forest inventory plots to our target wildland locations according to topographic and dominant tree species criteria. We start loading a forest map and an ``.rds file` which contains forest inventory plot data from the 4th Spanish Forest Inventory:
+
+```{r}
+forest_map <- terra::vect("exercises/StudentRdata/bcn/mfe/mfe25_cat_class.shp")
+ifn4 <- readRDS("exercises/StudentRdata/bcn/ifn4.rds")
+```
+
+Then we perform the imputation indicating the forest map, the file with forest inventory plots information, and the Digital Elevation Model that we have previously loaded in Step 3 :
+
+```{r}
+bcn_2 <- impute_forests(bcn_1, sf_fi = ifn4, dem = dem, 
+                      forest_map = forest_map, progress = T)
+```
+Finally we cheek the results:
+
+```{r}
+check_forests(bcn_2)
+```
+
+
+And visualize the `sf object`with the new forest column:
+
+```{r}
+bcn_2
+```
+
+**Interpretation**: The function output says that forest data is missing for 50 wildland pixels. That is due to 2 forest classes were not represented in forest inventory data. We can deal with this issue by several ways. First we can continue with `NULL` forest objects in that location. We can active `missing_class_imputation = TRUE` option in the function to impute missing forest based on topographic criteria only. Also we can establish a default `forest object` that could be an empty forest or a previously defined `forest object` to be imputed in those missing locations. Finally, considering that this missing forest are probably indicating that those target area are dominated by shrub species, the more recommended option is to load shrub maps and shrub inventory data and run again the function. However is important to consider that this shrub inventory data is not easy to obtain. In this example we will continue with NULL values.
+
+
+## Step 6. Correct forest structure
+
+First we load both height and basal area maps and resample them. Also we transform units in height map from m to cm:
+
+```{r}
+height_map <- terra::rast("exercises/StudentRdata/bcn/tree_height.tif")
+#Resample
+height_map_res <- terra::aggregate(terra::crop(height_map, r), 
+                                  fact = 2, fun = "mean", na.rm = TRUE)
+height_map_cm <- height_map_res*100
+```
+
+```{r}
+basal_area_map <- terra::rast("exercises/StudentRdata/bcn/tree_ba.tif")
+#Resample
+basal_area_map_res <- terra::aggregate(terra::crop(basal_area_map, r), 
+                                      fact = 2, fun = "mean", na.rm = TRUE)
+```
+
+Then we perfom the structure correction, first correcting tree heights:
+
+```{r}
+bcn_3 <- modify_forest_structure(bcn_2, height_map_cm, var = "mean_tree_height", progress = T)
+```
+
+And then, correcting tree basal areas:
+
+```{r}
+bcn_4 <- modify_forest_structure(bcn_3, basal_area_map_res, var = "basal_area", progress = T)
+```
+
+Finally we can compare forest structure before and after the correction:
+
+```{r}
+#Before
+bcn_2$forest[[4]]$treeData
+```
+
+```{r}
+#After
+bcn_4$forest[[4]]$treeData
+```
+
+
+## Step 7. Add soils
+
+The last step to initialize a landscape is adding soil characteristic in each pixel. Soil charcateristic data maps are available from SoilGrids data base. We have previously downloaded and stored it for this example. Soil inputation is done using:
+
+```{r}
+soilgrids_path = ("exercises/StudentRdata/bcn/SoilGrids/Spain/")
+bcn_5 <- add_soilgrids(bcn_4, soilgrids_path = soilgrids_path, progress = T)
+```
+
+Then we should check the result using:
+
+```{r}
+check_soils(bcn_5)
+```
+Finally, we should correct missing element by assigning default values:
+
+```{r}
+bcn_6 <- check_soils(bcn_5, missing_action = "default",
+                   default_values = c(clay = 25, sand = 25, bd = 1.5, rfc = 25))
+```
+
+Now, soil data is correctly added to our `sf object`:
+
+```{r}
+check_soils(bcn_6)
+```
+
+
+## Step 8. Check and Save
+
+We can check if the landscape is correclty initialized by using:
+
+```{r}
+data("SpParamsMED")
+z <- initialize_landscape(bcn_6, SpParamsMED, defaultControl(),
+                          progress = T)
+```
+
+Then we should save the initialized landscape as a .RDS file:
+
+```{r}
+saveRDS(bcn_6, "exercises/StudentRdata/bcn/bcn.rds")
+```
+

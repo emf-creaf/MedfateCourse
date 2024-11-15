@@ -38,7 +38,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Step 1. Load Tivissa data
 
-```{r, include=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(medfate)
 library(medfateland)
 library(meteoland)
@@ -46,7 +46,7 @@ library(cowplot)
 library(ggplot2)
 ```
 
-We are given all the necessary data, bundled in a single list:
+We are given all the necessary data bundled in a single list:
 
 ```{r}
 tv <- readRDS("exercises/StudentRdata/tivissa.rds")
@@ -89,7 +89,7 @@ tv_control$fireHazardStandardWind <- 5
 
 ## Steps 6-7. Initialize water balance input
 
-The error indicate that the rosemery scientific name used (Rosmarinus officinalis) is not found in SpParams. Thus, after check SpParams and replace it with its accepted name (Salvia rosmarinus) we can now initialize the water balance input
+The error indicate that the rosemery scientific name used (Rosmarinus officinalis) is not found in SpParams. Thus, after check and replace it with the SpParams name (Salvia rosmarinus) we can now initialize the water balance input
 
 ```{r}
 tv_forest$shrubData$Species[tv_forest$shrubData$Species=="Rosmarinus officinalis"] <- "Salvia rosmarinus"
@@ -107,15 +107,15 @@ tv$terrainData
 To finally run the advanced water balance simulation
 
 ```{r, eval=TRUE}
-tv_spwb1 <- spwb(tv_x1, tv_meteo, elevation = 555, latitude = 41.053)
+tv_spwb <- spwb(tv_x1, tv_meteo, elevation = 555, latitude = 41.053)
 ```
 
 ## Step 9. Visualize and compare both species LFMC dynamics
 
 We can use function `plot()` to draw live fuel moisture content dynamics (LFMC) of both species using `type = "LFMC"`:
 
-```{r echo=TRUE, fig.height=9, fig.width=11, fig=TRUE}
-g1 <- plot(tv_spwb1, type = "LFMC", bySpecies = T) +
+```{r echo=TRUE, fig.height=5, fig.width=7, fig=TRUE}
+g1 <- plot(tv_spwb, type = "LFMC", bySpecies = T) +
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
   theme(legend.position = "inside", legend.position.inside =  c(0.8,0.8))
 g1
@@ -136,20 +136,20 @@ tv_observed$dates <- as.Date(tv_observed$dates)
 Next, we can extract modeled LFMC values by species using `summary()`function for `spwb` objects and extract the `date` column from row names:
 
 ```{r}
-tv_modeled <- as.data.frame(summary(tv_spwb1, freq="days",FUN=mean, output="LFMC", bySpecies = T))
+tv_modeled <- as.data.frame(summary(tv_spwb, freq="days",FUN=mean, output="LFMC", bySpecies = T))
 tv_modeled <- tibble::rownames_to_column(tv_modeled, "dates")
 tv_modeled$dates<-as.Date(tv_modeled$dates)
 ```
 
 Then we can compare observed versus modeled LFMC dynamics using function `ggplot()`. Here we combine plots of temporal series with scatter plots of observed vs. predicted values. Note that we need to create dataframes for the scatter plots:
 
-```{r, warning=FALSE, message=FALSE, fig.width=11, fig.height=9}
+```{r, warning=FALSE, message=FALSE, fig.width=10, fig.height=6}
 #Dynamic plot Quercus
 g2.1<-ggplot(tv_observed, aes(x=dates, y=`Quercus coccifera`, fill  = "black"))+
   geom_point()+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
   geom_line(data=tv_modeled, aes(y=`Quercus coccifera`), colour = "#F8766D")+
-  ylab("LFMC")+
+  ylab("LFMC (%)")+
   xlab("")+
   ggtitle("Quercus coccifera")+
   theme_bw()+
@@ -165,6 +165,7 @@ g2.2<- ggplot(scatter_quercus, aes(x=modeled, y=observed)) +
   geom_point() +
   geom_smooth(method=lm , color="grey", se=FALSE, linetype = "dashed") +
   geom_abline()+
+  ggtitle("")+
   theme_bw()
 #Arrange
 g2 <- plot_grid(g2.1, g2.2, ncol = 2, rel_widths = c(1, 0.4))
@@ -173,7 +174,7 @@ g3.1<-ggplot(tv_observed, aes(x=dates, y=`Salvia rosmarinus`, fill = "black"))+
   geom_point()+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
   geom_line(data=tv_modeled, aes(y=`Salvia rosmarinus`), color = "#00BFC4")+
-  ylab("LFMC")+
+  ylab("LFMC (%)")+
   xlab("")+
   ggtitle("Salvia rosmarinus")+
   theme_bw()+
@@ -189,6 +190,7 @@ g3.2<- ggplot(scatter_salvia, aes(x=modeled, y=observed)) +
   geom_point() +
   geom_smooth(method=lm , color="grey", se=FALSE, linetype = "dashed") +
   geom_abline()+
+  ggtitle("")+
   theme_bw()
 #Arrange
 g3 <- plot_grid(g3.1, g3.2, ncol = 2, rel_widths = c(1, 0.4))
@@ -196,7 +198,7 @@ g3 <- plot_grid(g3.1, g3.2, ncol = 2, rel_widths = c(1, 0.4))
 plot_grid(g2, g3, ncol=1)
 ```
 
-**Interpretation**: We can observe that Salvia rosmarinus LFMC simulation performed a better agreement between modeled and field observed data than Quercus coccifera simulation. 
+**Interpretation**: We can observe that Salvia rosmarinus LFMC simulation performed a better agreement between modeled and field observed data than Quercus coccifera simulation. This could be indicating that the model fails in capturing the effect of seasonal phenological changes in Quercus coccifera LFMC values.
 
 
 ## Step 11. Fire hazard results extraction and visualization
@@ -204,7 +206,7 @@ plot_grid(g2, g3, ncol=1)
 We can extract daily fire hazard values using `summary()` function for `spwb` objects (again you should extract the `date` column from rownames):
 
 ```{r}
-FireHazard<-as.data.frame(summary(tv_spwb1, freq="days",FUN=mean, output="FireHazard"))
+FireHazard<-as.data.frame(summary(tv_spwb, freq="days",FUN=mean, output="FireHazard"))
 FireHazard <- tibble::rownames_to_column(FireHazard, "dates")
 FireHazard$dates<-as.Date(FireHazard$dates)
 ```
@@ -214,7 +216,7 @@ Then we can combine temporal series plots of annual precipitation, LFMC dynamics
 
 ```{r, warning=FALSE, message=FALSE, fig.width=11, fig.height=9}
 #Ppt plot
-g0<-plot(tv_spwb1)+
+g0<-plot(tv_spwb)+
   scale_x_date(date_breaks = "1 month", date_labels = "%m")+
   theme(legend.position = "none")
 #LFMC plot was previously created

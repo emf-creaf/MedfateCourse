@@ -84,13 +84,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-10. Compare the observed vs. modeled LFMC values and describe both species performance (*hint*: `evaluation_plot()` function does not work with `LFMC`, instead we can use `summary()` function for `spwb` objects and `ggplot()`).
+10. Compare the observed vs. modeled LFMC values and describe both species performance (*hint*: `evaluation_plot()` function does not work with `LFMC`, instead we can use `summary()` function for `spwb` objects and `ggplot()`). What could be driving the differences among both species degree of agreement?
 
 ```{r}
 
 ```
 
-11. Extract daily fire hazard values from the `spwb` object. Do you recognize any fire behavior variable represented in the columns? Compare precipitation, LFMC and surface fire line intensity. Which relations did you observe? (*hint*: use `summary()` function to obtain `FireHazard` results. Surface fire line intensity is named as `I_b_surface`). 
+11. Extract daily fire hazard values from the `spwb` object (*hint*: use `summary()` function to obtain `FireHazard` results). Do you recognize any fire behavior variable represented in the columns? Compare precipitation, LFMC and surface fire line intensity (*hint*: Surface fire line intensity is named as `I_b_surface`). Which relations did you observe? 
 
 ```{r}
 
