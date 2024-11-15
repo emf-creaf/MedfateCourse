@@ -1,0 +1,1 @@
+Due to memory issues, this data would be given to the students during the curse.

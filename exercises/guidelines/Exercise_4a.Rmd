@@ -1,0 +1,71 @@
+---
+title: "Exercise 4a guidelines"
+author: "Rodrigo Balaguer"
+date: '2024-11-13'
+output:
+  html_document: default
+---
+
+# Exercise setting
+
+
+##  Objectives
+
+Learn to initialized a landscape (creation of spatial inputs) to be used in **medfateland** model simulations.
+
+
+## Data
+
+The target area to be initialized corresponds to Barcelona county. It contains large areas covered by urban land-uses, some sparse agricultural zones and a northern belt of wildland area mostly dominated by P.halepensis stands. 
+
+
+## Guidelines
+
+1. Load package **medfateland**, **terra** and **sf**. Then load target area borders and visualize it (**hint**: Barcelona county shape file is in `shape/bcn.shp`).
+
+```{r}
+
+```
+
+2. Ratserize target area with a pixel side size of 500m. Then intersect the raster with target area boundaries to finally create a `sf object` in which each line corresponds to each pixel of the target area (**hint**: use functions `terra::rast()`, `terra::intersect()` and `sf::st_as_sf()`).
+
+```{r}
+
+```
+
+3. From now, landscape initialization consist in adding columns in the `sf object` that contain specific data for each pixel that latter would be used to carry out **medfateland** simulations. First, start adding topographic features. Check if missing values are present and if yes, filter that lines. Finally, visualize the elevation map (**hint**: topographic data is stored in `dem.tif` raster file. Use functions `add_topography()`, `check_topography()` and `plot_variable()`).
+
+```{r}
+
+```
+
+4. Load a land cover map and classify land cover elements in to the five land cover types used in **medfateland** (**hint**: land cover types: **agriculture**, **wildland**, **artificial**, **rock**, and **water**). Then add land cover type to the `sf object`, check for missing values and visualize it (**hint**: land cover data is stored in `cob.tif` raster file. Use functions `add_land_cover()`, `check_land_cover()` and `plot_variable()`)
+
+```{r}
+
+```
+
+5. Define forest objects in the wildland pixels. To define forest objects you need a forest map with dominant tree species (`mfe/mfe25_cat_class.shp`) and forest inventory data from nearby locations (`ifn4.rds`). Use `impute_forests()` and inspect function console output to check the result (**hint**: you can also use `check_forest()` function). Is there any forest class missing? How could yo deal with this missing data? (**hint**: reed the documentation of `impute_forests()` function)
+
+```{r}
+
+```
+
+6. As imputed forest inventory plots and our study area pixels have different sizes, we should correct forest structure (i.e. DBH, height and number of trees in each cohort). For that, we need vegetation spatial information that can be derived from LiDAR flights, for example. Thus, next step is use tree height (`tree_height.tif`) and basal area (`tree_ba.tif`) maps to correct forest structure (**hint**: use `modify_forest_structure()` function. Both maps need to be resampled by a `fact=2`, you can use `aggregate()` and `crop()` functions from `terra` package. Note that tree height map is in meters while `height`in `forest object`is in cm). To conclude, visualize a forest object before and after structure correction. What has changed?
+
+```{r}
+
+```
+
+7. Add soil characteristics for each pixel from Soil Grids dataset. Check the result and add default soil characteristics to fill any missing data (**hint**: soil data is stored in `soilgrids_path = prueba/4a/bcn/SoilGrids/Spain/`. Use `add_soils()` and `chekc_soils()` functions. Also, use the following `default_values = c(clay = 25, sand = 25, bd = 1.5, rfc = 25)`)
+
+```{r}
+
+```
+
+8. Check if the landscape is correctly initialized and store the data (**hint**: use `initialize_landscape()`function)
+
+```{r}
+
+```
+
