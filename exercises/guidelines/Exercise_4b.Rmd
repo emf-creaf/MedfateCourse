@@ -1,0 +1,66 @@
+---
+title: "Exercise 4b guidelines"
+author: "Rodrigo Balaguer"
+date: '2024-11-15'
+output:
+  html_document: default
+---
+
+## Exercise objectives
+
+Learn to perform forest dynamics simulations on an initialized landscape while evaluating a demand-based management scenario.
+
+## Exercise data
+
+We will use an initialized landscape corresponding to Barcelona county (derived from exercise 4a output). Daily weather data for 2023 will be extracted through an interpolation process.
+
+## Guidelines
+
+1. Load **medfateland** and **meteoland** packages and the file `"bcn.rds"`, which contains the Barcelona county initialized landscape derived form exercise 4a output.
+
+```{r}
+
+```
+
+2. Subset and filter `sf objetc` to just contain wildland locations without NULL forest objects.
+
+```{r}
+
+```
+
+3. Load species default parameters from `SpParamsMED` and create a new column in the `sf objetc` to specify the dominant tree specie in each forest plot (**hint**: use `stand_dominantTreeSpecies()` function).
+
+```{r}
+
+```
+
+4. Load `harvesting_metrics.csv` file and inspect which are the target species for wood harvesting in the Barcelona county. Then load from package **medfateland** the table `defaultPrescriptionsBySpecies`, which contains species default prescription parameters, and inspect it (note that the columns are the same as the parameter names required by function defaultManagementFunction() used in exercise 3). Finally, specify in the `sf object` the management unit for each stand dominated by a target specie (**Hint**: first define a column `management_unit` with missing values and then assign the corresponding row number of `defaultPrescriptionsBySpecies` for stands dominated by each of the target species listed in `harvesting_metrics.csv`, leave the stands dominated with other species as missing values).
+
+```{r}
+
+```
+
+5. Use function `create_management_scenario()` to define a demand-based management scenario with fixed demand values (m3) derived from `harvesting_metrics.csv` file. Inspect the created scenario. Which is the name of the scenario_type? Finally, it is necessary to specify the area (in ha) that each forest stand represents by adding a `represented_area_ha` columns in the `sf objetc` (**Hint**: pixel resulution was defined in exercise 4a).
+
+```{r}
+
+```
+
+6. Load meteorological data from the interpolator file `interpolator_2023_calibrated.nc` and inspect it (**Hint**: use `read_interpolator()` function from **meteoland** package)
+
+```{r}
+
+```
+
+7. Lunch the simulation of the management scenario in Barcelona county for the year 2023 (**Hint**: use `fordyn_scenario()` function setting `dispersal_control = NULL` and `parallelize = T` to reduce computation time). Do you understand all console simulation outputs? Which was the total demand in m3?
+ 
+```{r}
+
+```
+ 
+8. Inpect the simulation output. Which were the initial and final volumes (m3)?. What about the growth and mortality volumes? How many wood was extracted during the simulation? (**Hint**: visualize `result_volumes` output). Which specie was the more harvested during the simulation? (**Hint** visualize `result_volumes_spp` and `result_volumes_demand` output). Finally, how many trees and from which specie died during the simulation in the first stand (id = 4)? (**Hint**: visualize `result_sf` output).
+ 
+```{r}
+
+```
+ 

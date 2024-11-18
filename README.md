@@ -60,14 +60,14 @@ The proposed exercises are the following:
 
 | Exercise | Purpose |
 |----|----|
-| 1 | Create inputs (forest, soil, weather) |
+| 1 | Create inputs (forest, soil, weather). |
 | 2a | Run basic and advanced water balance. Learn evaluation. |
 | 2b | Water balance simulations under different bulk soil water sub-models. |
 | 2c | Live fuel moisture content and fire hazard simulation. |
 | 3 | Run growth and forest dynamics, including management. |
-| 4a | Landscape initialization with medfateland |
-| 4b |  |
-| 4c | Watershed-level hydrological simulations |
+| 4a | Landscape initialization with medfateland. |
+| 4b | Simulate forest dynamics under a demand-based management scenario. |
+| 4c | Watershed-level hydrological simulations. |
 
 ## Additional data (not in this repository)
 
