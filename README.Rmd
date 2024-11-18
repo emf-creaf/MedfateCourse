@@ -57,7 +57,7 @@ The proposed exercises are the following:
 | 2c        | Live fuel moisture content and fire hazard simulation.  |
 | 3         | Run growth and forest dynamics, including management.   |
 | 4a        | Landscape initialization with medfateland               |
-| 4b        |                                                         |
+| 4b        | Simulate forest dynamics under a demand-based management scenario. |
 | 4c        | Watershed-level hydrological simulations                |
 
 ## Additional data (not in this repository)

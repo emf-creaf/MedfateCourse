@@ -1,0 +1,185 @@
+---
+title: "Exercise 4b solution"
+author: "Rodrigo Balaguer"
+date: '2024-11-15'
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+``` 
+
+# Exercise setting
+
+
+##  Objectives
+
+Learn to perform forest dynamics simulations on an initialized landscape while evaluating a demand-based management scenario.
+
+  
+## Data
+
+We will use an initialized landscape corresponding to Barcelona county (derived from exercise 4a output). Daily weather data for 2023 will be extracted through an interpolation process.
+
+# Exercise solution
+
+## Step 1. Load initialized landscape file
+
+We begin by loading the packages and the initialized landscape file:
+
+```{r, message=FALSE, warning=FALSE}
+library(medfateland)
+library(meteoland)
+library(dplyr)
+```
+
+
+```{r}
+bcn <- readRDS("exercises/StudentRdata/bcn.rds")
+```
+
+
+## Step 2. Subset and filter sf objetc
+
+We can use the `subset()` function to create a dataframe with just wildland pixels:
+```{r}
+bcnFor<-subset(bcn, land_cover_type=="wildland")
+```
+
+Then we can use `filter()` function from `dplyr` package to remove lines with NULL forest objects:
+
+```{r}
+bcnFor <- bcnFor |> rowwise() |> filter(!is.null(forest))
+```
+
+
+## Step 3. Dominant tree species
+
+We load `SpParamsMED` and create a new column in the `sf objetc` to specify the dominant tree specie in each forest plot applying `stand_dominantTreeSpecies()` to each row:
+
+```{r}
+data("SpParamsMED")
+bcnFor$dominant_tree_species <- sapply(bcnFor$forest, stand_dominantTreeSpecies, SpParamsMED)
+```
+
+Now, we can get the dominant tree species using:
+
+```{r}
+summary(as.factor(bcnFor$dominant_tree_species))
+```
+
+## Step 4. Harvesting metrics
+
+We first load and inspect the harvesting metrics for each target specie in the Barcelona county:
+
+```{r}
+har<-read.csv("exercises/StudentRdata/harvesting_metrics.csv")
+har
+```
+
+The we load the `defaultPrescriptionsBySpecies` table and inspect it:
+
+```{r}
+data("defaultPrescriptionsBySpecies")
+names(defaultPrescriptionsBySpecies)
+```
+
+Finally, we specify the management unit for each stand by first defining a column `management_unit` with missing values and then assign the corresponding row number of defaultPrescriptionsBySpecies for stands dominated by each of the target species:
+
+```{r}
+defaultPrescriptionsBySpecies$Name
+```
+
+```{r}
+bcnFor$management_unit <- NA
+bcnFor$management_unit[bcnFor$dominant_tree_species=="Pinus halepensis"] <- 9
+bcnFor$management_unit[bcnFor$dominant_tree_species=="Pinus pinea"] <- 12
+bcnFor$management_unit[bcnFor$dominant_tree_species=="Quercus ilex"] <- 19
+```
+
+
+## Step 5. Management scenario
+
+We can define a management scenario object using:
+
+```{r, eval = TRUE}
+scen <- create_management_scenario(defaultPrescriptionsBySpecies, 
+                                   c("Pinus halepensis"=378,"Pinus pinea"=142.5, "Quercus ilex"=52.5))
+```
+
+Then, we can inspect it:
+
+```{r, eval = TRUE}
+names(scen)
+```
+And find the name of the scenario type:
+
+```{r, eval = TRUE}
+scen$scenario_type
+```
+
+Finally, we add a column to set the `represented_area_ha` in the `sf object`:
+
+```{r, eval = TRUE}
+bcnFor$represented_area_ha <- 25
+```
+
+
+
+## Step 6. Meteorlogical data
+
+We can load meteorological interpolator using:
+
+```{r, eval = TRUE}
+inter<-read_interpolator("exercises/StudentRdata/interpolator_2023_calibrated.nc")
+inter
+```
+
+
+## Step 7. Lunch simulation
+
+We can lunch the simulation of the management scenario by using:
+
+```{r}
+fs <- fordyn_scenario(bcnFor, SpParamsMED, meteo = inter, 
+                        management_scenario = scen,
+                        dispersal_control = NULL,
+                        parallelize = T,
+                        progress = T)
+```
+
+## Step 8. Result analyses
+
+We can inspect result volumes during the simulation by using:
+
+```{r}
+result_1 <- fs$result_volumes
+result_1
+```
+Also, we can inspect the volumes results by species:
+
+```{r}
+result_2 <- fs$result_volumes_spp
+result_2
+```
+
+And by demand:
+
+```{r}
+result_3 <- fs$result_volumes_demand
+result_3
+```
+
+Finally we can analyse different outputs at stand level by using:
+
+```{r}
+result_4 <- fs$result_sf
+names(result_4)
+```
+
+```{r}
+result_4$dead_tree_table[[1]]
+```
+
+**Interpretation** Approximately 185 `P.halepensis` trees died during the simulation in stand id = 4.
