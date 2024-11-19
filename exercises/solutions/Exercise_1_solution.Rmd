@@ -202,7 +202,6 @@ In this case, the name used for the downy oak (*Quercus humilis*) is a synonym a
 poblet_trees$Species[poblet_trees$Species=="Quercus humilis"] <- "Quercus pubescens"
 ```
 
-## Step 8. Fixing species nomenclature
 
 Now we repeat our mapping and check the results:
 

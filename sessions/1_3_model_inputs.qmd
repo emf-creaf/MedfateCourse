@@ -366,7 +366,7 @@ Package **medfateland** allows retrieving Soilgrids data by connecting with the 
 
 To start with, we need a spatial object of class `sf` or `sfc` (from package **sf**) containing the geographic coordinates of our target forest stand:
 
-```{r}
+```{r, echo = TRUE}
 cc <- c(1.32, 42.20)
 coords_sf <- sf::st_sf(geometry = sf::st_sfc(sf::st_point(cc), crs=4326))
 ```
@@ -375,7 +375,7 @@ coords_sf <- sf::st_sf(geometry = sf::st_sfc(sf::st_point(cc), crs=4326))
 
 We then call `add_soilgrids()` along with a desired vertical width (in mm) of soil layers:
 
-```{r}
+```{r, echo = TRUE}
 #| eval: false
 sf_soil <- medfateland::add_soilgrids(coords_sf, widths = c(300, 700, 1000))
 ```
