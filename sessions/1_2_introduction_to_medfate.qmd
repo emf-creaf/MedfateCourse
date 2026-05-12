@@ -198,11 +198,7 @@ A large number of functions implement sub-models (i.e. modules) on which the sim
 
 . . .
 
-They are included in the package, as **internal** (they are not visible in function index).
-
-. . .
-
-Sub-model functions are grouped by *subject*:
+They are included in the package, as **internal** (they are not visible in function index) and are grouped by *subject*:
 
 ::::: columns
 ::: {.column width="50%"}
@@ -210,6 +206,7 @@ Sub-model functions are grouped by *subject*:
 |----------------|--------------------------------|
 | `biophysics_*` | Physics and biophysics         |
 | `carbon_*`     | Carbon balance                 |
+| `decomposition_*` | Dynamics of litter/SOC      |
 | `fuel_*`       | Fuel properties                |
 | `fire_*`       | Fire behaviour                 |
 | `hydraulics_*` | Plant hydraulics               |
@@ -221,11 +218,13 @@ Sub-model functions are grouped by *subject*:
 ::: {.column width="50%"}
 | Group      | Description                                           |
 |------------|-------------------------------------------------------|
+| `mortality_*` | Plant mortality                                    |
 | `pheno_*`  | Leaf phenology                                        |
 | `photo_*`  | Leaf photosynthesis                                   |
-| `root_*`   | Root distribution and conductance calculations        |
+| `regeneration_*` | Regeneration (seeds/resprouting)         |
+| `root_*`   | Root distribution/conductance        |
 | `soil_*`   | Soil hydraulics and thermodynamics                    |
-| `transp_*` | Stomatal regulation, transpiration and photosynthesis |
+| `transp_*` | Transpiration/photosynthesis |
 | `wind_*`   | Canopy turbulence                                     |
 :::
 :::::

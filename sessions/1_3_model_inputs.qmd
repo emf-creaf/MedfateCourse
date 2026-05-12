@@ -130,7 +130,7 @@ The distinction between *shrubs* and *trees* is made on the basis of the measure
 
 | Variable  | Definition                                                    |
 |---------------|---------------------------------------------------------|
-| `Species` | Species numerical code (should match `SpIndex` in `SpParams`) |
+| `Species` | Species taxonomic name |
 | **`N`**   | Density of trees (in individuals per hectare)                 |
 | **`DBH`** | Tree diameter at breast height (in cm)                        |
 | `Height`  | Tree total height (in cm)                                     |
@@ -143,7 +143,7 @@ The distinction between *shrubs* and *trees* is made on the basis of the measure
 
 | Variable    | Definition                                                    |
 |----------------|--------------------------------------------------------|
-| `Species`   | Species numerical code (should match `SpIndex` in `SpParams`) |
+| `Species`   | Species taxonomic name |
 | **`Cover`** | Shrub cover (%)                                               |
 | `Height`    | Shrub total height (in cm)                                    |
 | `Z50`       | Soil depth corresponding to 50% of fine roots (mm)            |
