@@ -56,17 +56,13 @@ progress: true
 
 **Funding**
 
-I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Four other research projects (FORESTCAST, DRESS, BOMFORES, IMPROMED) have funded further developments.
-
-Developments were also supported by CTFC (until March 2021) and CREAF, where I currently coordinate its *Ecosystem Modelling Facility*.
+I have been intensively working on medfate since 2013, when I obtained a Ramon y Cajal research fellowship from the Spanish government. Four other Spanish research projects have funded further developments.
 
 . . .
 
 **Contribution**
 
-A large number of people has contributed with *ideas*, *data* or *code* to the project:
-
-Jordi Martínez-Vilalta (CREAF-UAB, Spain), Maurizio Mencuccini (ICREA, Spain), Juli G. Pausas (CIDE-CSIC, Spain), Pilar Llorens (CSIC, Spain), Rafa Poyatos (CREAF, Spain), Lluís Brotons (CREAF-CSIC, Spain), Antoine Cabon (WSL, Switzerland), Roberto Molowny (EMF-CREAF, Spain), Victor Granda (EMF-CREAF, Spain), Adriana Tovar (EMF-CREAF, Spain) Alicia Forner (MNCN-CSIC, Spain), Lluís Coll (UdL, Spain), Pere Casals (CTFC, Spain), Mario Beltrán (CTFC, Spain), Aitor Améztegui (UdL, Spain), Nicolas Martin-StPaul (INRA, France), Shengli Huang (USDA, USA), Enric Batllori (UB-CREAF, Spain), Santi Sabaté (UB-CREAF, Spain), Daniel Nadal-Sala (UB, Spain), María González (UPV, Spain), Núria Aquilué (CTFC, Spain), Mario Morales (UniZar, Spain), Léa Veuillen (INRAE, France), ...
+A large number of people has contributed with *ideas*, *data* or *code* to the project: Jordi Martínez-Vilalta (CREAF-UAB, Spain), Maurizio Mencuccini (ICREA, Spain), Juli G. Pausas (CIDE-CSIC, Spain), Pilar Llorens (CSIC, Spain), Rafa Poyatos (CREAF, Spain), Lluís Brotons (CREAF-CSIC, Spain), Antoine Cabon (WSL, Switzerland), Roberto Molowny (EMF-CREAF, Spain), Victor Granda (EMF-CREAF, Spain), Adriana Tovar (EMF-CREAF, Spain) Alicia Forner (MNCN-CSIC, Spain), Lluís Coll (UdL, Spain), Pere Casals (CTFC, Spain), Mario Beltrán (CTFC, Spain), Aitor Améztegui (UdL, Spain), Nicolas Martin-StPaul (INRA, France), Shengli Huang (USDA, USA), Enric Batllori (UB-CREAF, Spain), Santi Sabaté (UB-CREAF, Spain), Daniel Nadal-Sala (UB, Spain), María González (UPV, Spain), Núria Aquilué (CTFC, Spain), Mario Morales (UniZar, Spain), Léa Veuillen (INRAE, France), ...
 
 . . .
 
@@ -75,7 +71,7 @@ Jordi Martínez-Vilalta (CREAF-UAB, Spain), Maurizio Mencuccini (ICREA, Spain), 
 The framework is the joint effort of different institutions:
 
 ::: center
-![](resources/img/logos.png){width="30%"}
+![](resources/img/logos.png){width="45%"}
 ::: 
 
 ::: footer

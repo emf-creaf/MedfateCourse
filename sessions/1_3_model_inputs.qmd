@@ -24,7 +24,7 @@ progress: true
 ::::: columns
 ::: {.column width="50%"}
 1. Species parameters
-2. Forest input
+2. Vegetation input
 3. Vertical profiles
 4. Soil input
 5. Simulation control
@@ -85,7 +85,7 @@ DT::datatable(SpParamsDefinition,
 1.  Species parameters
 :::
 
-# 2. Forest input {background-color="#803300"}
+# 2. Vegetation input {background-color="#803300"}
 
 ## Forest class
 
@@ -119,7 +119,7 @@ The distinction between *shrubs* and *trees* is made on the basis of the measure
 
 
 ::: footer
-2.  Forest input
+2.  Vegetation input
 :::
 
 ## Forest class
@@ -157,8 +157,14 @@ The distinction between *shrubs* and *trees* is made on the basis of the measure
 medfate's *naming conventions* for tree cohorts and shrub cohorts uses `T` or `S`, the row number and species numerical code (e.g. `"T1_148"` for the first tree cohort, corresponding to *Pinus halepensis*).
 :::
 
+. . .
+
+::: callout-note
+The `forest` object can contain additional data frames for seedlings, seed bank, litter, snags, downed dead wood or soil organic carbon (see `?forest`). 
+:::
+
 ::: footer
-2.  Forest input
+2.  Vegetation input
 :::
 
 ## Creating a 'forest' from forest inventory data
@@ -178,7 +184,7 @@ Building `forest` objects from inventory data will always require some data wran
 | `forest_mapWoodyTables()` | Helps filling both `treeData` and `shrubData` tables |
 
 ::: footer
-2.  Forest input
+2.  Vegetation input
 :::
 
 ## Forest attributes
@@ -224,7 +230,7 @@ stand_LAI(forest, SpParamsMED)
 :::::
 
 ::: footer
-2.  Forest input
+2.  Vegetation input
 :::
 
 ## Aboveground data
@@ -247,7 +253,7 @@ where species-specific allometric coefficients are taken from `SpParamsMED`.
 Users will not normally call `forest2aboveground()`, but is important to understand what is going on behind the scenes.
 
 ::: footer
-2.  Forest input
+2.  Vegetation input
 :::
 
 # 3. Vertical profiles {background-color="#803300"}
@@ -323,9 +329,9 @@ shinyplot(forest, SpParamsMED)
 
 # 4. Soil input {background-color="#803300"}
 
-## Soil physical description
+## Soil physico-chemical description
 
-Soil physical attributes are specified using a **data.frame** with soil layers in rows and columns:
+Soil physico-chemical attributes are specified using a **data.frame** with soil layers in rows and columns:
 
 | Attribute | Description |
 |------------------------------------|------------------------------------|
@@ -333,7 +339,8 @@ Soil physical attributes are specified using a **data.frame** with soil layers i
 | `clay` | Percentage of clay (within volume of soil particles). |
 | `sand` | Percentage of sand (within volume of soil particles). |
 | `om` | Percentage of organic matter per dry weight (within volume of soil particles). |
-| `nitrogen` | Total nitrogen (g/kg). Not used at present. |
+| `nitrogen` | Total nitrogen (g/kg) (optional). |
+| `pH` | pH in water (0-14) (optional). |
 | `bd` | Bulk density (g/cm3) |
 | `rfc` | Rock fragment content (in whole-soil volume). |
 
@@ -508,9 +515,9 @@ All simulations in the package require **daily weather** forcing inputs in form 
 | Variables                         | Units                            |
 |-----------------------------------|----------------------------------|
 | Maximum/minimum temperature       | $ºC$                             |
-| Precipitation                     | $l \cdot m^{-2} \cdot day^{-1}$  |
+| Precipitation (cumulative daily)                    | $l \cdot m^{-2} = mm$  |
 | Maximum/minimum relative humidity | \%                               |
-| Radiation                         | $MJ \cdot m^{-2} \cdot day^{-1}$ |
+| Radiation (cumulative daily)                        | $MJ \cdot m^{-2}$ |
 | Wind speed                        | $m \cdot s^{-1}$                 |
 
 . . .
@@ -527,7 +534,7 @@ head(examplemeteo, 2)
 ::: callout-tip
 + Simulation functions have been designed to accept data frames generated using package [meteoland](https://emf-creaf.github.io/meteoland/).
 + The package will try to fill missing values of some variables with estimates (e.g. for radiation or relative humidity).
-+ Additional variables (atmospheric pressure or CO2 concentration) are optional.
++ Additional variables (atmospheric pressure or $CO_2$ concentration) are optional.
 :::
 
 ::: footer
