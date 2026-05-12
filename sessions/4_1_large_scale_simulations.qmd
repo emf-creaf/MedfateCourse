@@ -12,7 +12,7 @@ format:
     theme: [default, resources/scss/custom.scss]
 editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
-institute: "Ecosystem Modelling Facility, CREAF"
+institute: "Ecosystem Modelling Facility, CREAF-CSIC"
 toc: false
 toc-depth: 2
 number-sections: false
@@ -695,7 +695,7 @@ You should have access to a **Digital Elevation Model** (DEM) at a desired resol
 Here we will use a DEM raster for Catalonia at 30 m resolution, which we load using package **terra**:
 ```{r, echo = TRUE}
 dataset_path <- "~/OneDrive/EMF_datasets/"
-dem <- terra::rast(paste0(dataset_path,"Topography/Products/Catalunya/MET30m_ETRS89_UTM31_ICGC.tif"))
+dem <- terra::rast(paste0(dataset_path,"Topography/Catalunya/MET30_ETRS89_ICGC/MET30m_ETRS89_UTM31_ICGC.tif"))
 dem
 ```
 
@@ -817,7 +817,7 @@ Hence, we recommend downloading SoilGrid rasters for the target region and stori
 Assuming we have the raster data, parsing soil grids is straightforward:
 
 ```{r, echo = TRUE}
-soilgrids_path = paste0(dataset_path,"Soils/Sources/Global/SoilGrids/Spain/")
+soilgrids_path = paste0(dataset_path,"Soils/Global/SoilGrids/Spain/")
 y_3 <- add_soilgrids(y_2, soilgrids_path = soilgrids_path, progress = FALSE)
 ```
 

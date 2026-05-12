@@ -12,7 +12,7 @@ format:
     theme: [default, resources/scss/custom.scss]
 editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
-institute: "Ecosystem Modelling Facility, CREAF"
+institute: "Ecosystem Modelling Facility, CREAF-CSIC"
 toc: false
 toc-depth: 2
 number-sections: false
@@ -66,7 +66,7 @@ examplesoil <- defaultSoilParams(4)
 and a simulation control list:
 
 ```{r, echo = TRUE}
-control <- defaultControl(transpirationMode = "Granier", soilDomains = "buckets")
+control <- defaultControl(transpirationMode = "Granier", soilDomains = "buckets", rhizosphereOverlap = "partial")
 ```
 
 . . .
@@ -75,6 +75,8 @@ control <- defaultControl(transpirationMode = "Granier", soilDomains = "buckets"
 + Plant transpiration (`transpirationMode`) should be `"Granier"` (basic), `"Sperry"` (advanced with Sperry) or `"Sureau"` (advanced with Sureau-ECOS).
 
 + Soil water movement (`soilDomains`) should be `"buckets"` (multi-bucket), `"single"` (single-domain) or `"dual"` (dual-permeability).
+
++ Rhizosphere overlap (`rhizosphereOverlap`) should be `"total"` (shared water pools), `"partial"` (partially-shared water pools) or `"none"` (independent water pools).
 :::
 
 . . .

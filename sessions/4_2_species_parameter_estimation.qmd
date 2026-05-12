@@ -12,7 +12,7 @@ format:
     theme: [default, resources/scss/custom.scss]
 editor: source
 author: "Miquel De Cáceres, Rodrigo Balaguer"
-institute: "Ecosystem Modelling Facility, CREAF"
+institute: "Ecosystem Modelling Facility, CREAF-CSIC"
 toc: false
 toc-depth: 2
 number-sections: false
